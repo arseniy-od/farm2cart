@@ -1,0 +1,6 @@
+{
+  "customer": "default role",
+  "seller": "access to seller tools",
+  "moderator": "can delete reviews and goods",
+  "admin": "all privileges"
+}
