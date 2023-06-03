@@ -2,19 +2,13 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="f0661f64-e28e-47c4-a130-c9e4f586c552" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/dataSources.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.sequelizerc" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/database/models/connection.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pages/api/goods/index.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pages/api/users/index.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/roles.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" beforeDir="false" />
+      <change afterPath="$PROJECT_DIR$/pages/users/index.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/page.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/database/models/category.js" beforeDir="false" afterPath="$PROJECT_DIR$/database/models/category.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/database/models/categorygood.js" beforeDir="false" afterPath="$PROJECT_DIR$/database/models/categorygood.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/database/models/company.js" beforeDir="false" afterPath="$PROJECT_DIR$/database/models/company.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/database/models/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/database/models/index.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/database/models/ordergood.js" beforeDir="false" afterPath="$PROJECT_DIR$/database/models/ordergood.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -25,8 +19,8 @@
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="TypeScript JSX File" />
-        <option value="JavaScript File" />
         <option value="TypeScript File" />
+        <option value="JavaScript File" />
       </list>
     </option>
   </component>
@@ -110,7 +104,7 @@
       <option name="presentableId" value="Default" />
       <updated>1685709798381</updated>
       <workItem from="1685709799518" duration="1264000" />
-      <workItem from="1685801389859" duration="10268000" />
+      <workItem from="1685801389859" duration="12748000" />
     </task>
     <servers />
   </component>

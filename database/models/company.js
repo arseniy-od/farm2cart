@@ -2,7 +2,7 @@ import {Model, DataTypes} from "sequelize";
 import sequelize from './connection'
 
 
-class Company extends Model {
+export default class Company extends Model {
   /**
    * Helper method for defining associations.
    * This method is not a part of Sequelize lifecycle.
