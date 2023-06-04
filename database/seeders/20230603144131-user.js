@@ -1,17 +1,36 @@
 'use strict';
 
 /** @type {import('sequelize-cli').Migration} */
+
+
 module.exports = {
   async up (queryInterface, Sequelize) {
-    await queryInterface.bulkInsert('users', [{
-      firstName: 'John',
-      lastName: 'Doe 1',
-      username: 'johndoe1',
-      password:
-          '$2y$10$mj1OMFvVmGAR4gEEXZGtA.R5wYWBZTis72hSXzpxEs.QoXT3ifKSq', // password
-      email: 'example1@example.com',
-      phoneNumber: '0239239249239',
-    }]);
+    await queryInterface.bulkInsert('users', [
+      {
+        firstName: 'John',
+        lastName: 'Doe',
+        username: 'johndoe',
+        password: '12345', // password
+        email: 'example1@example.com',
+        role: 'seller',
+        phoneNumber: '0239239249239',
+      },
+      {
+        firstName: 'Jane',
+        lastName: 'Doe',
+        username: 'janedoe',
+        password: '12345', // password
+        email: 'example2@example.com',
+        phoneNumber: '0239239249238',
+      },
+      {
+        firstName: 'Tom',
+        lastName: 'Cruise',
+        username: 'superspy',
+        password: '12345', // password
+        email: 'example3@example.com',
+        phoneNumber: '0239239249237',
+      }]);
   },
 
   async down (queryInterface, Sequelize) {

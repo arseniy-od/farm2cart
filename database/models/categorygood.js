@@ -9,4 +9,5 @@ CategoryGood.init({
 }, {
   sequelize,
   modelName: 'CategoryGood',
+  timestamps: false
 });
