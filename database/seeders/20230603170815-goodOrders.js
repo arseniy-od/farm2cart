@@ -1,22 +1,11 @@
 module.exports = {
   async up(queryInterface, Sequelize) {
     const orderItems = [
-      {
-        orderId: 1,
-        goodId: 1,
-        quantity: 2,
-      },
-      {
-        orderId: 1,
-        goodId: 2,
-        quantity: 1,
-      },
-      {
-        orderId: 1,
-        goodId: 1,
-        quantity: 3,
-      },
+      {orderId: 1, goodId: 1, quantity: 2,},
+      {orderId: 1, goodId: 2, quantity: 1,},
+      {orderId: 1, goodId: 3, quantity: 3,},
     ];
+
     const goods = [
       {
         title: 'Strawberries',
@@ -43,7 +32,7 @@ module.exports = {
     const orders = [
       {
         customerId: 2,
-        total: 85.5,
+        total: 301741.0,
         paymentStatus: 'Ok',
       },
     ];

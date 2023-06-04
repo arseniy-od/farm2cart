@@ -3,14 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="f0661f64-e28e-47c4-a130-c9e4f586c552" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/database/migrations/20230603175833-create-order-good.js" beforeDir="false" afterPath="$PROJECT_DIR$/database/migrations/20230603175833-create-order-good.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/database/migrations/20230603180055-create-category-good.js" beforeDir="false" afterPath="$PROJECT_DIR$/database/migrations/20230603180055-create-category-good.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/database/models/categorygood.js" beforeDir="false" afterPath="$PROJECT_DIR$/database/models/categorygood.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/database/models/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/database/models/index.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/database/models/ordergood.js" beforeDir="false" afterPath="$PROJECT_DIR$/database/models/ordergood.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/database/seeders/20230603144131-user.js" beforeDir="false" afterPath="$PROJECT_DIR$/database/seeders/20230603144131-user.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/database/seeders/20230603170815-good.js" beforeDir="false" afterPath="$PROJECT_DIR$/database/seeders/20230603170815-good.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/dev_db.db" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -106,7 +99,7 @@
       <option name="presentableId" value="Default" />
       <updated>1685709798381</updated>
       <workItem from="1685709799518" duration="1264000" />
-      <workItem from="1685801389859" duration="20155000" />
+      <workItem from="1685801389859" duration="20872000" />
     </task>
     <servers />
   </component>
