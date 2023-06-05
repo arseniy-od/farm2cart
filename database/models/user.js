@@ -11,7 +11,7 @@ User.init({
   email: DataTypes.STRING,
   phoneNumber: DataTypes.STRING,
   role: DataTypes.STRING,
-  company_id: DataTypes.INTEGER
+  companyId: DataTypes.INTEGER
 }, {
   sequelize,
   modelName: 'user',

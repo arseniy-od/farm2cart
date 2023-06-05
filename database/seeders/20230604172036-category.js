@@ -3,23 +3,25 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up (queryInterface, Sequelize) {
-    /**
-     * Add seed commands here.
-     *
-     * Example:
-     * await queryInterface.bulkInsert('People', [{
-     *   name: 'John Doe',
-     *   isBetaMember: false
-     * }], {});
-    */
+    const categoryItems = [
+      {categoryId: 1, goodId: 1},
+      {categoryId: 2, goodId: 1},
+      {categoryId: 3, goodId: 1},
+
+    ];
+
+    const categories = [
+      {text: "Sale"},
+      {text: "Organic"},
+      {text: "Berry"},
+
+    ];
+    await queryInterface.bulkInsert('categories', categories);
+    await queryInterface.bulkInsert('categoryGoods', categoryItems);
   },
 
   async down (queryInterface, Sequelize) {
-    /**
-     * Add commands to revert seed here.
-     *
-     * Example:
-     * await queryInterface.bulkDelete('People', null, {});
-     */
+    await queryInterface.bulkDelete('categories', null, {});
+    await queryInterface.bulkDelete('categoryGoods', null, {});
   }
 };

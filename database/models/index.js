@@ -14,15 +14,18 @@ Good.belongsTo(User, {foreignKey: 'seller_id', as: 'seller',});
 User.hasMany(Review, {foreignKey: 'authorId', as: 'reviews'});
 Review.belongsTo(User, {foreignKey: 'authorId', as: 'author'});
 
+User.hasMany(Order, {foreignKey: 'customerId', as: 'orders'});
+Order.belongsTo(User, {foreignKey: 'customerId', as: 'customer'});
+
 Good.hasMany(Review, {foreignKey: 'goodId', as: 'reviews'});
 Review.belongsTo(Good, {foreignKey: 'goodId', as: 'good'});
 
-Company.hasMany(User, {foreignKey: 'company_id', as: 'sellers'});
-User.belongsTo(Company, {foreignKey: 'company_id', as: 'company'})
+Company.hasMany(User, {foreignKey: 'companyId', as: 'sellers'});
+User.belongsTo(Company, {foreignKey: 'companyId', as: 'company'})
 
 //Many to many
 Order.belongsToMany(Good, { through: 'OrderGood' });
-Good.belongsToMany(User, { through: 'OrderGood' });
+Good.belongsToMany(Order, { through: 'OrderGood' });
 
 Category.belongsToMany(Good, { through: 'CategoryGood' });
 Good.belongsToMany(Category, { through: 'CategoryGood' });

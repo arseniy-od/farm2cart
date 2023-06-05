@@ -7,10 +7,10 @@ module.exports = {
       lastName: {type: Sequelize.STRING},
       username: {type: Sequelize.STRING},
       password: {type: Sequelize.STRING},
-      email: {type: Sequelize.STRING},
+      email: {type: Sequelize.STRING, unique: true, allowNull:false},
       phoneNumber: {type: Sequelize.STRING},
       role: {type: Sequelize.STRING, defaultValue: 'customer'},
-      company_id: {type: Sequelize.INTEGER, defaultValue: null},
+      companyId: {type: Sequelize.INTEGER, defaultValue: null},
       createdAt: {type: Sequelize.DATE, allowNull: false, defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),},
       updatedAt: {allowNull: false, type: Sequelize.DATE, defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),}
     });

@@ -14,6 +14,7 @@ module.exports = {
         email: 'example1@example.com',
         role: 'seller',
         phoneNumber: '0239239249239',
+        companyId: 1
       },
       {
         firstName: 'Jane',
