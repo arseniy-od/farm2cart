@@ -10,16 +10,22 @@ export default function Layout({ children, home }) {
             <Head>
                 <title>{siteTitle}</title>
             </Head>
-            <header className="px-4 py-3 text-gray-900 text-2xl bg-gray-500">
-                {home ? (
-                    <h1 className="">Index page</h1>
-                ) : (
-                    <h2>
-                        <Link href="/">
-                            Home
-                        </Link>
-                    </h2>
-                )}
+            <header className="px-4 py-3 text-gray-900 bg-gray-500">
+                <div className="flex justify-between items-center">
+                    {home ? (
+                        <h1 className="text-2xl">Index page</h1>
+                    ) : (
+                        <h2>
+                            <Link className="text-2xl " href="/">
+                                Home
+                            </Link>
+                        </h2>
+                    )}
+                    <div>
+                        <Link className="" href="http://localhost:3000/signup">Sign up</Link>
+                        <Link className="ml-4" href="http://localhost:3000/login">Login</Link>
+                    </div>
+                </div>
             </header>
             <main className="">
                 {children}

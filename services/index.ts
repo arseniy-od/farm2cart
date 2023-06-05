@@ -1,13 +1,7 @@
 import {User, Review, Good, Order, OrderGood, Category, CategoryGood, Company} from '@/database/models'
 
 
-export function getUsers() {
-    return (User.findAll(
-        {
-            attributes: ['firstName', 'lastName', 'username', 'email']
-        }
-    ));
-}
+
 
 export function getReviews() {
     return (Review.findAll(

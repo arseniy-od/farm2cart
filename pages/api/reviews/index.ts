@@ -1,29 +1,24 @@
-import {Good, User, Review} from '@/database/models/index'
+import {Review} from '@/database/models/index'
+import { NextApiRequest, NextApiResponse } from "next";
+import { createRouter, expressWrapper } from "next-connect";
+import cors from "cors";
 
 
-async function handler(req, res) {
-    const {query: { nextPage }, method, body,} = req;
+import {getReviews} from '@/services'
+import {ServerResponse} from "http";
 
-    const reviews = await Review.findAll(
-        {
-        include: [
-            {
-                attributes: ['username', 'email'],
-                model: User,
-                as: 'author'
-            },
-            {
-                attributes: ['id', 'title'],
-                model: Good,
-                as: 'good'
-            }
+export const router = createRouter<NextApiRequest, NextApiResponse>()
 
-        ]
-    }
-    );
 
-    res.statusCode = 200;
+router.get(async (req: NextApiRequest, res: NextApiResponse) => {
+    const reviews = await getReviews();
     res.json(reviews);
-}
+});
 
-export default handler;
+
+export default router.handler({
+    onError: (err, req, res) => {
+        console.error(err.stack);
+        res.status(err.statusCode || 500).end(err.message);
+    },
+});

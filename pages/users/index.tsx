@@ -1,6 +1,6 @@
 import Layout from '@/app/layout'
 import {createRouter} from "next-connect";
-import {getUsers} from "../../services";
+import {getUsers} from "../../services/user";
 
 
 

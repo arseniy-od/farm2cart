@@ -1,24 +1,22 @@
 import {Category, Good, CategoryGood} from '@/database/models/index'
+import {getCategories} from "@/services"
+import {createRouter} from "next-connect";
+import {NextApiRequest, NextApiResponse} from "next";
 
 
-async function handler(req, res) {
-    const {query: { nextPage }, method, body,} = req;
+export const router = createRouter<NextApiRequest, NextApiResponse>()
 
-    const categories = await Category.findAll({
-        include: [
-            {
-                model: Good,
-                attributes: ['id', 'title'],
-                through: {
-                    model: CategoryGood,
-                    attributes: []
-                }
-            }
-        ]
-    });
 
-    res.statusCode = 200;
+router.get(async (req: NextApiRequest, res: NextApiResponse) => {
+    const categories = await getCategories();
     res.json(categories);
-}
+});
 
-export default handler;
+
+export default router.handler({
+    onError: (err, req, res) => {
+        console.error(err.stack);
+        res.status(err.statusCode || 500).end(err.message);
+    },
+});
+

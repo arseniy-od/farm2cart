@@ -5,6 +5,7 @@ import {getGoods} from "../../services";
 
 export default function Good(props){
     const { goods } = props;
+
     function Category({good}) {
         return (
         <div>
@@ -21,7 +22,7 @@ export default function Good(props){
                     <div className="mt-4 ml-4 px-4 py-3 text-lg border-2 max-w-xs text-center bg-gray-200 rounded-lg">
                         Good: {good.title}
                         <br/>
-                        {good.Categories[0] ? <Category good={good} /> : null}
+                        {good.Categories.length ? <Category good={good} /> : null}
 
                     </div>
                 </div>

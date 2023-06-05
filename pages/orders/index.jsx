@@ -1,14 +1,25 @@
 import {createRouter} from "next-connect";
 import {getOrders} from "../../services";
+import Layout from "../../app/layout"
 
-export default function Order(props){
-  const { orders } = props;
 
-  return orders.map((order, i) => {
+export default function Order({orders}){
+  // const { orders } = props;
+    console.log("Orders: ", orders)
+
     return (
-        <div key={i}>{order.total}</div>
+        <Layout>
+            {orders.map((order, i) => (
+                <div key={i}>
+                    <div className="mt-4 ml-4 px-4 py-3 text-lg border-2 max-w-xs text-center bg-gray-200 rounded-lg">
+                        <h4>Order #{order.id}</h4>
+                        <p>Total: ${order.total}</p>
+                    </div>
+                </div>
+            ))}
+        </Layout>
+
     );
-  });
 }
 
 

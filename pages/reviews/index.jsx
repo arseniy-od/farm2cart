@@ -15,8 +15,7 @@ export default function Review({ reviews }){
                         Review: {review.text}
                     </div>
                 </div>
-            ))
-            }
+            ))}
         </Layout>
 
     );
