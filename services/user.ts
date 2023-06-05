@@ -1,6 +1,7 @@
 import {User} from '@/database/models'
 
 
+
 export function getUsers() {
     return (User.findAll(
         {
@@ -10,9 +11,15 @@ export function getUsers() {
 }
 
 
-export function createUser(userData) {
-    return (
-        User.create(userData)
-        // check email unique
-    );
+export async function createUser(userData) {
+    const emailData = userData.email;
+    const userEmail = await User.findOne({where: {email: emailData}})
+    if (userEmail) {
+        return {error: "This email is already registered",
+        user: userEmail}
+    } else {
+        return (
+            User.create(userData)
+        );
+    }
 }
