@@ -10,5 +10,6 @@ Review.init({
   authorId: DataTypes.INTEGER
 }, {
   sequelize,
-  modelName: 'Review',
+  modelName: 'review',
+  timestamps: false,
 });

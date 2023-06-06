@@ -17,11 +17,11 @@ module.exports = {
 
     ];
     await queryInterface.bulkInsert('categories', categories);
-    await queryInterface.bulkInsert('categoryGoods', categoryItems);
+    await queryInterface.bulkInsert('category_good', categoryItems);
   },
 
   async down (queryInterface, Sequelize) {
     await queryInterface.bulkDelete('categories', null, {});
-    await queryInterface.bulkDelete('categoryGoods', null, {});
+    await queryInterface.bulkDelete('category_good', null, {});
   }
 };

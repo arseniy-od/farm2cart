@@ -20,4 +20,6 @@ Company.init({
 }, {
   sequelize,
   modelName: 'Company',
+  tableName: 'companies',
+  timestamps: false,
 });

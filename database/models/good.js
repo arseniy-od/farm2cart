@@ -12,4 +12,5 @@ Good.init({
 }, {
   sequelize,
   modelName: 'good',
+  timestamps: false,
 });

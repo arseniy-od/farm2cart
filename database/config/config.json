@@ -1,7 +1,10 @@
 {
   "development":{
-    "storage": "dev_db.db",
-    "dialect": "sqlite"
+    "username": "root",
+    "password": "qwerty",
+    "database": "farm2cart",
+    "host": "127.0.0.1",
+    "dialect": "mysql"
   },
   "test": {
     "username": "root",

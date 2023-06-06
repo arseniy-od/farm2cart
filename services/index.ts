@@ -5,21 +5,23 @@ import {User, Review, Good, Order, OrderGood, Category, CategoryGood, Company} f
 
 export function getReviews() {
     return (Review.findAll(
-        {
-            include: [
-                {
-                    attributes: ['username', 'email'],
-                    model: User,
-                    as: 'author'
-                },
-                {
-                    attributes: ['id', 'title'],
-                    model: Good,
-                    as: 'good'
-                }
+        {attributes: ['text']}
 
-            ]
-        }
+        // {
+        //     include: [
+        //         {
+        //             attributes: ['username', 'email'],
+        //             model: User,
+        //             as: 'author'
+        //         },
+        //         {
+        //             attributes: ['idgoods', 'title'],
+        //             model: Good,
+        //             as: 'good'
+        //         }
+        //
+        //     ]
+        // }
     ));
 }
 

@@ -5,16 +5,16 @@ import {getUsers} from "../../services/user";
 
 
 export default function User({ users }){
-        return (
-            <Layout>
-                {users.map((user, i) => (
+    return (
+        <Layout>
+            {users.map((user, i) => (
                     <div className="mt-4 ml-4 px-4 py-3 text-lg border-2 max-w-xs text-center bg-gray-200 rounded-lg" key={i}>
-                        Username: <span className="text-indigo-500">@{user.username}</span>
-                    </div>
-                ))
-                }
-            </Layout>
-        );
+                Username: <span className="text-indigo-500">@{user.username}</span>
+    </div>
+))
+}
+    </Layout>
+);
 
 }
 
@@ -32,4 +32,3 @@ const router = createRouter()
 export async function getServerSideProps({ req, res }) {
     return await router.run(req, res);
 }
-

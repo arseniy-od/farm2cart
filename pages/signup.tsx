@@ -18,7 +18,7 @@ export default function Home() {
     const handleSubmit = async (event) => {
         event.preventDefault();
 
-        const res = await fetch('/api/users/create', {
+        const res = await fetch('/api/users', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'

@@ -1,16 +1,21 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { createRouter, expressWrapper } from "next-connect";
 
-
-import {getUsers} from '@/services/user'
-
-
-export const router = createRouter<NextApiRequest, NextApiResponse>()
+import {getUsers, createUser} from '@/services/user'
 
 
-router.get(async (req: NextApiRequest, res: NextApiResponse) => {
+const router = createRouter<NextApiRequest, NextApiResponse>();
+
+
+router
+    .get(async (req, res) => {
     const users = await getUsers();
+    
     res.json(users);
+})
+    .post(async (req, res) => {
+    const user = await createUser(req.body);
+    res.json(user);
 });
 
 
