@@ -5,15 +5,9 @@ import {useState} from 'react'
 
 export default function Home() {
     const [user, setUser] = useState({
-        firstName: '',
-        lastName: '',
         email: '',
-        username: '',
         password: '',
-        phoneNumber: ''
     });
-
-
 
     const handleSubmit = async (event) => {
         event.preventDefault();
@@ -49,7 +43,9 @@ export default function Home() {
                             <input type="password" value={user.password} onChange={(event) => setUser({...user, password: event.target.value})}
                                    className="mt-2 px-4 py-3 w-full max-w-xs border-2" placeholder="password"/>
                         </div>
-                        <button onClick={handleSubmit} type="submit" className="mt-4 inline-block items-center bg-gray-400 hover:bg-gray-600 focus:outline-none focus:shadow-outline rounded-lg shadow px-8 py-2">Submit</button>
+                        <button
+                            onClick={handleSubmit}
+                            type="submit" className="mt-4 inline-block items-center bg-gray-400 hover:bg-gray-600 focus:outline-none focus:shadow-outline rounded-lg shadow px-8 py-2">Submit</button>
                     </form>
                 </div>
             </Layout>

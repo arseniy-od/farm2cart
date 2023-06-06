@@ -1,7 +1,7 @@
 import passport from 'passport';
-import { Strategy as LocalStrategy } from 'passport-local';
+import LocalStrategy from 'passport-local';
 import { User } from '@/database/models';
-import {UserService} from "@/services/userService";
+import { findUserByEmail, validatePassword } from "@/services/user";
 
 
 passport.serializeUser((user, callback) => {
@@ -12,19 +12,15 @@ passport.serializeUser((user, callback) => {
 
 passport.deserializeUser((req, id, done) => {
     console.log('passport deserialize, userId', id);
-    User.findByPk(id).then((user) => {
-        if (user) {
-            done(null, user);
-        } else {
-            done(null, false, { message: 'User not found' });
-        }
-    }).catch((err) => done(err));
+    const user = findUserByEmail(req, id);
+    done(null, user)
 });
 
 
 passport.use(
     new LocalStrategy({usernameField: 'email', passReqToCallback: true,},
-        (req, email, password, done) => {UserService.findUserWithEmailAndPassword(email, password).then((user) => {
+        (req, email, password, done) => {
+        findUserByEmail(req, email).then((user) => {
         if (user) {
             done(null, user);
         } else {
@@ -35,5 +31,5 @@ passport.use(
 
 
 
-export const passportAuth = passport.authenticate('local');
+// export const passportAuth = passport.authenticate('local');
 export default passport;
