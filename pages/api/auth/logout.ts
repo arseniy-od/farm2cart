@@ -14,7 +14,7 @@ router
   .use(passport.initialize())
   .use(passport.session())
   .get(async (req, res) => {
-    console.log("\nRequest for logOut is: \n", req)
+    console.log("\nRequest for logOut is: \n", req.logOut)
     req.logOut()
     res.json({result: "Logged out"});
 

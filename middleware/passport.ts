@@ -1,18 +1,19 @@
 import passport from 'passport';
 import LocalStrategy from 'passport-local';
 import { User } from '@/database/models';
-import { findUserByEmail, validatePassword } from "@/services/user";
+import { findUserById, findUserByEmail, validatePassword } from "@/services/user";
+import { NextApiRequest } from 'next';
 
 
 passport.serializeUser((user, callback) => {
-    console.log('passport serialize, userId=', user.id);
+    console.log('passport serialize, userid=', user.id);
     callback(null, user.id);
 });
 
 
-passport.deserializeUser((req, id, done) => {
-    console.log('passport deserialize, userId', id);
-    const user = findUserByEmail(req, id);
+passport.deserializeUser((req:NextApiRequest, id:number, done) => {
+    console.log('passport deserialize, userid', id);
+    const user = findUserById(id);
     done(null, user)
 });
 
@@ -20,7 +21,7 @@ passport.deserializeUser((req, id, done) => {
 passport.use(
     new LocalStrategy({usernameField: 'email', passReqToCallback: true,},
         (req, email, password, done) => {
-        findUserByEmail(req, email).then((user) => {
+        findUserByEmail(email).then((user) => {
         if (user) {
             done(null, user);
         } else {

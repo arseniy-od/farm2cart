@@ -5,6 +5,7 @@ import { authRouter } from '@/middleware/router'
 import passport from "@/middleware/passport";
 import session from "@/middleware/session";
 import nextSession from 'next-session'
+import { isConstructorDeclaration } from "typescript";
 
 const router = createRouter<NextApiRequest, NextApiResponse>();
 
@@ -14,14 +15,20 @@ router
     .use(passport.session())
     .post((req, res, next) => {
         passport.authenticate('local', (err, user, info) => {
+            console.log("Started authentication")
+            console.log("User is: ", user)
+            console.log("Err is: ", err)
+            console.log("Info is: ", info)
             if (err) {
                 console.log("\nPassport authenticate error:\n", err)
                 // console.log("\n\nRequest is: ", req)
                 return next(err)
             }
             if (!user) {
+                console.log("No user")
                 return res.status
             }
+            // console.log("User is: ", user)
             req.logIn(user, (err) => {
                 if (err) {
                     console.log("\nDev: LogIn Error: \n", err)
