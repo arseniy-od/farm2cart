@@ -6,26 +6,27 @@ import session from '@/middleware/session'
 
 
 
-const router = createRouter<NextApiRequest, NextApiResponse>();
+const authRouter = createRouter<NextApiRequest, NextApiResponse>();
 
 
 
-router
-    .use(
-        session({
-            name: 'sess',
-            secret: 'Very_secret_key_and_very_long_also',
-            cookie: {
-                maxAge: 60 * 60 * 8, // 8 hours,
-                httpOnly: true,
-                secure: process.env.NODE_ENV === 'production',
-                path: '/',
-                sameSite: 'lax',
-            },
-        })
-    )
+authRouter
+    // .use(session())
+    // .use(
+    //     session({
+    //         name: 'sess',
+    //         secret: 'Very_secret_key_and_very_long_also',
+    //         cookie: {
+    //             maxAge: 60 * 60 * 8, // 8 hours,
+    //             httpOnly: true,
+    //             secure: process.env.NODE_ENV === 'production',
+    //             path: '/',
+    //             sameSite: 'lax',
+    //         },
+    //     })
+    // )
     .use(passport.initialize())
     .use(passport.session())
 
 
-export {router};
+export { authRouter };

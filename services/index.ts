@@ -13,7 +13,7 @@ export function getReviews() {
                     as: 'author'
                 },
                 {
-                    attributes: ['idgoods', 'title'],
+                    attributes: ['id', 'title'],
                     model: Good,
                     as: 'good'
                 }

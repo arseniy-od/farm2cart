@@ -1,19 +1,26 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { createRouter, expressWrapper } from "next-connect";
 
-import {getUser, createUser} from '@/services/user'
-import {router} from "@/middleware/router";
+import { getUser, createUser } from '@/services/user'
+import { authRouter } from "@/middleware/router";
+import session from "@/middleware/session";
+import passport from "@/middleware/passport";
 
-// const router = createRouter<NextApiRequest, NextApiResponse>();
+const router = createRouter<NextApiRequest, NextApiResponse>();
 
 
 router
+    .use(session)
+    .use(passport.initialize())
+    .use(passport.session())
     .get(async (req, res) => {
-        console.log("Request.user: ", req.user)
-        if (!req.user) {
-            res.json({error: "User not found"})
+        const userId = req.session.passport.user
+        console.log("\nUserId: \n", userId)
+        console.log("\nREQUEST: \n", req)
+        if (!userId) {
+            res.json({ error: "User not found" })
         } else {
-            const user = await getUser(req.user.id);
+            const user = await getUser(userId);
             console.log("User is: ", user)
             res.json(user);
         }

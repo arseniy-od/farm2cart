@@ -1,7 +1,7 @@
 {
   "development":{
-    "username": "my_user",
-    "password": "1",
+    "username":  "root",  
+    "password": "qwerty",
     "database": "farm2cart",
     "host": "127.0.0.1",
     "dialect": "mysql"

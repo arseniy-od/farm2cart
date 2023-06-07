@@ -1,11 +1,28 @@
-import nextConnect from 'next-connect'
-import auth from '../../middleware/auth'
+import { NextApiRequest, NextApiResponse } from "next";
+import { createRouter, expressWrapper } from "next-connect";
 
-const handler = nextConnect()
+import { getUser, createUser } from '@/services/user'
+import { authRouter } from "@/middleware/router";
+import session from "@/middleware/session";
+import passport from "@/middleware/passport";
 
-handler.use(auth).get((req, res) => {
-  req.logOut()
-  res.status(204).end()
-})
+const router = createRouter<NextApiRequest, NextApiResponse>();
 
-export default handler
+
+router
+  .use(session)
+  .use(passport.initialize())
+  .use(passport.session())
+  .get(async (req, res) => {
+    console.log("\nRequest for logOut is: \n", req)
+    req.logOut()
+    res.json({result: "Logged out"});
+
+  })
+
+export default router.handler({
+  onError: (err, req, res) => {
+    console.error(err.stack);
+    res.status(err.statusCode || 500).end(err.message);
+  },
+});
