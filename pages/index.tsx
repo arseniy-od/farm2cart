@@ -23,7 +23,6 @@ export default function Home() {
                     <SiteLink href="/categories" text="Categories"/>
                     <SiteLink href="/companies" text="Companies"/>
                 </div>
-
             </Layout>
         </div>
 );

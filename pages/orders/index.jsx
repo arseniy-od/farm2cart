@@ -2,7 +2,6 @@ import {createRouter} from "next-connect";
 import {getOrders} from "../../services";
 import Layout from "../../app/layout"
 
-
 export default function Order({orders}){
   // const { orders } = props;
     console.log("Orders: ", orders)

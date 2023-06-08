@@ -7,6 +7,7 @@ OrderGood.init({
   quantity: {type: DataTypes.INTEGER, allowNull: false,},
 }, {
   sequelize,
-  modelName: 'order_good',
+  modelName: 'OrderGood',
+  tableName: 'order_goods',
   timestamps: false
 });

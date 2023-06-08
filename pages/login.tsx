@@ -1,9 +1,10 @@
 import Link from 'next/link'
 import Layout from '../app/layout'
-import {useState} from 'react'
-
+import { useState } from 'react'
+import { useRouter } from 'next/navigation';
 
 export default function Home() {
+    const { push } = useRouter();
     const [user, setUser] = useState({
         email: '',
         password: '',
@@ -11,6 +12,7 @@ export default function Home() {
 
     const handleSubmit = async (event) => {
         event.preventDefault();
+        
 
         const res = await fetch('/api/auth', {
             method: 'POST',
@@ -23,6 +25,9 @@ export default function Home() {
         if (res.ok) {
             const user = await res.json();
             console.log("Login successful")
+            const baseUrl = process.env['HOST']
+            console.log("host: ", baseUrl)
+            push('/')
         } else {
             console.log("Login error")
         }
@@ -36,12 +41,12 @@ export default function Home() {
                     <form className="text-center">
                         <h3 className="text-xl">Login</h3>
                         <div>
-                            <input type="text" value={user.email} onChange={(event) => setUser({...user, email: event.target.value})}
-                                   className="mt-2 px-4 py-3 w-full max-w-xs border-2" placeholder="email"/>
+                            <input type="text" value={user.email} onChange={(event) => setUser({ ...user, email: event.target.value })}
+                                className="mt-2 px-4 py-3 w-full max-w-xs border-2" placeholder="email" />
                         </div>
                         <div>
-                            <input type="password" value={user.password} onChange={(event) => setUser({...user, password: event.target.value})}
-                                   className="mt-2 px-4 py-3 w-full max-w-xs border-2" placeholder="password"/>
+                            <input type="password" value={user.password} onChange={(event) => setUser({ ...user, password: event.target.value })}
+                                className="mt-2 px-4 py-3 w-full max-w-xs border-2" placeholder="password" />
                         </div>
                         <button
                             onClick={handleSubmit}

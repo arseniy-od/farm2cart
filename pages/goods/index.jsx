@@ -1,33 +1,42 @@
-import {createRouter} from "next-connect";
+import { createRouter } from "next-connect";
 import Layout from '@/app/layout'
+import Image from "next/image";
+import Link from "next/link";
 
-import {getGoods} from "../../services";
+import { getGoods } from "../../services/good";
 
-export default function Good(props){
+import GoodCard from '@/app/components/goodCard'
+
+export default function Goods(props) {
     const { goods } = props;
-
-    function Category({good}) {
+    function Category({ good }) {
         return (
-        <div>
-            Categories: {good.Categories.map((category, i) => (
-            <div className="inline-block px-1" key={i}>{category.text}</div>))}
-        </div>
+            <div>
+                {good.Categories.map((category, i) => (
+                    <div className="inline-block px-1 text-indigo-500" key={i}>{category.text}</div>))}
+            </div>
         );
     }
 
     return (
         <Layout>
-            {goods.map((good, i) => (
-                <div key={i}>
-                    <div className="mt-4 ml-4 px-4 py-3 text-lg border-2 max-w-xs text-center bg-gray-200 rounded-lg">
-                        Good: {good.title}
-                        <br/>
-                        {good.Categories.length ? <Category good={good} /> : null}
 
-                    </div>
+
+            <div className="mx-auto flex flex-wrap justify-center">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+                    {goods.map((good, i) => (
+                        <div key={i}>
+                            <Link href={"/goods/" + good.id}>
+                                <GoodCard good={good} categories={good.Categories} />
+                            </Link>
+                        </div>
+                    ))
+                    }
                 </div>
-            ))
-            }
+
+
+            </div>
+
         </Layout>
 
     );
@@ -41,24 +50,10 @@ const router = createRouter()
         if (!goods) {
             return { props: { notFound: true } };
         }
-        return { props: {goods: JSON.parse(JSON.stringify(goods))} };
+        return { props: { goods: JSON.parse(JSON.stringify(goods)) } };
     });
 
 
 export async function getServerSideProps({ req, res }) {
     return await router.run(req, res);
 }
-
-
-
-
-// export async function getServerSideProps(context) {
-//   const goodsApi = await fetch('http://localhost:3000/api/goods');
-//   const goods = await goodsApi.json();
-//
-//   return {
-//     props: {
-//       goods,
-//     },
-//   };
-// }

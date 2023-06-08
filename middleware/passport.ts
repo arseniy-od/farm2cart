@@ -13,8 +13,8 @@ passport.serializeUser((user, callback) => {
 
 passport.deserializeUser((req:NextApiRequest, id:number, done) => {
     console.log('passport deserialize, userid', id);
-    const user = findUserById(id);
-    done(null, user)
+    const user = findUserById(id).then(user => {done(null, user)})
+    .catch(e => done(e, null));
 });
 
 
