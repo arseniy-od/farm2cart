@@ -8,6 +8,10 @@ export async function getCategoryByText(text:string) {
             include: [
                 {
                     model: Good,
+                    include : [
+                        {model: User, as: "seller"},
+                        {model: Category, as: "Categories"}
+                    ]
                 }
             ]
         })

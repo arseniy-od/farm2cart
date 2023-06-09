@@ -33,12 +33,8 @@ export default function Goods(props) {
                     ))
                     }
                 </div>
-
-
             </div>
-
         </Layout>
-
     );
 }
 

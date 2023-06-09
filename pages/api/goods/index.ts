@@ -1,22 +1,28 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { createRouter} from "next-connect";
+import { createRouter } from "next-connect";
 
-import {getGoods, createGood} from '@/services/good'
-
+import { getGoods, createGood } from '@/services/good'
+import session from "@/middleware/session";
+import passport from "@/middleware/passport";
 
 const router = createRouter<NextApiRequest, NextApiResponse>();
 
 
 router
+    .use(session)
+    .use(passport.initialize())
+    .use(passport.session())
     .get(async (req, res) => {
-    const goods = await getGoods();
-    
-    res.json(goods);
-})
+        const goods = await getGoods();
+
+        res.json(goods);
+    })
     .post(async (req, res) => {
-    const good = await createGood(req.body);
-    res.json(good);
-});
+        const goodData = { ...req.body, seller_id: req.user.id }
+        console.log("[api/goods] goodData: ", goodData)
+        const good = await createGood(goodData);
+        res.json(goodData);
+    });
 
 
 export default router.handler({
@@ -25,44 +31,3 @@ export default router.handler({
         res.status(err.statusCode || 500).end(err.message);
     },
 });
-
-
-
-
-// import { Good, User, Order, OrderGood, Category, CategoryGood } from '@/database/models/index'
-
-
-// async function handler(req, res) {
-//     const { query: { nextPage }, method, body, } = req;
-
-//     const goods = await Good.findAll({
-//         include: [
-//             {
-//                 attributes: ['username', 'email'],
-//                 model: User,
-//                 as: 'seller'
-//             },
-//             {
-//                 model: Order,
-//                 attributes: ['id'],
-//                 through: {
-//                     model: OrderGood,
-//                     attributes: []
-//                 }
-//             },
-//             {
-//                 model: Category,
-//                 attributes: ['text'],
-//                 through: {
-//                     model: CategoryGood,
-//                     attributes: []
-//                 }
-//             }
-//         ]
-//     });
-
-//     res.statusCode = 200;
-//     res.json(goods);
-// }
-
-// export default handler;

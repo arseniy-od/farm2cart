@@ -16,12 +16,12 @@ export default function Home() {
         <div id="app" className="">
             <Layout home>
                 <div className="mt-6">
-                    <SiteLink href="/users" text="Users"/>
-                    <SiteLink href="/reviews" text="Reviews"/>
                     <SiteLink href="/goods" text="Goods"/>
-                    <SiteLink href="/orders" text="Orders"/>
                     <SiteLink href="/categories" text="Categories"/>
                     <SiteLink href="/companies" text="Companies"/>
+                    <SiteLink href="/users" text="Users"/>
+                    <SiteLink href="/reviews" text="Reviews"/>
+                    <SiteLink href="/orders" text="Orders"/>
                 </div>
             </Layout>
         </div>

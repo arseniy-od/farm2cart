@@ -2,9 +2,9 @@ import { User } from '@/database/models'
 const bcrypt = require('bcrypt');
 
 
-async function hashPassword(password) {
-    const saltRounds = 10;
-    const salt = await bcrypt.genSalt(saltRounds);
+async function hashPassword(password:string):Promise<string> {
+    const saltRounds = 10
+    const salt = await bcrypt.genSalt(saltRounds)
     const hash = await bcrypt.hash(password, salt);
     return hash;
 }
@@ -13,7 +13,9 @@ async function hashPassword(password) {
 export async function getUsers() {
     return await User.findAll(
         {
-            attributes: ['firstName', 'lastName', 'username', 'email', 'password']
+            attributes: {
+                exclude: ['password'] 
+            }
         }
     );
 }
@@ -25,6 +27,7 @@ export async function createUser(userData) {
     console.log("Hashed password is: ", passwordHash)
     userData.password = passwordHash
     const userEmail = await User.findOne({ where: { email: emailData } });
+    console.log(userEmail)
     if (userEmail) {
         return { error: "This email is already registered" }
     } else {
@@ -35,8 +38,13 @@ export async function createUser(userData) {
 }
 
 
+export async function deleteUser(id) {
+    return await User.destroy({ where: { id } });
+}
+
+
 export async function findUserById(id) {
-    const user = await User.findOne({ where: { id: id } })
+    const user = await User.findOne({ where: { id } })
     if (user) { return user; }
     return { error: true, message: "User not found" }
 }
@@ -52,9 +60,10 @@ export async function findUserByEmail(email) {
     return await User.findOne({ where: { email: email } });
 }
 
-export function validatePassword(user, inputPassword: string) {
-    console.log("Input password: ", inputPassword)
-    return hashPassword(inputPassword) === user.password
+export async function validatePassword(user, inputPassword: string) {
+    const res = await bcrypt.compare(inputPassword, user.password)
+    console.log("Password comparison result: ", res) // return true
+    return res
 }
 
 export async function getUser(id) {

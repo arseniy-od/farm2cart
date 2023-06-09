@@ -19,9 +19,9 @@ export default function Good(props) {
                 </div>
                 {goods.map((good, i) => (
                     <div key={i}>
-                        <Link href={"/goods/" + good.id}>
-                            <GoodCard good={good} categories={[]}/>
-                        </Link>
+                        
+                            <GoodCard good={good} categories={good.Categories}/>
+                    
                     </div>
                 ))}
             </div>
@@ -31,7 +31,7 @@ export default function Good(props) {
 
 export const getStaticPaths: GetStaticPaths = async () => {
     const paths = await getAllCategorySlugs()
-    console.log("Paths are: -------------------------\n", paths)
+    // console.log("Paths are: -------------------------\n", paths)
     return {
         paths,
         fallback: false
@@ -40,11 +40,11 @@ export const getStaticPaths: GetStaticPaths = async () => {
 
 
 export const getStaticProps: GetStaticProps = async ({ params }) => {
-    console.log("Got slug: ", params.slug);
+    // console.log("Got slug: ", params.slug);
     const categoryData = await getCategoryByText(params?.slug);
-    console.log("goodData is: ", categoryData);
+    // console.log("goodData is: ", categoryData);
     const parsedData = JSON.parse(JSON.stringify(categoryData));
-    console.log("parsedData is: ", parsedData)
+    // console.log("parsedData is: ", parsedData)
     return {
         props: {
             parsedData

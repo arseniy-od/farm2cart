@@ -6,6 +6,8 @@ import RedisStore from "connect-redis";
 
 import nextSession from 'next-session';
 import { promisifyStore } from 'next-session/lib/compat';
+import passport from "@/middleware/passport";
+import { promisify } from "util";
 
 
 
@@ -43,74 +45,34 @@ const getSession = nextSession({
 
 export default async function session(req: NextApiRequest, res: NextApiResponse, next) {
   await getSession(req, res);
-  await next();
+  return await next();
 }
 
+const passportInit = passport.initialize();
+const passportSession = passport.session();
 
-// !Sage
-
-
-// !Cookie session below
-
-
-// import { parse, serialize } from 'cookie'
-// import { createLoginSession, getLoginSession } from './auth'
-
-// function parseCookies(req) {
-//   // For API Routes we don't need to parse the cookies.
-//   if (req.cookies) return req.cookies
-
-//   // For pages we do need to parse the cookies.
-//   const cookie = req.headers?.cookie
-//   return parse(cookie || '')
-// }
-
-// export default function session({ name, secret, cookie: cookieOpts }) {
-//   return async (req, res, next) => {
-//     const cookies = parseCookies(req)
-//     const token = cookies[name]
-//     let unsealed = {}
-
-//     if (token) {
-//       try {
-//         // the cookie needs to be unsealed using the password `secret`
-//         unsealed = await getLoginSession(token, secret)
-//       } catch (e) {
-//         // The cookie is invalid
-//       }
-//     }
-
-//     req.session = unsealed
-
-//     // We are proxying res.end to commit the session cookie
-//     const oldEnd = res.end
-//     res.end = async function resEndProxy(...args) {
-//       if (res.finished || res.writableEnded || res.headersSent) return
-//       if (cookieOpts.maxAge) {
-//         req.session.maxAge = cookieOpts.maxAge
-//       }
-
-//       const token = await createLoginSession(req.session, secret)
-
-//       res.setHeader('Set-Cookie', serialize(name, token, cookieOpts))
-//       oldEnd.apply(this, args)
-//     }
-
-//     next()
-//   }
-// }
+export const middlewares = [
+  async (req, res, next) => {
+    const f = {}
+    const pr: Promise<unknown> = new Promise((resolve, reject) => {
+        f.resolve = resolve;
+    });
+    passportInit(req, res, () => {
+        f.resolve();
+    });
+    await pr;
+    return await next();
+  },
+  async (req, res, next) => {
+    const f = {}
+    const pr: Promise<unknown> = new Promise((resolve, reject) => {
+        f.resolve = resolve
+    });
+    
+    await passportSession(req, res, () => {f.resolve()});
+    await pr;
+    return await next();
+  }
+]
 
 
-// !Iron session
-
-// import { withIronSession } from 'next-iron-session';
-
-// export default function withSession(handler) {
-//   return withIronSession(handler, {
-//     password: process.env.SECRET_COOKIE_PASSWORD,
-//     cookieName: 'session',
-//     cookieOptions: {
-//       secure: process.env.NODE_ENV === 'production',
-//     },
-//   });
-// }

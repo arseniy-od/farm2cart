@@ -1,0 +1,2 @@
+Add page for seller profile
+Add category select for good creation

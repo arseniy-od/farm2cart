@@ -1,5 +1,5 @@
 import {createRouter} from "next-connect";
-import {getCategories} from "../../services";
+import {getCategories} from "../../services/category";
 import Layout from '@/app/layout'
 
 

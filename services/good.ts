@@ -17,6 +17,18 @@ export async function findGoodById(id:number) {
                 {
                     model: Category,
                     attributes: ['text'],
+                },
+                {
+                    model: Review,
+                    as: "reviews",
+                    attributes: ['text', 'authorId', 'score', 'datepub'],
+                    include: [
+                        {
+                            model: User,
+                            attributes: ['id', 'username'],
+                            as: "author"
+                        }
+                    ]
                 }
             ]
         }
@@ -51,7 +63,18 @@ export function getGoods() {
                 {
                     model: Category,
                     attributes: ['text'],
-                    
+                },
+                {
+                    model: Review,
+                    attributes: ['text', 'datepub'],
+                    as: "reviews",
+                    include: [
+                        {
+                            model: User,
+                            attributes: ['id', 'username'],
+                            as: "author"
+                        }
+                    ]
                 }
             ]
         })
@@ -60,5 +83,12 @@ export function getGoods() {
 
 
 export async function createGood(goodData) {
-    return (Good.create(goodData));
+    const newGood = await Good.create(goodData);
+    return newGood
+    // const categorySale = await Category.findOne({where: { id: 1 }})
+    // return await newGood.addCategory(categorySale)
+}
+
+export async function getGoodsForUser(userId) {
+    return await Good.findAll({where: {seller_id: userId}})
 }

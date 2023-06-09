@@ -22,11 +22,15 @@ passport.use(
     new LocalStrategy({usernameField: 'email', passReqToCallback: true,},
         (req, email, password, done) => {
         findUserByEmail(email).then((user) => {
-        if (user) {
-            done(null, user);
-        } else {
-            done(null, false, { message: 'Email or password is incorrect' });
-        }
+            validatePassword(user, password).then((isValid)=> {
+                if (user && isValid) {
+                    done(null, user);
+                } else {
+                    done(true, false, { message: 'Email or password is incorrect' });
+                }
+            }
+            );
+        
     }).catch((err) => done(err));
 }));
 

@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { createRouter, expressWrapper } from "next-connect";
+import { createRouter } from "next-connect";
 
 import { getUser, createUser, findUserByEmail, findUserById } from '@/services/user'
 import { authRouter } from "@/middleware/router";
@@ -14,7 +14,6 @@ router
     .use(passport.initialize())
     .use(passport.session())
     .get(async (req, res) => {
-        // console.log("req.user: ", req.user)
         if (!req.user) {
             res.json({error: true, message: "You are not logged in"})
         } else {

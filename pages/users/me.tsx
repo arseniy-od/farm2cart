@@ -1,12 +1,17 @@
 import { createRouter } from "next-connect";
 import Layout from '@/app/layout';
 import { useState, useEffect } from "react";
+import session, { middlewares } from "@/middleware/session";
+import Link from "next/link";
 
 
-export default function User() {
+import { getGoodsForUser } from '@/services/good'
+import { isConstructorDeclaration } from "typescript";
+import GoodCard from "@/app/components/goodCard";
+
+export default function User({ goods }) {
     const [user, setUser] = useState(null);
     const [isLoading, setLoading] = useState(false);
-
     function fetchUser() {
         setLoading(true);
         fetch('/api/users/me')
@@ -18,72 +23,66 @@ export default function User() {
     }
 
     useEffect(fetchUser, []);
-    
+
     if (isLoading) return <Layout></Layout>;
     if (!user) return <Layout></Layout>;
 
-    // if (user.error) {
-    //     return <div>{user.message}</div>
-    // }
+    if (user.error) {
+        return <Layout><h2 className="ml-5 mt-5 text-2xl">{user.message}</h2></Layout>
+    }
+
     return (
         <Layout>
             <div className="mt-4 ml-4 px-4 py-3 text-lg border-2 max-w-xs text-center bg-gray-200 rounded-lg">
                 Username: <span className="text-indigo-500">@{user.username}</span>
             </div>
-        </Layout>
+            <div>
+                {user.role === "seller" || "admin"
+                    ? <div>
+                        <div>
+                            <Link href="/goods/create">Add new product</Link>
+                        </div>
+                        <h3 className="ml-5 mt-3 text-xl">Your products:</h3>
+                        {goods.map((good, i) => (
+                            <div key={i}>
+                                <div>
+                                    <GoodCard good={good} categories={good.Categories}/>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                    : null}
+
+
+
+            </div>
+        </Layout >
     );
 
 }
 
 
-// async function fetchUser(req, redisClient) {
-//     console.log("\nRequest in fetchUser:\n", req)
-//     const session = await nextSession({ req, client: redisClient });
+const router = createRouter()
+    .use(session)
+    .use(middlewares[0])
+    .use(middlewares[1])
+    .get(async (req, res) => {
+        console.log("session: ", req.session);
 
-//     if (!session) {
-//         // If the user is not authenticated, return null or throw an error
-//         console.log('No session on client');
-//         return { error: true, message: 'Session is blank' };
-//     }
-
-//     // Extract the user data from the session object
-//     console.log('Here is session: ', session);
-//     const user = {
-//         error: null,
-//         id: session.user.id,
-//         username: session.user.username,
-//         email: session.user.email,
-//         // Add any other user data you need here
-//     };
-
-//     // Return the user object
-//     return user;
-// }
-
-// User.getInitialProps = async (ctx) => {
-//     // Here, `ctx` is an object that contains information about the request
-//     const redisClient = createClient();
-//     const session = await getSession({ req: ctx.req });
-//     if (!session) {
-//         return { user: { error: true, message: 'Session is blank' } };
-//     }
-
-//     const user = await fetchUser(ctx.req, redisClient);
-
-//     return { user };
-// };
-
-// const router = createRouter()
-//     .get(async (req, res) => {
-//         const user = req.user;
-//         console.log("[users/me.tsx] request is: ", req)
-//         if (!user) {
-//             return { props: { notFound: true } };
-//         }
-//         return { props: { user: JSON.parse(JSON.stringify(user)) } };
-//     });
+        const goods = await getGoodsForUser(req.user.id);
+        const parsedGoods = JSON.parse(JSON.stringify(goods))
+        console.log("-----------------------------------------------\n\n")
+        console.log("Goods are: ", parsedGoods)
+        if (!goods) {
+            return { props: { notFound: true } };
+        }
+        return { props: { goods: parsedGoods, } };
+    });
 
 
-// export async function getServerSideProps({ req, res }) {
-//     return await router.run(req, res);
-// }
+export async function getServerSideProps({ req, res }) {
+    console.log("<<<<<<<<<<<<<<<<SSR>>>>>>>>>>>>>>>>>>>>")
+    const response = await router.run(req, res);
+    console.log("[SSR] response: ", response)
+    return response
+}
