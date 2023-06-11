@@ -1,20 +1,22 @@
+import {createRouter} from "next-connect";
+import {NextApiRequest, NextApiResponse} from "next";
+
 import {User, Company} from '@/database/models/index'
+import { getCompanies } from '@/services/company'
+
+export const router = createRouter<NextApiRequest, NextApiResponse>()
 
 
-async function handler(req, res) {
-    const {query: { nextPage }, method, body,} = req;
-
-    const companies = await Company.findAll({
-        include: [{
-            attributes: ['username', 'email'],
-            model: User,
-            as: 'sellers'},
-
-        ]
-    });
-
-    res.statusCode = 200;
+router.get(async (req: NextApiRequest, res: NextApiResponse) => {
+    const companies = await getCompanies();
     res.json(companies);
-}
+});
 
-export default handler;
+
+export default router.handler({
+    onError: (err, req, res) => {
+        console.error(err.stack);
+        res.status(err.statusCode || 500).end(err.message);
+    },
+});
+

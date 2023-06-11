@@ -60,6 +60,9 @@ export default function Layout({ children, home }) {
                         </div>
                         :
                         <div>
+                            {user.role === "seller"
+                            ? <Link href="/products/create">Add new product</Link>
+                            : null}
                             <button onClick={handleLogout} className="">Logout</button>
                             <Link className="ml-4" href="http://localhost:3000/users/me">{user.username}</Link>
                         </div>

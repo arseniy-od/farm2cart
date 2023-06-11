@@ -24,6 +24,11 @@ export default function Good(props) {
                     
                     </div>
                 ))}
+                <div>
+                    <Link href="/categories" className='ml-4 mt-4 px-6 py-3 inline-block bg-gray-200 font-semibold rounded-lg shadow-lg'>
+                        Go back
+                    </Link>
+                </div>
             </div>
         </Layout>
     );

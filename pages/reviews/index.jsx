@@ -1,6 +1,6 @@
 import Layout from '@/app/layout'
 import {createRouter} from "next-connect";
-import {getReviews} from "../../services";
+import {getReviews} from "@/services/review";
 
 
 

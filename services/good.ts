@@ -28,7 +28,8 @@ export async function findGoodById(id:number) {
                             attributes: ['id', 'username'],
                             as: "author"
                         }
-                    ]
+                    ],
+                    order: [['score', 'DESC']],
                 }
             ]
         }
@@ -66,7 +67,7 @@ export function getGoods() {
                 },
                 {
                     model: Review,
-                    attributes: ['text', 'datepub'],
+                    attributes: ['text', 'datepub', 'score'],
                     as: "reviews",
                     include: [
                         {

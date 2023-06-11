@@ -41,22 +41,22 @@ export default function Home() {
                     <form className="text-center">
                         <h3 className="text-xl">Add new product</h3>
                         <div>
-                        <label for="title">Title: </label>
+                        <label htmlFor="title">Title: </label>
                             <input type="text" id="title" value={good.title} onChange={(event) => setGood({ ...good, title: event.target.value })}
                                 className="mt-2 px-4 py-3 w-full max-w-xs border-2" placeholder="title" />
                         </div>
                         <div>
-                        <label for="description">Description: </label>
+                        <label htmlFor="description">Description: </label>
                             <input type="text" id="description" value={good.description} onChange={(event) => setGood({ ...good, description: event.target.value })}
                                 className="mt-2 px-4 py-3 w-full max-w-xs border-2" placeholder="description" />
                         </div>
                         <div>
-                        <label for="image">Image URL: </label>
+                        <label htmlFor="image">Image URL: </label>
                             <input type="text" id="image" value={good.imageUrl} onChange={(event) => setGood({ ...good, imageUrl: event.target.value })}
                                 className="mt-2 px-4 py-3 w-full max-w-xs border-2" placeholder="imageUrl" />
                         </div>
                         <div>
-                            <label for="price">Price: </label>
+                            <label htmlFor="price">Price: </label>
                             <input type="number" step="0.01" id="price" value={good.price} onChange={(event) => setGood({ ...good, price: event.target.value })}
                                 className="mt-2 px-4 py-3 w-full max-w-xs border-2" placeholder="price" />
                         </div>

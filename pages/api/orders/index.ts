@@ -1,29 +1,27 @@
-import {Good, User, Order, OrderGood} from '@/database/models/index'
+import { NextApiRequest, NextApiResponse } from "next";
+import { createRouter } from "next-connect";
+
+import { getOrders } from '@/services/order'
+import session from "@/middleware/session";
+import passport from "@/middleware/passport";
 
 
-async function handler(req, res) {
-    const {query: { nextPage }, method, body,} = req;
+const router = createRouter<NextApiRequest, NextApiResponse>();
 
-    const orders = await Order.findAll(
-        {
-        include: [{
-            attributes: ['username', 'email'],
-            model: User,
-            as: 'customer'},
-            {
-                model: Good,
-                attributes: ['id', 'title'],
-                through: {
-                    model: OrderGood,
-                    attributes: ['quantity'],
-                }
-            }
-        ]
-    }
-    );
+router
+    .use(session)
+    .use(passport.initialize())
+    .use(passport.session())
+    .get(async (req, res) => {
+        const orders = await getOrders();
 
-    res.statusCode = 200;
-    res.json(orders);
-}
+        res.json(orders);
+    });
 
-export default handler;
+
+export default router.handler({
+    onError: (err, req, res) => {
+        console.error(err.stack);
+        res.status(err.statusCode || 500).end(err.message);
+    },
+});
