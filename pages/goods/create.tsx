@@ -1,9 +1,13 @@
+import { createRouter } from "next-connect";
 import Link from 'next/link'
-import Layout from '@/app/layout'
+
 import { useState } from 'react'
 import { useRouter } from 'next/navigation';
 
-export default function Home() {
+import Layout from '@/app/layout'
+import { getAllCategorySlugs, getCategories } from "@/services/category";
+
+export default function Home({ categories }) {
     const { push } = useRouter();
     const [good, setGood] = useState({
         title: '',
@@ -25,9 +29,9 @@ export default function Home() {
         });
 
         if (res.ok) {
-            const user = await res.json();
+            const good = await res.json();
             console.log("Good creation ok")
-            push('/')
+            push('/goods/' + good.id)
         } else {
             console.log("Good creation not ok")
         }
@@ -60,6 +64,8 @@ export default function Home() {
                             <input type="number" step="0.01" id="price" value={good.price} onChange={(event) => setGood({ ...good, price: event.target.value })}
                                 className="mt-2 px-4 py-3 w-full max-w-xs border-2" placeholder="price" />
                         </div>
+
+                        {categories.map((category, i) => <div>{category.text}</div>)}
                         {/* <div>
                             <label for="categories">Categories </label>
                             <input type="number" step="0.01" id="categories" value={good.Categories} onChange={(event) => setGood({ ...good, categories: event.target.value })}
@@ -73,4 +79,20 @@ export default function Home() {
             </Layout>
         </div>
     );
+}
+
+
+
+const router = createRouter()
+    .get(async (req, res) => {
+        const categories = await getCategories();
+        if (!categories) {
+            return { props: { notFound: true } };
+        }
+        return { props: { categories: JSON.parse(JSON.stringify(categories)) } };
+    });
+
+
+export async function getServerSideProps({ req, res }) {
+    return await router.run(req, res);
 }
