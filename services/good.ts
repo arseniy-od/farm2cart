@@ -7,6 +7,9 @@ export async function findGoodById(id: number) {
     const good = await Good.findOne(
         {
             where: { id },
+            attributes: ["id", "title", "description", "price", "imageUrl", 
+            [Sequelize.fn("avg", Sequelize.col("reviews.score")), "averageScore"]],
+            group: ['title'],
             include: [
                 {
                     attributes: ['id', 'username', 'email'],
@@ -38,13 +41,13 @@ export async function findGoodById(id: number) {
         }
     )
 
-    const avgScore = await Review.findOne({
-        attributes: [[Sequelize.fn('AVG', Sequelize.col('score')), 'averageScore']],
-        where: {
-            goodId: id,
-        },
-    });
-    if (good) { return {...JSON.parse(JSON.stringify(good)), ...JSON.parse(JSON.stringify(avgScore))}; }
+    // const avgScore = await Review.findOne({
+    //     attributes: [[Sequelize.fn('AVG', Sequelize.col('score')), 'averageScore']],
+    //     where: {
+    //         goodId: id,
+    //     },
+    // });
+    if (good) { return JSON.parse(JSON.stringify(good)); }
     return { error: true, message: "Good not found" }
 }
 
@@ -60,12 +63,15 @@ export async function getAllGoodIds() {
 }
 
 export async function getGoods() {
-    const avgScores = await Review.findAll({
-        attributes: ['goodId', [Sequelize.fn('AVG', Sequelize.col('score')), 'averageScore']],
-        group: ['goodId'],
-    });
+    // const avgScores = await Review.findAll({
+    //     attributes: ['goodId', [Sequelize.fn('AVG', Sequelize.col('score')), 'averageScore']],
+    //     group: ['goodId'],
+    // });
 
     const goods = await Good.findAll({
+        attributes: ["id", "title", "description", "price", "imageUrl", 
+        [Sequelize.fn("avg", Sequelize.col("reviews.score")), "averageScore"]],
+        group: ['title'],
         include: [
             {
                 attributes: ['id', 'username', 'email'],
@@ -95,12 +101,12 @@ export async function getGoods() {
         ],
     });
 
-    const goodsWithAvgScores = goods.map((good) => {
-        const avgScore = avgScores.find((avg) => avg.goodId === good.id)?.dataValues.averageScore || null;
-        return { ...good.dataValues, averageScore: avgScore };
-    });
+    // const goodsWithAvgScores = goods.map((good) => {
+    //     const avgScore = avgScores.find((avg) => avg.goodId === good.id)?.dataValues.averageScore || null;
+    //     return { ...good.dataValues, averageScore: avgScore };
+    // });
 
-    return goodsWithAvgScores;
+    return goods;
 }
 
 
@@ -114,17 +120,16 @@ export async function createGood(goodData) {
 }
 
 export async function getGoodsForUser(userId) {
-    const avgScores = await Review.findAll({
-        attributes: ['goodId', [Sequelize.fn('AVG', Sequelize.col('score')), 'averageScore']],
-        group: ['goodId'],
-    });
-    console.log("================");
+    // const avgScores = await Review.findAll({
+    //     attributes: ['goodId', [Sequelize.fn('AVG', Sequelize.col('score')), 'averageScore']],
+    //     group: ['goodId'],
+    // });
     
     const goods = await Good.findAll({
         where: { seller_id: userId },
         attributes: ["id", "title", "description", "price", "imageUrl", 
         [Sequelize.fn("avg", Sequelize.col("reviews.score")), "averageScore"]],
-        group: ['title', "description", "price", "username", "email", "id", "Categories.text", "Categories.id"],
+        group: ['title'],
         include: [
             {
                 attributes: [
