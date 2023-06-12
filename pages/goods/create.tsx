@@ -1,11 +1,12 @@
 import { createRouter } from "next-connect";
 import Link from 'next/link'
-
+import axios from "axios";
 import { useState } from 'react'
 import { useRouter } from 'next/navigation';
 
 import Layout from '@/app/layout'
 import { getAllCategorySlugs, getCategories } from "@/services/category";
+import { UiFileInputButton } from "@/app/components/fileInput";
 
 export default function Home({ categories }) {
     const { push } = useRouter();
@@ -33,9 +34,20 @@ export default function Home({ categories }) {
         }
     };
 
+
+    // const onChange = async (formData) => {
+    //     const config = {
+    //       headers: { 'content-type': 'multipart/form-data' },
+    //     };
+    
+    // const response = await axios.post('/api/goods', formData, config);
+
+
+
     const handleSubmit = async (event) => {
         event.preventDefault();
         const formData = new FormData();
+        console.log("GOOD FILE: ", good.file)
         formData.append("file", good.file);
         formData.append("title", good.title);
         formData.append("description", good.description);
@@ -50,21 +62,11 @@ export default function Home({ categories }) {
         console.log("Good object: ", good)
 
 
-        const res = await fetch('/api/goods', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'multipart/form-data'
-            },
-            body: good,
-        });
-
-        if (res.ok) {
-            const good = await res.json();
-            console.log("Good creation ok")
-            push('/goods/' + good.id)
-        } else {
-            console.log("Good creation not ok", res.statusText)
-        }
+        const config = {
+            headers: { 'content-type': 'multipart/form-data' },
+          };
+        
+        const response = await axios.post('/api/goods', formData, config);
     };
 
 
@@ -85,8 +87,7 @@ export default function Home({ categories }) {
                                 className="mt-2 px-4 py-3 w-full max-w-xs border-2" placeholder="description" />
                         </div>
                         <div>
-                            <label htmlFor="file">File: </label>
-                            <input type="file" id="file" name="file" onChange={handleFileChange} className="mt-2" />
+                            <input type="file" name="file" onChange={handleFileChange} />
                         </div>
                         <div>
                             <label htmlFor="price">Price: </label>
@@ -127,5 +128,5 @@ const router = createRouter()
 
 
 export async function getServerSideProps({ req, res }) {
-    return await router.run(req, res);
+    return await router.run(req, res)
 }

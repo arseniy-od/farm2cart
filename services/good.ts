@@ -122,22 +122,17 @@ export async function getGoodsForUser(userId) {
     
     const goods = await Good.findAll({
         where: { seller_id: userId },
-        attributes: ["title", "description", "price",
-        [Sequelize.fn("avg", Sequelize.col("reviews.score")), "avgScore"]],
-        group: ['title', "description", "price", "username", "email", "id", "text"],
+        attributes: ["id", "title", "description", "price", "imageUrl", 
+        [Sequelize.fn("avg", Sequelize.col("reviews.score")), "averageScore"]],
+        group: ['title', "description", "price", "username", "email", "id", "Categories.text", "Categories.id"],
         include: [
             {
                 attributes: [
                     'username', 
                     'email',
-                    
                 ],
                 model: User,
                 as: 'seller'
-            },
-            {
-                model: Order,
-                attributes: ['id'],
             },
             {
                 model: Category,
@@ -146,32 +141,16 @@ export async function getGoodsForUser(userId) {
             {
                 model: Review,
                 as: "reviews",
-                attributes: ["score"]
+                attributes: {exclude: ["id", "text"]},
             },
-        
-            // {
-            //     model: Review,
-            //     as: "reviews",
-            //     attributes: ['text', 'authorId', 'score', 'datepub'],
-            //     include: [
-            //         {
-            //             model: User,
-            //             attributes: ['id', 'username'],
-            //             as: "author"
-            //         }
-            //     ],
-            // }
         ],
     });
 
-    const goodsWithAvgScores = goods.map((good) => {
-        const avgScore = avgScores.find((avg) => avg.goodId === good.id)?.dataValues.averageScore || null;
-        return { ...good.dataValues, averageScore: avgScore };
-    });
+    // const goodsWithAvgScores = goods.map((good) => {
+    //     const avgScore = avgScores.find((avg) => avg.goodId === good.id)?.dataValues.averageScore || null;
+        return goods;
+    };
 
-    return goodsWithAvgScores;
-
-}
 
 export async function deleteGood(id) {
     return await Good.destroy({ where: { id } })

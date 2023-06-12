@@ -10,10 +10,10 @@ import passport from "@/middleware/passport";
 
 const upload = multer({
     storage: multer.diskStorage({
-        destination: './public/uploads',
-        filename: (req, file, cb) => cb(null, file.originalname),
+      destination: './public/uploads',
+      filename: (req, file, cb) => cb(null, file.originalname),
     }),
-});// Specify the destination folder for file uploads
+});
 
 const uploadMiddleware = upload.single('file');
 
@@ -37,7 +37,7 @@ router
         const file = req.file;
         if (file) {
             // Store the file information (e.g., file path) in the `goodData` object
-            goodData.imageUrl = file.path;
+            goodData.imageUrl = file.path.replace('public', '');
         }
         console.log("[api/goods] goodData: ", goodData)
 
