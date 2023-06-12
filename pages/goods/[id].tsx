@@ -1,20 +1,21 @@
 import { GetStaticProps, GetStaticPaths } from 'next'
-import { findGoodById, getAllGoodIds } from '@/services/good'
-import Image from 'next/image';
-import Link from 'next/link';
-import Layout from '@/app/layout';
-import slugify from '@sindresorhus/slugify';
-import GoodCard from '@/app/components/goodCard'
-import { formatDate } from '@/app/utils'
 import { useState } from 'react'
 import { useRouter } from 'next/navigation';
+
+import Image from 'next/image';
+import Link from 'next/link';
+
+import Layout from '@/app/layout';
+import { findGoodById, getAllGoodIds } from '@/services/good'
+import GoodCard from '@/app/components/goodCard'
+import { formatDate } from '@/app/utils'
 
 
 export default function Good(props) {
     const good = props.parsedData;
     const categories = good.Categories;
 
-    // const { push } = useRouter();
+    const { push } = useRouter();
     const [review, setReview] = useState({
         goodId: good.id,
         text: "",
@@ -24,6 +25,22 @@ export default function Good(props) {
     const [reviews, setReviews] = useState(good.reviews);
     // setReviews(reviews.sort((a, b) => a.score - b.score))
 
+    const handleDelete = async (event) => {
+        const res = await fetch(`/api/goods/?id=${good.id}`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            // query: JSON.stringify(good.id)
+        });
+        if (res.ok) {
+            const deleted = await res.json();
+            console.log("Good deleted");
+            push('/goods');
+        } else {
+            console.log("Good not deleted")
+        }
+    };
     const handleSubmit = async (event) => {
         event.preventDefault();
         
@@ -56,6 +73,7 @@ export default function Good(props) {
         <Layout>
             <div className="mx-auto flex">
                 <GoodCard good={good} categories={categories} />
+                <button onClick={handleDelete} >Delete</button>
             </div>
 
             <div>
@@ -64,7 +82,9 @@ export default function Good(props) {
                     <div key={i}>
                         <div className='ml-5 mt-3 px-4 py-4 border-2 border-gray-200 max-w-xs rounded-lg'>
                             <div className='px-3 py-2 flex justify-between'>
-                            <div>{review.author.username}</div>
+                            <Link href={'/users/' + review.author.id}>
+                                <div>{review.author.username}</div>
+                            </Link>
                             <div className="text-gray-700">{formatDate(review.datepub)}</div>
                             </div>
                             <div>Score: {review.score}</div>
@@ -117,14 +137,11 @@ export const getStaticPaths: GetStaticPaths = async () => {
 
 
 export const getStaticProps: GetStaticProps = async ({ params }) => {
-    // console.log("Got id: ", params.id);
     const goodData = await findGoodById(params?.id);
-    // console.log("goodData is: ", goodData);
-    const parsedData = JSON.parse(JSON.stringify(goodData));
+    const parsedData = goodData;
     console.log("Before", parsedData.reviews)
     parsedData.reviews.sort((a, b,) => new Date(a.datepub) - new Date(b.datepub))
     console.log("After", parsedData.reviews)
-    // console.log("Good parsedData is: ", parsedData)
     return {
         props: {
             parsedData

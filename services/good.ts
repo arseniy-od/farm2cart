@@ -1,15 +1,18 @@
+import { Sequelize } from 'sequelize';
 import { User, Review, Good, Order, OrderGood, Category, CategoryGood, Company } from '@/database/models'
+import sequelize from '@/database/models/connection';
 
 
-export async function findGoodById(id:number) {
+export async function findGoodById(id: number) {
     const good = await Good.findOne(
-        { 
+        {
             where: { id },
             include: [
                 {
-                    attributes: ['username', 'email'],
+                    attributes: ['id', 'username', 'email'],
                     model: User,
-                    as: 'seller'},
+                    as: 'seller'
+                },
                 {
                     model: Order,
                     attributes: ['id'],
@@ -33,8 +36,15 @@ export async function findGoodById(id:number) {
                 }
             ]
         }
-        )
-    if (good) { return good; }
+    )
+
+    const avgScore = await Review.findOne({
+        attributes: [[Sequelize.fn('AVG', Sequelize.col('score')), 'averageScore']],
+        where: {
+            goodId: id,
+        },
+    });
+    if (good) { return {...JSON.parse(JSON.stringify(good)), ...JSON.parse(JSON.stringify(avgScore))}; }
     return { error: true, message: "Good not found" }
 }
 
@@ -49,47 +59,120 @@ export async function getAllGoodIds() {
     })
 }
 
-export function getGoods() {
-    return (
-        Good.findAll({
-            include: [
-                {
-                    attributes: ['username', 'email'],
-                    model: User,
-                    as: 'seller'},
-                {
-                    model: Order,
-                    attributes: ['id'],
-                },
-                {
-                    model: Category,
-                    attributes: ['text'],
-                },
-                {
-                    model: Review,
-                    attributes: ['text', 'datepub', 'score'],
-                    as: "reviews",
-                    include: [
-                        {
-                            model: User,
-                            attributes: ['id', 'username'],
-                            as: "author"
-                        }
-                    ]
-                }
-            ]
-        })
-    );
+export async function getGoods() {
+    const avgScores = await Review.findAll({
+        attributes: ['goodId', [Sequelize.fn('AVG', Sequelize.col('score')), 'averageScore']],
+        group: ['goodId'],
+    });
+
+    const goods = await Good.findAll({
+        include: [
+            {
+                attributes: ['id', 'username', 'email'],
+                model: User,
+                as: 'seller'
+            },
+            {
+                model: Order,
+                attributes: ['id'],
+            },
+            {
+                model: Category,
+                attributes: ['text'],
+            },
+            {
+                model: Review,
+                attributes: ['text', 'datepub', 'score'],
+                as: "reviews",
+                include: [
+                    {
+                        model: User,
+                        attributes: ['id', 'username'],
+                        as: "author"
+                    }
+                ]
+            }
+        ],
+    });
+
+    const goodsWithAvgScores = goods.map((good) => {
+        const avgScore = avgScores.find((avg) => avg.goodId === good.id)?.dataValues.averageScore || null;
+        return { ...good.dataValues, averageScore: avgScore };
+    });
+
+    return goodsWithAvgScores;
 }
 
 
 export async function createGood(goodData) {
     const newGood = await Good.create(goodData);
+    await goodData.categories.forEach(async catId => {
+        const categorySale = await Category.findOne({ where: { id: catId } })
+        await newGood.addCategory(categorySale)
+    })
     return newGood
-    // const categorySale = await Category.findOne({where: { id: 1 }})
-    // return await newGood.addCategory(categorySale)
 }
 
 export async function getGoodsForUser(userId) {
-    return await Good.findAll({where: {seller_id: userId}})
+    const avgScores = await Review.findAll({
+        attributes: ['goodId', [Sequelize.fn('AVG', Sequelize.col('score')), 'averageScore']],
+        group: ['goodId'],
+    });
+    console.log("================");
+    
+    const goods = await Good.findAll({
+        where: { seller_id: userId },
+        attributes: ["title", "description", "price",
+        [Sequelize.fn("avg", Sequelize.col("reviews.score")), "avgScore"]],
+        group: ['title', "description", "price", "username", "email", "id", "text"],
+        include: [
+            {
+                attributes: [
+                    'username', 
+                    'email',
+                    
+                ],
+                model: User,
+                as: 'seller'
+            },
+            {
+                model: Order,
+                attributes: ['id'],
+            },
+            {
+                model: Category,
+                attributes: ['text'],
+            },
+            {
+                model: Review,
+                as: "reviews",
+                attributes: ["score"]
+            },
+        
+            // {
+            //     model: Review,
+            //     as: "reviews",
+            //     attributes: ['text', 'authorId', 'score', 'datepub'],
+            //     include: [
+            //         {
+            //             model: User,
+            //             attributes: ['id', 'username'],
+            //             as: "author"
+            //         }
+            //     ],
+            // }
+        ],
+    });
+
+    const goodsWithAvgScores = goods.map((good) => {
+        const avgScore = avgScores.find((avg) => avg.goodId === good.id)?.dataValues.averageScore || null;
+        return { ...good.dataValues, averageScore: avgScore };
+    });
+
+    return goodsWithAvgScores;
+
+}
+
+export async function deleteGood(id) {
+    return await Good.destroy({ where: { id } })
 }

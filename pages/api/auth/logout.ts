@@ -16,6 +16,7 @@ router
   .get(async (req, res) => {
     console.log("\nRequest for logOut is: \n", req.logOut)
     req.logOut()
+    req.session.destroy();
     res.json({result: "Logged out"});
 
   })

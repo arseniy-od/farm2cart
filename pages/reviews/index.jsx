@@ -1,11 +1,11 @@
 import Layout from '@/app/layout'
-import {createRouter} from "next-connect";
-import {getReviews} from "@/services/review";
+import { createRouter } from "next-connect";
+import { getReviews } from "@/services/review";
 
 
 
 
-export default function Review({ reviews }){
+export default function Review({ reviews }) {
 
     return (
         <Layout>
@@ -24,15 +24,15 @@ export default function Review({ reviews }){
 
 const router = createRouter()
     .get(async (req, res) => {
-      const reviews = await getReviews();
-      if (!reviews) {
-        return { props: { notFound: true } };
-      }
-      return { props: {reviews: JSON.parse(JSON.stringify(reviews))} };
+        const reviews = await getReviews();
+        if (!reviews) {
+            return { props: { notFound: true } };
+        }
+        return { props: { reviews: JSON.parse(JSON.stringify(reviews)) } };
     });
 
 
 export async function getServerSideProps({ req, res }) {
-  return await router.run(req, res);
+    return await router.run(req, res);
 }
 

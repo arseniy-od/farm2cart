@@ -8,20 +8,20 @@ import Category from "@/database/models/category";
 import CategoryGood from "@/database/models/categorygood";
 
 // One to many
-User.hasMany(Good, {foreignKey: 'seller_id', as: 'goods',});
-Good.belongsTo(User, {foreignKey: 'seller_id', as: 'seller',});
+User.hasMany(Good, { foreignKey: 'seller_id', as: 'goods', });
+Good.belongsTo(User, { foreignKey: 'seller_id', as: 'seller', });
 
-User.hasMany(Review, {foreignKey: 'authorId', as: 'reviews'});
-Review.belongsTo(User, {foreignKey: 'authorId', as: 'author'});
+User.hasMany(Review, { foreignKey: 'authorId', as: 'reviews' });
+Review.belongsTo(User, { foreignKey: 'authorId', as: 'author' });
 
-User.hasMany(Order, {foreignKey: 'customerId', as: 'orders'});
-Order.belongsTo(User, {foreignKey: 'customerId', as: 'customer'});
+User.hasMany(Order, { foreignKey: 'customerId', as: 'orders' });
+Order.belongsTo(User, { foreignKey: 'customerId', as: 'customer' });
 
-Good.hasMany(Review, {foreignKey: 'goodId', as: 'reviews'});
-Review.belongsTo(Good, {foreignKey: 'goodId', as: 'good'});
+Good.hasMany(Review, { foreignKey: 'goodId', as: 'reviews' });
+Review.belongsTo(Good, { foreignKey: 'goodId', as: 'good' });
 
-Company.hasMany(User, {foreignKey: 'companyId', as: 'sellers'});
-User.belongsTo(Company, {foreignKey: 'companyId', as: 'company'})
+Company.hasMany(User, { foreignKey: 'companyId', as: 'sellers' });
+User.belongsTo(Company, { foreignKey: 'companyId', as: 'company' })
 
 //Many to many
 Order.belongsToMany(Good, { through: 'OrderGood' });
@@ -31,4 +31,4 @@ Category.belongsToMany(Good, { through: 'CategoryGood' });
 Good.belongsToMany(Category, { through: 'CategoryGood' });
 
 
-export {User, Good, Review, Category, CategoryGood, Company, OrderGood, Order};
+export { User, Good, Review, Category, CategoryGood, Company, OrderGood, Order };

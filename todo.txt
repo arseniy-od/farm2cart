@@ -1,2 +1,5 @@
 Add page for seller profile
-Add category select for good creation
+Soft delete for goods
+
+Add to cart -> session.cart. [ {Good.id, Good.title, qty}, {} ]
+Buy -> Order

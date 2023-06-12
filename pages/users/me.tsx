@@ -81,8 +81,8 @@ const router = createRouter()
 
 
 export async function getServerSideProps({ req, res }) {
-    console.log("<<<<<<<<<<<<<<<<SSR>>>>>>>>>>>>>>>>>>>>")
+    // console.log("<<<<<<<<<<<<<<<<SSR>>>>>>>>>>>>>>>>>>>>")
     const response = await router.run(req, res);
-    console.log("[SSR] response: ", response)
+    // console.log("[SSR] response: ", response)
     return response
 }

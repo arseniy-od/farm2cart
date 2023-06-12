@@ -1,5 +1,5 @@
 import {createRouter} from "next-connect";
-import {getCompanies} from "../../services";
+import {getCompanies} from "@/services/company";
 import Layout from '@/app/layout'
 
 
@@ -33,16 +33,3 @@ const router = createRouter()
 export async function getServerSideProps({ req, res }) {
   return await router.run(req, res);
 }
-
-
-
-// export async function getServerSideProps(context) {
-//   const companiesApi = await fetch('http://localhost:3000/api/companies');
-//   const companies = await companiesApi.json();
-//
-//   return {
-//     props: {
-//       companies,
-//     },
-//   };
-// }

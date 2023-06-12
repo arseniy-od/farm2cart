@@ -26,9 +26,7 @@ export default function Goods(props) {
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
                     {goods.map((good, i) => (
                         <div key={i}>
-                            <Link href={"/goods/" + good.id}>
                                 <GoodCard good={good} categories={good.Categories} />
-                            </Link>
                         </div>
                     ))
                     }

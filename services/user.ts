@@ -71,3 +71,15 @@ export async function getUser(id) {
     if (user) { return user; }
     return { error: true, message: "User not found" }
 }
+
+
+export async function getAllUserIds() {
+    const users = await User.findAll()
+    return users.map(user => {
+        return {
+            params: {
+                id: user.id.toString()
+            }
+        }
+    })
+}
