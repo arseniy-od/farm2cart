@@ -14,8 +14,11 @@ router
     .use(passport.session())
     .get(async (req: NextApiRequest, res: NextApiResponse) => {
         const cart = req.session.cart;
-        if (cart) {res.json(cart);}
-        else {res.json({blank: true})}
+        if (cart) {
+            res.json(cart);
+        } else {
+            res.json({blank: true})
+        }
         
     })
     .post(async (req, res) => {
@@ -27,10 +30,14 @@ router
     
         res.json(req.session.cart)
     })
-    .delete((req, res) => {
-        console.log('======================================\n\n')
+    .delete(async (req, res) => {
+        console.log('===============API==DELETE=======================\n\n')
         console.log("index, ", req.query.index)
-        const good = req.session.cart.splice(req.query.index, 1);
+        console.log("Cart: ", await req.session.cart)
+        const good = await req.session.cart.splice(parseInt(req.query.index), 1);
+        if (!req.session.cart.length) {
+            req.session.cart = null
+            }
         res.json({ res: "Good deleted" });
     });
 

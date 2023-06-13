@@ -16,6 +16,14 @@ import goods from "../api/goods";
 
 export default function Cart({ cart }) {
 
+    if (cart.notFound) {
+        return (
+            <Layout>
+                <h1>Cart is empty</h1>
+            </Layout>
+        )
+    }
+
     const [cartGoods, setCartGoods] = useState([...cart])
     const {push} = useRouter()
     
@@ -48,20 +56,25 @@ export default function Cart({ cart }) {
         
         async function handleDelete(event) {
             console.log("DELETE")
-            
-            const res = await fetch(`/api/cart?index=${index}`, {
-                method: 'DELETE',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                // query: JSON.stringify(index)
-            });
-            if (res.ok) {
-                const deleted = await res.json();
-                console.log("Good deleted");
-            } else {
-                console.log("Good not deleted")
-            }            
+
+            try {
+                const res = await fetch(`/api/cart?index=${index}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    // query: JSON.stringify(index)
+                });
+                if (res.ok) {
+                    const deleted = await res.json();
+                    console.log("Good deleted");
+                } else {
+                    console.log("Good not deleted")
+                }
+            } catch (e) {
+                console.error("ERR: ", e)
+            }
+                        
         }
 
         function handleChange(event) {
@@ -130,13 +143,8 @@ const router = createRouter()
     .get(async (req, res) => {
         // console.log("session: ", req.session);
         const cart = req.session.cart
-
-        // const goods = await getGoodsForUser(req.user.id);
-        // const parsedGoods = JSON.parse(JSON.stringify(goods))
-        // console.log("-----------------------------------------------\n\n")
-        // console.log("Goods are: ", parsedGoods)
         if (!cart) {
-            return { props: { notFound: true } };
+            return { notFound: true };
         }
         return cart;
     });
@@ -144,6 +152,9 @@ const router = createRouter()
 
 export async function getServerSideProps({ req, res }) {
     const cart = await router.run(req, res);
+    if (cart.notFound) {
+        return {props: {cart: {notFound: true}}}
+    }
     let cartGoods = []
     for (let cartEl of cart) {
         const good = await findGoodById(cartEl.goodId);
