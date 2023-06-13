@@ -5,8 +5,8 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation';
 
 import Layout from '@/app/layout'
-import { getAllCategorySlugs, getCategories } from "@/services/category";
-import { UiFileInputButton } from "@/app/components/fileInput";
+import { getCategories } from "@/services/category";
+
 
 export default function Home({ categories }) {
     const { push } = useRouter();
@@ -39,7 +39,7 @@ export default function Home({ categories }) {
     //     const config = {
     //       headers: { 'content-type': 'multipart/form-data' },
     //     };
-    
+
     // const response = await axios.post('/api/goods', formData, config);
 
 
@@ -64,9 +64,11 @@ export default function Home({ categories }) {
 
         const config = {
             headers: { 'content-type': 'multipart/form-data' },
-          };
-        
+        };
+
         const response = await axios.post('/api/goods', formData, config);
+        console.log("Response id: ", response.data.id)
+        push('/goods/' + response.data.id)
     };
 
 

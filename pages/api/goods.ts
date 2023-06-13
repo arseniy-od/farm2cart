@@ -10,8 +10,8 @@ import passport from "@/middleware/passport";
 
 const upload = multer({
     storage: multer.diskStorage({
-      destination: './public/uploads',
-      filename: (req, file, cb) => cb(null, file.originalname),
+        destination: './public/uploads',
+        filename: (req, file, cb) => cb(null, file.originalname),
     }),
 });
 
@@ -29,9 +29,6 @@ router
         res.json(goods);
     })
     .post(async (req, res) => {
-        console.log('-----------POST--------------------')
-        console.log("Body: ", JSON.stringify(req.body))
-        console.log("File: ", req.file)
         const goodData = { ...req.body, seller_id: req.user.id }
 
         const file = req.file;
@@ -42,6 +39,7 @@ router
         console.log("[api/goods] goodData: ", goodData)
 
         const good = await createGood(goodData);
+        console.log("[api/goods] Good: ", good)
         res.json(good);
     })
     .delete(async (req, res) => {

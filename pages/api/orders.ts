@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { createRouter } from "next-connect";
 
-import { getOrders } from '@/services/order'
+import { getOrders, createOrder } from '@/services/order'
 import session from "@/middleware/session";
 import passport from "@/middleware/passport";
 
@@ -14,9 +14,22 @@ router
     .use(passport.session())
     .get(async (req, res) => {
         const orders = await getOrders();
-
         res.json(orders);
-    });
+    })
+    .post(
+        async (req, res) => {
+            const OrderData = {
+                ...req.body,
+                customerId: req.user.id,
+                paymentStatus: "Ok" 
+            }
+            
+            const order = await createOrder(OrderData);
+            console.log("[POST] order: ", order);
+            req.session.cart = null;
+            res.json(order)
+        }
+    );
 
 
 export default router.handler({

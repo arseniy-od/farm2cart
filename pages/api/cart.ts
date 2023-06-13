@@ -14,14 +14,24 @@ router
     .use(passport.session())
     .get(async (req: NextApiRequest, res: NextApiResponse) => {
         const cart = req.session.cart;
-        res.json(cart);
+        if (cart) {res.json(cart);}
+        else {res.json({blank: true})}
+        
     })
     .post(async (req, res) => {
         const goodData = req.body
         req.session.cart = req.session.cart || [];
-        console.log("[POST] Cart: ", req.session.cart)
         await req.session.cart.push(goodData);
         await req.session.commit()
+        console.log("[POST] Cart: ", req.session.cart)
+    
+        res.json(req.session.cart)
+    })
+    .delete((req, res) => {
+        console.log('======================================\n\n')
+        console.log("index, ", req.query.index)
+        const good = req.session.cart.splice(req.query.index, 1);
+        res.json({ res: "Good deleted" });
     });
 
 

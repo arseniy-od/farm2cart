@@ -60,6 +60,7 @@ export default function Layout({ children, home }) {
                         </div>
                         :
                         <div>
+                            <Link href='/cart'>Cart</Link>
                             {user.role === "seller"
                             ? <Link className='px-4 inline-block' href="/goods/create">Add new product</Link>
                             : null}

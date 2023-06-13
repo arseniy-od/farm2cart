@@ -139,9 +139,9 @@ export const getStaticPaths: GetStaticPaths = async () => {
 export const getStaticProps: GetStaticProps = async ({ params }) => {
     const goodData = await findGoodById(params?.id);
     const parsedData = goodData;
-    console.log("Before", parsedData.reviews)
+    // console.log("Before", parsedData.reviews)
     parsedData.reviews.sort((a, b,) => new Date(a.datepub) - new Date(b.datepub))
-    console.log("After", parsedData.reviews)
+    // console.log("After", parsedData.reviews)
     return {
         props: {
             parsedData

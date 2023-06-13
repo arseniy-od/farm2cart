@@ -1,4 +1,6 @@
 import {createRouter} from "next-connect";
+import Link from "next/link";
+
 import {getOrders} from "@/services/order";
 import Layout from "@/app/layout"
 
@@ -10,10 +12,13 @@ export default function Order({orders}){
         <Layout>
             {orders.map((order, i) => (
                 <div key={i}>
-                    <div className="mt-4 ml-4 px-4 py-3 text-lg border-2 max-w-xs text-center bg-gray-200 rounded-lg">
+                  <Link href={'/orders/' + order.id}>
+                  <div className="mt-4 ml-4 px-4 py-3 text-lg border-2 max-w-xs text-center bg-gray-200 rounded-lg">
                         <h4>Order #{order.id}</h4>
                         <p>Total: ${order.total}</p>
                     </div>
+                  </Link>
+                    
                 </div>
             ))}
         </Layout>
