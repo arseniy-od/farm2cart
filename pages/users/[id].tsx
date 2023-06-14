@@ -1,8 +1,8 @@
 import { GetStaticProps, GetStaticPaths } from 'next'
 import Link from 'next/link';
 
-import {getAllUserIds, findUserById} from '@/services/user'
-import { getGoodsForUser } from '@/services/good';
+import {getAllUserIds, findUserById} from '@/server/services/user'
+import { getGoodsForUser } from '@/server/services/good';
 import Layout from '@/app/layout';
 import GoodCard from '@/app/components/goodCard';
 

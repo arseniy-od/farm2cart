@@ -1,4 +1,4 @@
-import { User, Review, Good, Order, OrderGood, Category, CategoryGood, Company } from '@/database/models'
+import { User, Review, Good, Order, OrderGood, Category, CategoryGood, Company } from '@/server/database/models'
 import { GOOGLE_FONT_PROVIDER } from 'next/dist/shared/lib/constants';
 
 

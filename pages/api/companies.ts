@@ -1,8 +1,8 @@
 import {createRouter} from "next-connect";
 import {NextApiRequest, NextApiResponse} from "next";
 
-import {User, Company} from '@/database/models/index'
-import { getCompanies } from '@/services/company'
+import {User, Company} from '@/server/database/models/index'
+import { getCompanies } from '@/server/services/company'
 
 export const router = createRouter<NextApiRequest, NextApiResponse>()
 

@@ -1,6 +1,6 @@
 import { GetServerSideProps } from 'next'
 
-import { getOrderById, getAllOrderIds } from '@/services/order'
+import { getOrderById, getAllOrderIds } from '@/server/services/order'
 import Layout from '@/app/layout';
 
 

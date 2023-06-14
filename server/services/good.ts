@@ -1,6 +1,6 @@
 import { Sequelize } from 'sequelize';
-import { User, Review, Good, Order, OrderGood, Category, CategoryGood, Company } from '@/database/models'
-import sequelize from '@/database/models/connection';
+import { User, Review, Good, Order, OrderGood, Category, CategoryGood, Company } from '@/server/database/models'
+import sequelize from '@/server/database/models/connection';
 
 
 export async function findGoodById(id: number) {

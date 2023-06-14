@@ -1,5 +1,5 @@
-import {Category, Good, CategoryGood} from '@/database/models/index'
-import {getCategories, createCategory, deleteCategory, updateCategory} from "@/services/category"
+import {Category, Good, CategoryGood} from '@/server/database/models/index'
+import {getCategories, createCategory, deleteCategory, updateCategory} from "@/server/services/category"
 import {createRouter} from "next-connect";
 import {NextApiRequest, NextApiResponse} from "next";
 

@@ -5,7 +5,7 @@ import session, { middlewares } from "@/middleware/session";
 import Link from "next/link";
 
 
-import { getGoodsForUser } from '@/services/good'
+import { getGoodsForUser } from '@/server/services/good'
 import { isConstructorDeclaration } from "typescript";
 import GoodCard from "@/app/components/goodCard";
 

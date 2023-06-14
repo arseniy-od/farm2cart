@@ -1,10 +1,10 @@
-import {Review} from '@/database/models/index'
+import {Review} from '@/server/database/models/index'
 import { NextApiRequest, NextApiResponse } from "next";
 import { createRouter, expressWrapper } from "next-connect";
 import cors from "cors";
 
 
-import { getReviews, createReview } from '@/services/review'
+import { getReviews, createReview } from '@/server/services/review'
 import {ServerResponse} from "http";
 import session from "@/middleware/session";
 import passport from "@/middleware/passport";

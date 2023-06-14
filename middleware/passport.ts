@@ -1,7 +1,7 @@
 import passport from 'passport';
 import LocalStrategy from 'passport-local';
-import { User } from '@/database/models';
-import { findUserById, findUserByEmail, validatePassword } from "@/services/user";
+import { User } from '@/server/database/models';
+import { findUserById, findUserByEmail, validatePassword } from "@/server/services/user";
 import { NextApiRequest } from 'next';
 
 

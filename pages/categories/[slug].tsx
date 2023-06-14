@@ -1,5 +1,5 @@
 import { GetStaticProps, GetStaticPaths } from 'next'
-import { getCategoryByText, getAllCategorySlugs } from '@/services/category'
+import { getCategoryByText, getAllCategorySlugs } from '@/server/services/category'
 import Image from 'next/image';
 import Link from 'next/link';
 import Layout from '@/app/layout';

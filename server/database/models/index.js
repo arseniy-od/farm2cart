@@ -1,11 +1,11 @@
 import User from './user'
 import Good from './good'
 import Review from "./review"
-import Order from "@/database/models/order";
-import OrderGood from "@/database/models/ordergood";
-import Company from "@/database/models/company";
-import Category from "@/database/models/category";
-import CategoryGood from "@/database/models/categorygood";
+import Order from "@/server/database/models/order";
+import OrderGood from "@/server/database/models/ordergood";
+import Company from "@/server/database/models/company";
+import Category from "@/server/database/models/category";
+import CategoryGood from "@/server/database/models/categorygood";
 
 // One to many
 User.hasMany(Good, { foreignKey: 'seller_id', as: 'goods', });

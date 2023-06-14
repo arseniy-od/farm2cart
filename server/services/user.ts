@@ -1,5 +1,7 @@
-import { User } from '@/database/models'
+import { User } from '@/server/database/models'
 const bcrypt = require('bcrypt');
+
+// export default class UserService extends BaseContext
 
 
 async function hashPassword(password:string):Promise<string> {

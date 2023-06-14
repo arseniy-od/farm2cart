@@ -3,7 +3,7 @@ import Layout from '@/app/layout'
 import Image from "next/image";
 import Link from "next/link";
 
-import { getGoods } from "../../services/good";
+import { getGoods } from "../../server/services/good";
 
 import GoodCard from '@/app/components/goodCard'
 

@@ -36,3 +36,4 @@ next-env.d.ts
 
 .env
 mysql_home.txt
+server/database/config/config.json

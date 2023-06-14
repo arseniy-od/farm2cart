@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { createRouter } from "next-connect";
 
-import { getUser, createUser, findUserByEmail, findUserById } from '@/services/user'
+import { getUser, createUser, findUserByEmail, findUserById } from '@/server/services/user'
 import { authRouter } from "@/middleware/router";
 import session from "@/middleware/session";
 import passport from "@/middleware/passport";

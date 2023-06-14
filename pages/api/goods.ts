@@ -1,9 +1,8 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { createRouter } from "next-connect";
 import multer from 'multer'
-import bodyParser from "body-parser";
 
-import { getGoods, createGood, deleteGood } from '@/services/good'
+import { getGoods, createGood, deleteGood } from '@/server/services/good'
 import session from "@/middleware/session";
 import passport from "@/middleware/passport";
 

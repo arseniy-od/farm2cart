@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { createRouter, expressWrapper } from "next-connect";
 
-import { getUsers, createUser, deleteUser } from '@/services/user'
+import { getUsers, createUser, deleteUser } from '@/server/services/user'
 
 
 const router = createRouter<NextApiRequest, NextApiResponse>();

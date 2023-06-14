@@ -5,7 +5,7 @@ import Link from "next/link";
 import axios from "axios";
 
 
-import { findGoodById } from '@/services/good'
+import { findGoodById } from '@/server/services/good'
 import session, { middlewares } from "@/middleware/session";
 import Layout from '@/app/layout';
 import CartGood from "@/app/components/cartGood";

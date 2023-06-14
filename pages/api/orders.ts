@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { createRouter } from "next-connect";
 
-import { getOrders, createOrder } from '@/services/order'
+import { getOrders, createOrder } from '@/server/services/order'
 import session from "@/middleware/session";
 import passport from "@/middleware/passport";
 

@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { createRouter, expressWrapper } from "next-connect";
 
-import { getUser, createUser } from '@/services/user'
+import { getUser, createUser } from '@/server/services/user'
 import { authRouter } from "@/middleware/router";
 import session from "@/middleware/session";
 import passport from "@/middleware/passport";

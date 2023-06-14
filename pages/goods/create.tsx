@@ -5,7 +5,7 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation';
 
 import Layout from '@/app/layout'
-import { getCategories } from "@/services/category";
+import { getCategories } from "@/server/services/category";
 
 
 export default function Home({ categories }) {

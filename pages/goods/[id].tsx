@@ -6,7 +6,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 
 import Layout from '@/app/layout';
-import { findGoodById, getAllGoodIds } from '@/services/good'
+import { findGoodById, getAllGoodIds } from '@/server/services/good'
 import GoodCard from '@/app/components/goodCard'
 import { formatDate } from '@/app/utils'
 
