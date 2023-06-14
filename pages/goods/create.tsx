@@ -17,6 +17,7 @@ export default function Home({ categories }) {
         price: '',
         categories: [],
         file: null,
+        available: '1'
     });
 
     const handleFileChange = (event) => {
@@ -53,6 +54,7 @@ export default function Home({ categories }) {
         formData.append("description", good.description);
         formData.append("imageUrl", good.imageUrl);
         formData.append("price", good.price);
+        formData.append("available", good.available);
 
         good.categories.forEach((category) => {
             formData.append("categories", category);
@@ -75,37 +77,53 @@ export default function Home({ categories }) {
     return (
         <div id="app" className="">
             <Layout>
-                <div className="mt-6">
-                    <form className="text-center">
+                <div className="mt-6 grid place-items-center">
+                    <form className="content-center">
                         <h3 className="text-xl">Add new product</h3>
-                        <div>
-                            <label htmlFor="title">Title: </label>
-                            <input type="text" id="title" value={good.title} onChange={(event) => setGood({ ...good, title: event.target.value })}
-                                className="mt-2 px-4 py-3 w-full max-w-xs border-2" placeholder="title" />
-                        </div>
-                        <div>
-                            <label htmlFor="description">Description: </label>
-                            <input type="text" id="description" value={good.description} onChange={(event) => setGood({ ...good, description: event.target.value })}
-                                className="mt-2 px-4 py-3 w-full max-w-xs border-2" placeholder="description" />
-                        </div>
-                        <div>
-                            <input type="file" name="file" onChange={handleFileChange} />
-                        </div>
-                        <div>
-                            <label htmlFor="price">Price: </label>
-                            <input type="number" step="0.01" id="price" value={good.price} onChange={(event) => setGood({ ...good, price: event.target.value })}
-                                className="mt-2 px-4 py-3 w-full max-w-xs border-2" placeholder="price" />
-                        </div>
+                        <div className="mt-4">
+                            <div>
+                                <div>
+                                    <label htmlFor="title">Title: </label>
+                                </div>
 
-                        {categories.map((category, i) => (
-                            <div key={i}>
-                                <p>
-                                    <input type="checkbox" name={category.id} checked={good.categories.includes(category.id)} onChange={handleCategoryChange} />
-                                    <label htmlFor={category.id}>{category.text}</label>
-                                </p>
+                                <input type="text" id="title" value={good.title} onChange={(event) => setGood({ ...good, title: event.target.value })}
+                                    className="mt-2 px-4 py-3 w-full max-w-xs border-2" placeholder="title" />
                             </div>
+                            <div>
+                                <div><label htmlFor="description">Description: </label></div>
+                                
+                                <input type="text" id="description" value={good.description} onChange={(event) => setGood({ ...good, description: event.target.value })}
+                                    className="mt-2 px-4 py-3 w-full max-w-xs border-2" placeholder="description" />
+                            </div>
+                            <div>
+                                <input type="file" name="file" onChange={handleFileChange} />
+                            </div>
+                            <div>
+                                <div><label htmlFor="price">Price: </label></div>
+                                <input type="number" min="0" step="0.05" id="price" value={good.price} onChange={(event) => setGood({ ...good, price: event.target.value })}
+                                    className="mt-2 px-4 py-3 w-full max-w-xs border-2" placeholder="price" />
+                            </div>
+                            <div>
+                                <div><label htmlFor="available">available: </label></div>
+                                <input type="number" min="1" id="available" value={good.available} onChange={(event) => setGood({ ...good, available: event.target.value })}
+                                    className="mt-2 px-4 py-3 w-full max-w-xs border-2" placeholder="available" />
+                            </div>
+                            <h3>Choose categories: </h3>
+                            <div className="grid grid-cols-2">
+                                
+                                {categories.map((category, i) => (
+                                    <div key={i}>
+                                        <p>
+                                            <input type="checkbox" name={category.id} checked={good.categories.includes(category.id)} onChange={handleCategoryChange} />
+                                            <label htmlFor={category.id}> {category.text}</label>
+                                        </p>
+                                    </div>
 
-                        ))}
+                                ))}
+                            </div>
+                            
+                        </div>
+
 
                         <button
                             onClick={handleSubmit}

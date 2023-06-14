@@ -1,15 +1,14 @@
 import { createRouter } from "next-connect";
 import { useRouter } from 'next/navigation';
-import Layout from '@/app/layout';
-import { useState, useEffect } from "react";
-import session, { middlewares } from "@/middleware/session";
+import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import axios from "axios";
 
 
-import { findGoodById, getGoodsForUser } from '@/services/good'
-import { totalmem } from "os";
-import goods from "../api/goods";
+import { findGoodById } from '@/services/good'
+import session, { middlewares } from "@/middleware/session";
+import Layout from '@/app/layout';
+import CartGood from "@/app/components/cartGood";
 
 
 
@@ -25,14 +24,14 @@ export default function Cart({ cart }) {
     }
 
     const [cartGoods, setCartGoods] = useState([...cart])
-    const {push} = useRouter()
-    
+    const { push } = useRouter()
+
     const config = {
         headers: { 'content-type': 'application/json' },
     };
 
     function getTotal(goods) {
-        let total:number = 0
+        let total: number = 0
         for (let good of goods) {
             total += good.price * good.quantity
         }
@@ -42,90 +41,26 @@ export default function Cart({ cart }) {
     async function handleSubmit(event) {
         event.preventDefault();
         console.log("Submit")
-        
-
-        const cartData = {goods: cartGoods, total: getTotal(cartGoods)}
-
+        const cartData = { goods: cartGoods, total: getTotal(cartGoods) }
         const response = await axios.post('/api/orders', cartData, config);
-        console.log("Response id: ", response)
-        push('/orders/')
-    }
-
-
-    function CartGood({ good, index }) {
-        
-        async function handleDelete(event) {
-            console.log("DELETE")
-
-            try {
-                const res = await fetch(`/api/cart?index=${index}`, {
-                    method: 'DELETE',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    // query: JSON.stringify(index)
-                });
-                if (res.ok) {
-                    const deleted = await res.json();
-                    console.log("Good deleted");
-                } else {
-                    console.log("Good not deleted")
-                }
-            } catch (e) {
-                console.error("ERR: ", e)
-            }
-                        
-        }
-
-        function handleChange(event) {
-            let items = [...cartGoods];
-            let item = { ...items[index] };
-            item.quantity = parseInt(event.target.value);
-            items[index] = item;
-            setCartGoods(items);
-        }
-
-        return (
-            <div>
-                <div>
-                    id: {index}
-                </div>
-                <div>
-                    Title: {good.title}
-                </div>
-                <div>
-                    Price: {good.price}
-                </div>
-                <div>
-                    Total: {good.price * cartGoods[index].quantity}
-                </div>
-                <div>
-                    <label htmlFor="quantity">Quantity: </label>
-                    <input type="number" id="quantity" value={cartGoods[index].quantity}
-                        onChange={handleChange}
-                    />
-                </div>
-                <div>
-                    <button onClick={handleDelete}>Delete</button>
-                </div>
-            </div>
-        );
-
+        const orderId = response.data.id;
+        push('/orders/' + response.data.id)
     }
 
     return (
         <Layout>
             <div>
-                <h1>Cart</h1>
+                <h1 className="ml-4 mt-4 text-2xl">Cart</h1>
                 <div>
                     <form>
                         {cart.map((good, i) => (
                             <div key={i}>
-                                <CartGood good={good} index={i} />
-                                <br />
+                                <CartGood good={good} index={i} cartGoods={cartGoods} setCartGoods={setCartGoods} />
+                                
                             </div>
                         ))}
-                        <button type="submit" onClick={handleSubmit}>Submit</button>
+                        <button className="mt-4 ml-4 px-6 py-3 inline-block bg-gray-200 rounded-lg shadow-lg hover:bg-gray-300"
+                        type="submit" onClick={handleSubmit}>Submit</button>
                     </form>
                 </div>
             </div>
@@ -153,7 +88,7 @@ const router = createRouter()
 export async function getServerSideProps({ req, res }) {
     const cart = await router.run(req, res);
     if (cart.notFound) {
-        return {props: {cart: {notFound: true}}}
+        return { props: { cart: { notFound: true } } }
     }
     let cartGoods = []
     for (let cartEl of cart) {
@@ -163,3 +98,26 @@ export async function getServerSideProps({ req, res }) {
 
     return { props: { cart: cartGoods } }
 }
+
+
+//! Sage
+// import { useHistory } from 'react-router-dom';
+
+// async function handleSubmit(event) {
+//   event.preventDefault();
+//   console.log("Submit");
+
+//   const cartData = { goods: cartGoods, total: getTotal(cartGoods) };
+
+//   try {
+//     const response = await axios.post('/api/orders', cartData, config);
+//     console.log("Response id: ", response.data);
+
+//     const orderId = response.data.id;
+//     history.push(`/orders/${orderId}`); // navigate to the order page
+//   } catch (error) {
+//     console.error(error);
+//   }
+// }
+
+// in your component

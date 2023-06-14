@@ -60,6 +60,7 @@ module.exports = {
         description: 'Ripe sweet and beautiful strawberries',
         price: 85.5,
         seller_id: 1,
+        available: 50
       },
       {
         title: 'Bananas',
@@ -67,6 +68,7 @@ module.exports = {
         description: 'Ripe sweet and beautiful bananas',
         price: 70.0,
         seller_id: 1,
+        available: 70
       },
       {
         title: 'Cranberries',
@@ -74,6 +76,7 @@ module.exports = {
         description: 'Ripe sweet and beautiful cranberries',
         price: 100500.0,
         seller_id: 1,
+        available: 10
       },
     ];
     const orders = [

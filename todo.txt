@@ -4,7 +4,7 @@
 - Create category form at good creation:
     * read docs on get or create
 
-- make possible delete good from cart
 - Show only orders for user
+
 - Add validators on inputs
 - Add styles

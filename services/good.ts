@@ -66,9 +66,11 @@ export async function getGoods() {
     // });
 
     const goods = await Good.findAll({
-        attributes: ["id", "title", "description", "price", "imageUrl", 
-        [Sequelize.fn("avg", Sequelize.col("reviews.score")), "averageScore"]],
-        group: ['title', 'Categories.text'],
+        attributes: ["id", "title", "description", "price", "imageUrl", "available",
+        [Sequelize.fn("avg", Sequelize.col("reviews.score")), "averageScore"],
+        [Sequelize.fn("count", Sequelize.col("reviews.id")), "reviewsCount"]
+    ],
+        group: ['good.id', 'title', 'Categories.text', 'Categories.id'],
         include: [
             {
                 attributes: ['id', 'username', 'email'],
@@ -76,24 +78,13 @@ export async function getGoods() {
                 as: 'seller'
             },
             {
-                model: Order,
-                attributes: ['id'],
-            },
-            {
                 model: Category,
                 attributes: ['text'],
             },
             {
                 model: Review,
-                attributes: ['text', 'datepub', 'score'],
+                attributes: [],
                 as: "reviews",
-                include: [
-                    {
-                        model: User,
-                        attributes: ['id', 'username'],
-                        as: "author"
-                    }
-                ]
             }
         ],
     });
@@ -124,7 +115,7 @@ export async function getGoodsForUser(userId) {
     
     const goods = await Good.findAll({
         where: { seller_id: userId },
-        attributes: ["id", "title", "description", "price", "imageUrl", 
+        attributes: ["id", "title", "description", "price", "imageUrl", 'available',
         [Sequelize.fn("avg", Sequelize.col("reviews.score")), "averageScore"]],
         group: ['title', 'Categories.text'],
         include: [
@@ -155,5 +146,7 @@ export async function getGoodsForUser(userId) {
 
 
 export async function deleteGood(id) {
+    console.log("==========================================\n\n")
+    console.log("Destroying good with id: ", id)
     return await Good.destroy({ where: { id } })
 }

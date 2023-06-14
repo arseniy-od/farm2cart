@@ -67,12 +67,12 @@ const router = createRouter()
     .use(middlewares[0])
     .use(middlewares[1])
     .get(async (req, res) => {
-        console.log("session: ", req.session);
+        // console.log("session: ", req.session);
 
         const goods = await getGoodsForUser(req.user.id);
         const parsedGoods = JSON.parse(JSON.stringify(goods))
-        console.log("-----------------------------------------------\n\n")
-        console.log("Goods are: ", parsedGoods)
+        // console.log("-----------------------------------------------\n\n")
+        // console.log("Goods are: ", parsedGoods)
         if (!goods) {
             return { props: { notFound: true } };
         }

@@ -1,4 +1,5 @@
 import { User, Review, Good, Order, OrderGood, Category, CategoryGood, Company } from '@/database/models'
+import { GOOGLE_FONT_PROVIDER } from 'next/dist/shared/lib/constants';
 
 
 export function getOrders() {
@@ -22,6 +23,7 @@ export async function createOrder(orderData) {
     const newOrder =  await Order.create(orderData);
     await orderData.goods.forEach(async good => {
         const goodOrder = await Good.findOne({ where: { id: good.id } })
+        await goodOrder?.decrement('available', {by: good.quantity});
         await newOrder.addGood(goodOrder, {through: {quantity: good.quantity}})
     })
     return newOrder

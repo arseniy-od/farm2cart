@@ -27,7 +27,7 @@ import { InferAttributes, InferCreationAttributes } from "sequelize";
 // export interface IUserModel extends Model<InferAttributes<IGood>, InferCreationAttributes<IGood>> {}
 
 export default class Good extends Model {
-  declare title: string
+  // declare title: string
   // imageUrl: string
   // description: string
   // price: number
@@ -38,9 +38,11 @@ Good.init({
   imageUrl: DataTypes.STRING,
   description: DataTypes.TEXT,
   price: {type: DataTypes.FLOAT, allowNull:false},
-  seller_id: {type: DataTypes.INTEGER, allowNull: false}
+  seller_id: {type: DataTypes.INTEGER, allowNull: false},
+  available: {type: DataTypes.INTEGER, allowNull: false}
 }, {
   sequelize,
   modelName: 'good',
-  timestamps: false,
+  paranoid: true,
+  // timestamps: false,
 });

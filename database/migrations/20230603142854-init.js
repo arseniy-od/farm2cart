@@ -46,8 +46,11 @@ module.exports = {
             "  `imageUrl` VARCHAR(255) NULL,\n" +
             "  `description` TEXT NULL,\n" +
             "  `price` FLOAT NOT NULL,\n" +
-            "  `datepub` DATETIME NULL DEFAULT CURRENT_TIMESTAMP,\n" +
             "  `seller_id` INT NOT NULL,\n" +
+            "  `available` INT NOT NULL ,\n" +
+            "  `createdAt` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,\n" +
+            "  `updatedAt` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,\n" +
+            "  `deletedAt` DATETIME NULL DEFAULT NULL,\n" +
             "  PRIMARY KEY (`id`),\n" +
             "  INDEX `seller_id_idx` (`seller_id` ASC) VISIBLE,\n" +
             "  CONSTRAINT `seller_id`\n" +

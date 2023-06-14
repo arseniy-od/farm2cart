@@ -37,7 +37,6 @@ export default function Goods(props) {
 }
 
 
-
 const router = createRouter()
     .get(async (req, res) => {
         const goods = await getGoods();

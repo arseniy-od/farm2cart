@@ -4,9 +4,7 @@ import Image from "next/image";
 import { useState } from "react";
 
 export default function GoodCard({ good, categories }) {
-
     const [inCart, setInCart] = useState(false)
-
     const isInCart = async () => {
         const cart = await fetch('/api/cart')
         const cartContent = await cart.json()
@@ -62,12 +60,22 @@ export default function GoodCard({ good, categories }) {
                     <div className='px-2 py-2 bg-gray-100'>
                         <h3 className="text-xl font-semibold">{good.title}</h3>
                         {good.averageScore
-                            ? <div>Rating: {good.averageScore}</div>
+                            ? 
+                            <div className="mx-12 flex justify-between">
+                                <div>
+                                    Rating: {good.averageScore}
+                                </div>
+                            
+                                <div className="text-gray-600">
+                                    {good.reviewsCount} review{good.reviewsCount > 1 ? 's' : null}
+                                </div>
+                            </div>
                             : null}
 
                         <p>{good.description}</p>
                         <Link href={"/users/" + good.seller.id} className="text-gray-700">Seller: {good.seller.username}</Link>
                         <div className="text-gray-700">₴ {good.price}</div>
+                        <div className="text-gray-700">Available: {good.available}</div>
                         <Link href={'/goods/' + good.id} className="px-6 py-4 inline-block bg-gray-200 rounded-lg shadow-lg hover:bg-gray-400">Product page</Link>
                         {inCart
                             ? <div>Added to cart</div>
@@ -75,12 +83,8 @@ export default function GoodCard({ good, categories }) {
 
                     </div>
                 </div>
-
-
                 {categories && categories.length ? <Category good={good} /> : null}
-
             </div>
-
         </div>
     );
 }

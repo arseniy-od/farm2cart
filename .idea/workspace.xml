@@ -2,25 +2,29 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="f0661f64-e28e-47c4-a130-c9e4f586c552" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/middleware/auth.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/middleware/router.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pages/api/auth/index.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pages/api/auth/logout.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pages/api/users/me.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources.local.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources.local.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/components/goodCard.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/components/goodCard.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/database/config/config.json" beforeDir="false" afterPath="$PROJECT_DIR$/database/config/config.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/middleware/passport.ts" beforeDir="false" afterPath="$PROJECT_DIR$/middleware/passport.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/middleware/session.ts" beforeDir="false" afterPath="$PROJECT_DIR$/middleware/session.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/database/migrations/20230603142854-init.js" beforeDir="false" afterPath="$PROJECT_DIR$/database/migrations/20230603142854-init.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/database/models/good.ts" beforeDir="false" afterPath="$PROJECT_DIR$/database/models/good.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/database/models/review.js" beforeDir="false" afterPath="$PROJECT_DIR$/database/models/review.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/database/seeders/20230603144131-user.js" beforeDir="false" afterPath="$PROJECT_DIR$/database/seeders/20230603144131-user.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pages/api/auth.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/pages/login.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/pages/login.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/services/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/services/index.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/services/user.ts" beforeDir="false" afterPath="$PROJECT_DIR$/services/user.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/services/userService.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pages/api/categories.ts" beforeDir="false" afterPath="$PROJECT_DIR$/pages/api/categories.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pages/cart/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/pages/cart/index.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pages/categories/create.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/pages/categories/create.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pages/goods/create.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/pages/goods/create.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pages/goods/index.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/pages/goods/index.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pages/orders/[id].tsx" beforeDir="false" afterPath="$PROJECT_DIR$/pages/orders/[id].tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pages/signup.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/pages/signup.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pages/users/me.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/pages/users/me.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/services/category.ts" beforeDir="false" afterPath="$PROJECT_DIR$/services/category.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/services/good.ts" beforeDir="false" afterPath="$PROJECT_DIR$/services/good.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/services/order.ts" beforeDir="false" afterPath="$PROJECT_DIR$/services/order.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/todo.txt" beforeDir="false" afterPath="$PROJECT_DIR$/todo.txt" afterDir="false" />
     </list>
+    <ignored path="$PROJECT_DIR$/node_modules/" />
+    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -169,14 +173,10 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "DefaultHtmlFileTemplate": "HTML File",
-    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "WebServerToolWindowFactoryState": "false",
-    "last_opened_file_path": "D:/code/farm2cart"
-  }
-}]]></component>
+  <component name="PropertiesComponent">
+    <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+  </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/pages/categories" />
@@ -192,6 +192,18 @@
       <recent name="$PROJECT_DIR$/pages" />
       <recent name="D:\code\farm2cart\database\models" />
     </key>
+  </component>
+  <component name="RunDashboard">
+    <option name="ruleStates">
+      <list>
+        <RuleState>
+          <option name="name" value="ConfigurationTypeDashboardGroupingRule" />
+        </RuleState>
+        <RuleState>
+          <option name="name" value="StatusDashboardGroupingRule" />
+        </RuleState>
+      </list>
+    </option>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="SvnConfiguration">
@@ -209,16 +221,17 @@
       <workItem from="1685945451878" duration="23729000" />
       <workItem from="1686031843179" duration="16762000" />
       <workItem from="1686068384298" duration="12009000" />
+      <workItem from="1686741431893" duration="276000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="41755000" />
+    <option name="totallyTimeSpent" value="42031000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="72" y="27" width="1848" height="1053" extended-state="6" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.14301552" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.14467849" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="npm" order="2" side_tool="true" />
       <window_info id="Favorites" order="3" side_tool="true" />
@@ -267,14 +280,21 @@
     </layout-to-restore>
   </component>
   <component name="TypeScriptGeneratedFilesManager">
-    <option name="version" value="3" />
+    <option name="version" value="1" />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
     <option name="TAB_STATES">
       <map>
         <entry key="MAIN">
           <value>
-            <State />
+            <State>
+              <option name="RECENTLY_FILTERED_USER_GROUPS">
+                <collection />
+              </option>
+              <option name="RECENTLY_FILTERED_BRANCH_GROUPS">
+                <collection />
+              </option>
+            </State>
           </value>
         </entry>
       </map>
@@ -390,19 +410,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/pages/users/index.tsx">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/pages/api/users/create.ts">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="234">
-          <caret line="13" selection-start-line="13" selection-end-line="13" />
-          <folding>
-            <element signature="e#0#44#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/pages/api/users/create.ts" />
     <entry file="file://$PROJECT_DIR$/pages/signup.tsx">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="144">
@@ -464,27 +472,9 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/database/migrations/create-user.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="468">
-          <caret line="26" column="10" lean-forward="true" selection-start-line="5" selection-start-column="6" selection-end-line="26" selection-end-column="10" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/database/seeders/20230604171745-company.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="162">
-          <caret line="9" column="4" selection-start-line="9" selection-start-column="4" selection-end-line="9" selection-end-column="58" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/database/seeders/20230603170815-goodOrders.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="108">
-          <caret line="6" selection-start-line="6" selection-end-line="6" />
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/database/migrations/create-user.js" />
+    <entry file="file://$PROJECT_DIR$/database/seeders/20230604171745-company.js" />
+    <entry file="file://$PROJECT_DIR$/database/seeders/20230603170815-goodOrders.js" />
     <entry file="file://$PROJECT_DIR$/database/seeders/20230604172036-category.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="450">
@@ -643,9 +633,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/services/UserService.ts">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
+    <entry file="file://$PROJECT_DIR$/services/UserService.ts" />
     <entry file="file://$PROJECT_DIR$/middleware/passport.ts">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="666">

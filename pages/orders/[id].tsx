@@ -1,4 +1,4 @@
-import { GetStaticProps, GetStaticPaths } from 'next'
+import { GetServerSideProps } from 'next'
 
 import { getOrderById, getAllOrderIds } from '@/services/order'
 import Layout from '@/app/layout';
@@ -25,20 +25,10 @@ export default function Order({order}) {
 }
 
 
-
-export const getStaticPaths: GetStaticPaths = async () => {
-    const paths = await getAllOrderIds()
-    // console.log("Paths are: -------------------------\n", paths)
-    return {
-        paths,
-        fallback: false
-    }
-}
-
-
-export const getStaticProps: GetStaticProps = async ({ params }) => {
+export const getServerSideProps: GetServerSideProps = async (ctx) => {
     // console.log("Got slug: ", params.slug);
-    let orderData = await getOrderById(params?.id);
+    const { id } = ctx.query;
+    let orderData = await getOrderById(id);
     // console.log("goodData is: ", categoryData);
     orderData = JSON.parse(JSON.stringify(orderData));
     console.log("orderData is: ", orderData)

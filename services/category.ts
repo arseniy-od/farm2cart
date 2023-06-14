@@ -40,3 +40,19 @@ export function getCategories() {
         })
     );
 }
+
+export async function createCategory(categoryData) {
+    return await Category.create(categoryData);
+}
+
+export async function deleteCategory(id) {
+    return await Category.destroy({where: { id }})
+}
+
+export async function updateCategory(id, categoryData) {
+    const category = await Category.findOne({where: {id}})
+    if (!category) {
+        return {error: true, message: "Category not found"}
+    }
+    return await category.update(categoryData)
+}
