@@ -1,7 +1,8 @@
-import Layout from '@/app/layout'
 import { createRouter } from "next-connect";
-import { getUsers } from "../../services/user";
 import Link from 'next/link';
+
+import Layout from '@/app/layout'
+import container from '@/server/container';
 
 
 
@@ -28,7 +29,7 @@ export default function User({ users }) {
 
 const router = createRouter()
     .get(async (req, res) => {
-        const users = await getUsers();
+        const users = await container.resolve("UserService").getUsers();
         if (!users) {
             return { props: { notFound: true } };
         }

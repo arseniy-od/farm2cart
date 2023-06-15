@@ -3,7 +3,8 @@ import Layout from '@/app/layout'
 import Image from "next/image";
 import Link from "next/link";
 
-import { getGoods } from "../../server/services/good";
+
+import container from '@/server/container'
 
 import GoodCard from '@/app/components/goodCard'
 
@@ -39,7 +40,7 @@ export default function Goods(props) {
 
 const router = createRouter()
     .get(async (req, res) => {
-        const goods = await getGoods();
+        const goods = await container.resolve("GoodService").getGoods();
         if (!goods) {
             return { props: { notFound: true } };
         }

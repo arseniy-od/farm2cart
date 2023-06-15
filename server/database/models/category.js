@@ -1,22 +1,38 @@
-import {Model, DataTypes} from "sequelize";
-import sequelize from './connection'
+import { Model, DataTypes } from "sequelize";
 
 
-export default class Category extends Model {
-  /**
-   * Helper method for defining associations.
-   * This method is not a part of Sequelize lifecycle.
-   * The `models/index` file will call this method automatically.
-   */
-  static associate(models) {
-    // define association here
-  }
+const CategoryModel = (ctx) => {
+  const Category = ctx.db.define('Category', {
+    text: DataTypes.STRING
+  },
+    {
+      tableName: 'categories',
+      timestamps: false,
+    }
+  );
+  
+  Category.belongsToMany(ctx.Good, { through: ctx.CategoryGood });
+  ctx.Good.belongsToMany(Category, { through: ctx.CategoryGood });
+  return Category
 }
-Category.init({
-  text: DataTypes.STRING
-}, {
-  sequelize,
-  modelName: 'Category',
-  tableName: 'categories',
-  timestamps: false,
-});
+
+export default CategoryModel
+
+
+
+
+
+//! Old
+// import { Model, DataTypes } from "sequelize";
+// import sequelize from './connection'
+
+
+// export default class Category extends Model { }
+// Category.init({
+//   text: DataTypes.STRING
+// }, {
+//   sequelize,
+//   modelName: 'Category',
+//   tableName: 'categories',
+//   timestamps: false,
+// });

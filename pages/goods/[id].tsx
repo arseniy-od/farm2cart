@@ -1,4 +1,4 @@
-import { GetStaticProps, GetStaticPaths } from 'next'
+import { GetServerSideProps } from 'next'
 import { useState } from 'react'
 import { useRouter } from 'next/navigation';
 
@@ -6,9 +6,9 @@ import Image from 'next/image';
 import Link from 'next/link';
 
 import Layout from '@/app/layout';
-import { findGoodById, getAllGoodIds } from '@/server/services/good'
 import GoodCard from '@/app/components/goodCard'
 import { formatDate } from '@/app/utils'
+import container from '@/server/container'
 
 
 export default function Good(props) {
@@ -127,17 +127,18 @@ export default function Good(props) {
     );
 }
 
-export const getStaticPaths: GetStaticPaths = async () => {
-    const paths = await getAllGoodIds()
-    return {
-        paths,
-        fallback: false
-    }
-}
+// export const getStaticPaths: GetStaticPaths = async () => {
+//     const paths = await container.resolve("GoodService").getAllGoodIds()
+//     return {
+//         paths,
+//         fallback: false
+//     }
+// }
 
 
-export const getStaticProps: GetStaticProps = async ({ params }) => {
-    const goodData = await findGoodById(params?.id);
+export const getServerSideProps: GetServerSideProps = async (ctx) => {
+    const { id } = ctx.query; 
+    const goodData = await container.resolve("GoodService").findGoodById(id);
     const parsedData = goodData;
     // console.log("Before", parsedData.reviews)
     parsedData.reviews.sort((a, b,) => new Date(a.datepub) - new Date(b.datepub))

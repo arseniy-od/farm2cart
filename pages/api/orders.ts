@@ -1,9 +1,9 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { createRouter } from "next-connect";
 
-import { getOrders, createOrder } from '@/server/services/order'
 import session from "@/middleware/session";
 import passport from "@/middleware/passport";
+import container from "@/server/container";
 
 
 const router = createRouter<NextApiRequest, NextApiResponse>();
@@ -13,7 +13,7 @@ router
     .use(passport.initialize())
     .use(passport.session())
     .get(async (req, res) => {
-        const orders = await getOrders();
+        const orders = await container.resolve("OrderService").getOrders();
         res.json(orders);
     })
     .post(
@@ -24,7 +24,7 @@ router
                 paymentStatus: "Ok" 
             }
             
-            const order = await createOrder(OrderData);
+            const order = await container.resolve("OrderService").createOrder(OrderData);
             console.log("[POST] order: ", order);
             req.session.cart = null;
             res.json(order)

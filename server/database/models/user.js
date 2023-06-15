@@ -1,35 +1,69 @@
-import {Model, DataTypes} from "sequelize";
+import { Model, DataTypes, BuildOptions } from "sequelize";
 import sequelize from './connection'
+import { IContextContainer } from '../../container';
+// import { IStoreModel } from '../../interfaces/stores';
 
-
-
-export default class User extends Model {}
-User.init({
-  firstName: DataTypes.STRING,
-  lastName: DataTypes.STRING,
-  username: DataTypes.STRING,
-  password: DataTypes.STRING,
-  email: {
-    type: DataTypes.STRING, 
-    validate: {isEmail: true}
+const UserModel = (ctx) => {
+  const User = ctx.db.define('user', {
+    firstName: DataTypes.STRING,
+    lastName: DataTypes.STRING,
+    username: DataTypes.STRING,
+    password: DataTypes.STRING,
+    email: {
+      type: DataTypes.STRING,
+      validate: { isEmail: true }
+    },
+    phoneNumber: DataTypes.STRING,
+    role: {
+      type: DataTypes.STRING,
+      validate: { isIn: [['customer', 'seller', 'admin']] }
+    },
+    companyId: DataTypes.INTEGER
   },
-  phoneNumber: DataTypes.STRING,
-  role: {type: DataTypes.STRING, 
-    validate: {isIn: [['customer', 'seller', 'admin']]}
-  },
-  companyId: DataTypes.INTEGER
-}, {
-  sequelize,
-  modelName: 'user',
-  timestamps: false,
-});
+    {
+      timestamps: false,
+    }
+  );
+
+  ctx.Company.hasMany(User, { foreignKey: 'companyId', as: 'sellers' });
+  User.belongsTo(ctx.Company, { foreignKey: 'companyId', as: 'company' })
+  
+  return User
+}
+
+export default UserModel
+
+
+
+
+//! Old
+
+// export default class User extends Model { }
+//   User.init({
+//     firstName: DataTypes.STRING,
+//     lastName: DataTypes.STRING,
+//     username: DataTypes.STRING,
+//     password: DataTypes.STRING,
+//     email: {
+//       type: DataTypes.STRING,
+//       validate: { isEmail: true }
+//     },
+//     phoneNumber: DataTypes.STRING,
+//     role: {
+//       type: DataTypes.STRING,
+//       validate: { isIn: [['customer', 'seller', 'admin']] }
+//     },
+//     companyId: DataTypes.INTEGER
+//   }, {
+//     sequelize,
+//     modelName: 'user',
+//     timestamps: false,
+//   });
 
 
 //! Copied from tg
 
-// import { BuildOptions, DataTypes, Model } from 'sequelize';
-// import { IContextContainer } from '../container';
-// import { IStoreModel } from '../interfaces/stores';
+
 
 // export type StoreType = typeof Model & {
 //   new(values?: object, options?: BuildOptions): IStoreModel;

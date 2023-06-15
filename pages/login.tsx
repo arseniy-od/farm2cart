@@ -3,6 +3,7 @@ import Layout from '../app/layout'
 import { useState } from 'react'
 import { useRouter } from 'next/navigation';
 
+
 export default function Home() {
     const { push } = useRouter();
     const [user, setUser] = useState({

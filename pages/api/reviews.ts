@@ -1,13 +1,10 @@
-import {Review} from '@/server/database/models/index'
 import { NextApiRequest, NextApiResponse } from "next";
-import { createRouter, expressWrapper } from "next-connect";
-import cors from "cors";
+import { createRouter } from "next-connect";
 
-
-import { getReviews, createReview } from '@/server/services/review'
-import {ServerResponse} from "http";
 import session from "@/middleware/session";
 import passport from "@/middleware/passport";
+import container from "@/server/container";
+
 
 export const router = createRouter<NextApiRequest, NextApiResponse>()
 
@@ -17,13 +14,13 @@ router
     .use(passport.initialize())
     .use(passport.session())
     .get(async (req: NextApiRequest, res: NextApiResponse) => {
-        const reviews = await getReviews();
+        const reviews = await container.resolve("ReviewService").getReviews();
         res.json(reviews);
     })
     .post(async (req, res) => {
         const reviewData = { ...req.body, authorId: req.user.id, score: parseInt(req.body.score) }
         console.log("[api/reviews] reviewData: ", reviewData)
-        const review = await createReview(reviewData);
+        const review = await container.resolve("ReviewService").createReview(reviewData);
         res.json(review);
     });
 

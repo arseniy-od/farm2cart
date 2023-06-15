@@ -2,9 +2,9 @@ import { NextApiRequest, NextApiResponse } from "next";
 import { createRouter } from "next-connect";
 import multer from 'multer'
 
-import { getGoods, createGood, deleteGood } from '@/server/services/good'
 import session from "@/middleware/session";
 import passport from "@/middleware/passport";
+import container from "@/server/container";
 
 
 const upload = multer({
@@ -24,7 +24,7 @@ router
     .use(passport.session())
     .use(uploadMiddleware)
     .get(async (req, res) => {
-        const goods = await getGoods();
+        const goods = await container.resolve("GoodService").getGoods();
         res.json(goods);
     })
     .post(async (req, res) => {
@@ -37,12 +37,12 @@ router
         }
         console.log("[api/goods] goodData: ", goodData)
 
-        const good = await createGood(goodData);
+        const good = await container.resolve("GoodService").createGood(goodData);
         console.log("[api/goods] Good: ", good)
         res.json(good);
     })
     .delete(async (req, res) => {
-        const good = await deleteGood(req.query.id);
+        const good = await container.resolve("GoodService").deleteGood(req.query.id);
         res.json({ res: "Good deleted" });
     });
 

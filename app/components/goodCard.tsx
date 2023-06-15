@@ -59,6 +59,7 @@ export default function GoodCard({ good, categories }) {
                     </div>
                     <div className='px-2 py-2 bg-gray-100'>
                         <h3 className="text-xl font-semibold">{good.title}</h3>
+                        <div>{good.active}</div>
                         {good.averageScore
                             ? 
                             <div className="mx-12 flex justify-between">

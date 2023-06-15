@@ -1,9 +1,10 @@
 import { GetStaticProps, GetStaticPaths } from 'next'
-import { getCategoryByText, getAllCategorySlugs } from '@/server/services/category'
 import Image from 'next/image';
 import Link from 'next/link';
+
 import Layout from '@/app/layout';
 import GoodCard from '@/app/components/goodCard'
+import container from '@/server/container';
 
 
 export default function Good(props) {
@@ -35,7 +36,7 @@ export default function Good(props) {
 }
 
 export const getStaticPaths: GetStaticPaths = async () => {
-    const paths = await getAllCategorySlugs()
+    const paths = await container.resolve("CategoryService").getAllCategorySlugs()
     // console.log("Paths are: -------------------------\n", paths)
     return {
         paths,
@@ -46,7 +47,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
 
 export const getStaticProps: GetStaticProps = async ({ params }) => {
     // console.log("Got slug: ", params.slug);
-    const categoryData = await getCategoryByText(params?.slug);
+    const categoryData = await container.resolve("CategoryService").getCategoryByText(params?.slug);
     // console.log("goodData is: ", categoryData);
     const parsedData = JSON.parse(JSON.stringify(categoryData));
     // console.log("parsedData is: ", parsedData)

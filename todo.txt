@@ -8,3 +8,7 @@
 
 - Add validators on inputs
 - Add styles
+
+
+Make goods/[id] serverside not static
+categories too

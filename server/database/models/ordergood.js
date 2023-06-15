@@ -1,13 +1,16 @@
-import {Model, DataTypes} from "sequelize";
-import sequelize from './connection'
+import { Model, DataTypes } from "sequelize";
 
 
-export default class OrderGood extends Model {}
-OrderGood.init({
-  quantity: {type: DataTypes.INTEGER, allowNull: false,},
-}, {
-  sequelize,
-  modelName: 'OrderGood',
-  tableName: 'order_goods',
-  timestamps: false
-});
+const OrderGoodModel = (ctx) => {
+  const OrderGood = ctx.db.define('OrderGood', {
+    quantity: {type: DataTypes.INTEGER, allowNull: false,},
+  },
+    {
+      tableName: 'order_goods',
+      timestamps: false,
+    }
+  );
+  return OrderGood
+}
+
+export default OrderGoodModel

@@ -1,8 +1,7 @@
 import Layout from '@/app/layout'
 import { createRouter } from "next-connect";
-import { getReviews } from "@/services/review";
 
-
+import container from '@/server/container'
 
 
 export default function Review({ reviews }) {
@@ -24,7 +23,7 @@ export default function Review({ reviews }) {
 
 const router = createRouter()
     .get(async (req, res) => {
-        const reviews = await getReviews();
+        const reviews = await container.resolve("ReviewService").getReviews();
         if (!reviews) {
             return { props: { notFound: true } };
         }

@@ -1,7 +1,6 @@
 import passport from 'passport';
 import LocalStrategy from 'passport-local';
-import { User } from '@/server/database/models';
-import { findUserById, findUserByEmail, validatePassword } from "@/server/services/user";
+import container from '@/server/container';
 import { NextApiRequest } from 'next';
 
 
@@ -13,7 +12,7 @@ passport.serializeUser((user, callback) => {
 
 passport.deserializeUser((req:NextApiRequest, id:number, done) => {
     console.log('passport deserialize, userid', id);
-    const user = findUserById(id).then(user => {done(null, user)})
+    const user = container.resolve("UserService").findUserById(id).then(user => {done(null, user)})
     .catch(e => done(e, null));
 });
 
@@ -21,9 +20,13 @@ passport.deserializeUser((req:NextApiRequest, id:number, done) => {
 passport.use(
     new LocalStrategy({usernameField: 'email', passReqToCallback: true,},
         (req, email, password, done) => {
-        findUserByEmail(email).then((user) => {
-            validatePassword(user, password).then((isValid)=> {
+            // console.log("request to resolve user");
+            
+            container.resolve("UserService").findUserByEmail(email).then((user) => {
+                // console.log("[passport] User found: ", user.username)
+                container.resolve("UserService").validatePassword(user, password).then((isValid)=> {
                 if (user && isValid) {
+                    // console.log("[passport] User password is valid")
                     done(null, user);
                 } else {
                     done(true, false, { message: 'Email or password is incorrect' });

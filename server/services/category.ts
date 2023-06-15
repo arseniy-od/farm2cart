@@ -1,58 +1,63 @@
-import { User, Review, Good, Order, OrderGood, Category, CategoryGood, Company } from '@/server/database/models'
+import BaseContext from "../baseContext"
 
+export default class CategoryService extends BaseContext {
+    private Good = this.di.Good;
+    private User = this.di.User;
+    private Category = this.di.Category;
 
-export async function getCategoryByText(text:string) {
-    return await Category.findOne(
-        {
-            where: {text},
-            include: [
-                {
-                    model: Good,
-                    include : [
-                        {model: User, as: "seller"},
-                        {model: Category, as: "Categories"}
-                    ]
-                }
-            ]
-        })
-}
-
-
-export async function getAllCategorySlugs() {
-    const categories = await Category.findAll()
-    return categories.map(category => {
-        return {
-            params: {
-            slug: category.text.toLowerCase()
-        }}
-    })    
-}
-
-
-export function getCategories() {
-    return (
-        Category.findAll({
-            include: [
-                {
-                    model: Good,
-                }
-            ]
-        })
-    );
-}
-
-export async function createCategory(categoryData) {
-    return await Category.create(categoryData);
-}
-
-export async function deleteCategory(id) {
-    return await Category.destroy({where: { id }})
-}
-
-export async function updateCategory(id, categoryData) {
-    const category = await Category.findOne({where: {id}})
-    if (!category) {
-        return {error: true, message: "Category not found"}
+    async getCategoryByText(text:string) {
+        return await this.Category.findOne(
+            {
+                where: {text},
+                include: [
+                    {
+                        model: this.Good,
+                        include : [
+                            {model: this.User, as: "seller"},
+                            {model: this.Category, as: "Categories"}
+                        ]
+                    }
+                ]
+            })
     }
-    return await category.update(categoryData)
+    
+    
+    async getAllCategorySlugs() {
+        const categories = await this.Category.findAll()
+        return categories.map(category => {
+            return {
+                params: {
+                slug: category.text.toLowerCase()
+            }}
+        })    
+    }
+    
+    
+    async getCategories() {
+        return (
+            await this.Category.findAll({
+                include: [
+                    {
+                        model: this.Good,
+                    }
+                ]
+            })
+        );
+    }
+    
+    async createCategory(categoryData) {
+        return await this.Category.create(categoryData);
+    }
+    
+    async deleteCategory(id) {
+        return await this.Category.destroy({where: { id }})
+    }
+    
+    async updateCategory(id, categoryData) {
+        const category = await this.Category.findOne({where: {id}})
+        if (!category) {
+            return {error: true, message: "Category not found"}
+        }
+        return await category.update(categoryData)
+    }
 }

@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { createRouter, expressWrapper } from "next-connect";
+import { createRouter } from "next-connect";
 
 
 import session from "@/middleware/session";
@@ -41,7 +41,7 @@ router
         res.json({ res: "Good deleted" });
     });
 
-
+    
 export default router.handler({
     onError: (err, req, res) => {
         console.error(err.stack);

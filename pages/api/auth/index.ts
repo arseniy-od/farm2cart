@@ -32,7 +32,7 @@ router
 
             });
 
-            console.log("Request User is: ", req.user)
+            console.log("\n\n[api/auth/index] Request User is:\n", req.user)
         })(req, res, next);
     });
 

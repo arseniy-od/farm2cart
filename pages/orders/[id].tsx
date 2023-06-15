@@ -1,8 +1,7 @@
 import { GetServerSideProps } from 'next'
 
-import { getOrderById, getAllOrderIds } from '@/server/services/order'
 import Layout from '@/app/layout';
-
+import container from '@/server/container';
 
 
 export default function Order({order}) {
@@ -28,7 +27,7 @@ export default function Order({order}) {
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
     // console.log("Got slug: ", params.slug);
     const { id } = ctx.query;
-    let orderData = await getOrderById(id);
+    let orderData = await container.resolve("OrderService").getOrderById(id);
     // console.log("goodData is: ", categoryData);
     orderData = JSON.parse(JSON.stringify(orderData));
     console.log("orderData is: ", orderData)

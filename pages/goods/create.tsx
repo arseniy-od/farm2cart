@@ -5,7 +5,7 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation';
 
 import Layout from '@/app/layout'
-import { getCategories } from "@/server/services/category";
+import container from "@/server/container";
 
 
 export default function Home({ categories }) {
@@ -139,7 +139,7 @@ export default function Home({ categories }) {
 
 const router = createRouter()
     .get(async (req, res) => {
-        const categories = await getCategories();
+        const categories = await container.resolve("CategoryService").getCategories();
         if (!categories) {
             return { props: { notFound: true } };
         }

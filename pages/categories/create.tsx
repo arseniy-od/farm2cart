@@ -4,7 +4,7 @@ import axios from "axios";
 import Layout from "@/app/layout";
 
 
-export default function CategoreCreate() {
+export default function CategoryCreate() {
     const [text, setText] = useState('');
 
     async function handleSubmit(event) {

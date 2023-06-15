@@ -1,8 +1,9 @@
 import {createRouter} from "next-connect";
 import Link from "next/link";
 
-import {getOrders} from "@/services/order";
 import Layout from "@/app/layout"
+import container from '@/server/container'
+
 
 export default function Order({orders}){
   // const { orders } = props;
@@ -29,7 +30,7 @@ export default function Order({orders}){
 
 const router = createRouter()
     .get(async (req, res) => {
-      const orders = await getOrders();
+      const orders = await container.resolve("OrderService").getOrders();
       if (!orders) {
         return { props: { notFound: true } };
       }

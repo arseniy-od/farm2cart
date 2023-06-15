@@ -1,6 +1,7 @@
 import {createRouter} from "next-connect";
-import {getCompanies} from "@/services/company";
+
 import Layout from '@/app/layout'
+import container from '@/server/container'
 
 
 export default function Company(props){
@@ -22,7 +23,7 @@ export default function Company(props){
 
 const router = createRouter()
     .get(async (req, res) => {
-      const companies = await getCompanies();
+      const companies = await container.resolve("CompanyService").getCompanies();
       if (!companies) {
         return { props: { notFound: true } };
       }

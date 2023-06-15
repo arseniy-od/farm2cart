@@ -1,7 +1,8 @@
 import Link from 'next/link'
 import { useRouter } from 'next/navigation';
-import Layout from '../app/layout'
 import { useState } from 'react'
+
+import Layout from '../app/layout'
 
 
 export default function Home() {

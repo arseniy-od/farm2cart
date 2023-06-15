@@ -4,11 +4,10 @@ import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import axios from "axios";
 
-
-import { findGoodById } from '@/server/services/good'
 import session, { middlewares } from "@/middleware/session";
 import Layout from '@/app/layout';
 import CartGood from "@/app/components/cartGood";
+import container from "@/server/container";
 
 
 
@@ -92,32 +91,10 @@ export async function getServerSideProps({ req, res }) {
     }
     let cartGoods = []
     for (let cartEl of cart) {
-        const good = await findGoodById(cartEl.goodId);
+        const good = await container.resolve("GoodService").findGoodById(cartEl.goodId);
         cartGoods.push({ quantity: 1, ...good })
     }
 
     return { props: { cart: cartGoods } }
 }
 
-
-//! Sage
-// import { useHistory } from 'react-router-dom';
-
-// async function handleSubmit(event) {
-//   event.preventDefault();
-//   console.log("Submit");
-
-//   const cartData = { goods: cartGoods, total: getTotal(cartGoods) };
-
-//   try {
-//     const response = await axios.post('/api/orders', cartData, config);
-//     console.log("Response id: ", response.data);
-
-//     const orderId = response.data.id;
-//     history.push(`/orders/${orderId}`); // navigate to the order page
-//   } catch (error) {
-//     console.error(error);
-//   }
-// }
-
-// in your component

@@ -1,15 +1,22 @@
-import {User, Review, Good, Order, OrderGood, Category, CategoryGood, Company} from '@/server/database/models'
+import BaseContext from "../baseContext";
 
 
-export function getCompanies() {
-    return (
-        Company.findAll({
+export default class CompanyService extends BaseContext {
+
+    private User = this.di.User;
+
+    private Company = this.di.Company;
+
+    async getCompanies() {
+        return await this.Company.findAll({
             include: [{
                 attributes: ['username', 'email'],
-                model: User,
-                as: 'sellers'},
+                model: this.User,
+                as: 'sellers'
+            },
 
             ]
-        })
-    );
+        });
+    }
+
 }

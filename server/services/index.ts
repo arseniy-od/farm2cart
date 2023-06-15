@@ -1,19 +1,27 @@
 import { asClass } from 'awilix';
-import ProductService from './product';
-import ReviewService from './review';
-import StoreService from './store';
 import UserService from './user';
+import CompanyService from './company';
+import GoodService from './good';
+import CategoryService from './category';
+import OrderService from './order';
+import ReviewService from './review'
 
 export interface IServicesContainer {
     UserService: UserService;
-    StoreService: StoreService
-    ReviewService: ReviewService
-    ProductService: ProductService
+    CompanyService: CompanyService;
+    GoodService: GoodService;
+    ReviewService: ReviewService;
+    CategoryService: CategoryService;
+    OrderService: OrderService;
 }
 
-export default {
+const services = {
     UserService: asClass(UserService).singleton(),
-    StoreService: asClass(StoreService).singleton(),
+    CompanyService: asClass(CompanyService).singleton(),
+    GoodService: asClass(GoodService).singleton(),
     ReviewService: asClass(ReviewService).singleton(),
-    ProductService: asClass(ProductService).singleton(),
+    CategoryService: asClass(CategoryService).singleton(),
+    OrderService: asClass(OrderService).singleton()
 };
+
+export default services

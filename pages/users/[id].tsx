@@ -1,10 +1,10 @@
 import { GetStaticProps, GetStaticPaths } from 'next'
 import Link from 'next/link';
 
-import {getAllUserIds, findUserById} from '@/server/services/user'
-import { getGoodsForUser } from '@/server/services/good';
 import Layout from '@/app/layout';
 import GoodCard from '@/app/components/goodCard';
+import container from '@/server/container';
+
 
 export default function User({ user, goods }) {
     console.log("user: ", user)
@@ -35,7 +35,7 @@ export default function User({ user, goods }) {
 
 
 export const getStaticPaths: GetStaticPaths = async () => {
-    const paths = await getAllUserIds()
+    const paths = await container.resolve("UserService").getAllUserIds()
     return {
         paths,
         fallback: false
@@ -44,8 +44,8 @@ export const getStaticPaths: GetStaticPaths = async () => {
 
 
 export const getStaticProps: GetStaticProps = async ({ params }) => {
-    const userData = await findUserById(params?.id);
-    const goodsData = await getGoodsForUser(params?.id);
+    const userData = await container.resolve("UserService").findUserById(params?.id);
+    const goodsData = await container.resolve("GoodService").getGoodsForUser(params?.id);
     const parsedUser = JSON.parse(JSON.stringify(userData));
     const parsedGoods = JSON.parse(JSON.stringify(goodsData));
 

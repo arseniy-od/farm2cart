@@ -1,53 +1,53 @@
-import {User, Review, Good, Order, OrderGood, Category, CategoryGood, Company} from '@/server/database/models'
+import BaseContext from "../baseContext";
 
+export default class ReviewService extends BaseContext {
+    private Good = this.di.Good;
+    private User = this.di.User;
+    private Review = this.di.Review;
+    private Category = this.di.Category;
+    private Order = this.di.Order;
 
-export async function getReviews() {
-    return await Review.findAll(
-        {
-            include: [
-                {
-                    attributes: ['username', 'email'],
-                    model: User,
-                    as: 'author'
-                },
-                {
-                    attributes: ['id', 'title'],
-                    model: Good,
-                    as: 'good'
-                }
+    async getReviews() {
+        return await this.Review.findAll({
+                include: [
+                    {
+                        attributes: ['username', 'email'],
+                        model: this.User,
+                        as: 'author'
+                    },
+                    {
+                        attributes: ['id', 'title'],
+                        model: this.Good,
+                        as: 'good'
+                    }
+    
+                ]
+            });
+    }
+    
+    
+    async getReviewById(id) {
+        return await this.Review.findOne({
+                where: {id},
+                attributes: ['text', 'score', 'datepub'],
+                include: [
+                    {
+                        attributes: ['username', 'email'],
+                        model: this.User,
+                        as: 'author'
+                    },
+                    {
+                        attributes: ['id', 'title'],
+                        model: this.Good,
+                        as: 'good'
+                    }
+    
+                ]
+            });
+    }
+    
+    async createReview(reviewData) {
+        return await this.Review.create(reviewData);
 
-            ]
-        }
-    );
+    }   
 }
-
-
-export async function getReviewById(id) {
-    return await Review.findOne(
-        {
-            where: {id},
-            attributes: ['text', 'score', 'datepub'],
-            include: [
-                {
-                    attributes: ['username', 'email'],
-                    model: User,
-                    as: 'author'
-                },
-                {
-                    attributes: ['id', 'title'],
-                    model: Good,
-                    as: 'good'
-                }
-
-            ]
-        }
-    );
-}
-
-
-
-export async function createReview(reviewData) {
-    const result = await Review.create(reviewData);
-    return await getReviewById(result.id)
-}
-

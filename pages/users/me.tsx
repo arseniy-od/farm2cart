@@ -4,10 +4,10 @@ import { useState, useEffect } from "react";
 import session, { middlewares } from "@/middleware/session";
 import Link from "next/link";
 
-
-import { getGoodsForUser } from '@/server/services/good'
 import { isConstructorDeclaration } from "typescript";
 import GoodCard from "@/app/components/goodCard";
+import container from "@/server/container";
+
 
 export default function User({ goods }) {
     const [user, setUser] = useState(null);
@@ -69,7 +69,7 @@ const router = createRouter()
     .get(async (req, res) => {
         // console.log("session: ", req.session);
 
-        const goods = await getGoodsForUser(req.user.id);
+        const goods = await container.resolve("GoodService").getGoodsForUser(req.user.id);
         const parsedGoods = JSON.parse(JSON.stringify(goods))
         // console.log("-----------------------------------------------\n\n")
         // console.log("Goods are: ", parsedGoods)

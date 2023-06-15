@@ -50,7 +50,7 @@ module.exports = {
             "  `available` INT NOT NULL ,\n" +
             "  `createdAt` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,\n" +
             "  `updatedAt` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,\n" +
-            "  `deletedAt` DATETIME NULL DEFAULT NULL,\n" +
+            "  `active` TINYINT NULL DEFAULT 1,\n" +
             "  PRIMARY KEY (`id`),\n" +
             "  INDEX `seller_id_idx` (`seller_id` ASC) VISIBLE,\n" +
             "  CONSTRAINT `seller_id`\n" +

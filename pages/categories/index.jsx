@@ -1,9 +1,8 @@
 import {createRouter} from "next-connect";
 import Link from "next/link";
 
-
-import {getCategories} from "@/services/category";
 import Layout from '@/app/layout'
+import container from '@/server/container'
 
 
 export default function Category(props){
@@ -28,7 +27,7 @@ export default function Category(props){
 
 const router = createRouter()
     .get(async (req, res) => {
-      const categories = await getCategories();
+      const categories = await container.resolve("CategoryService").getCategories();
       if (!categories) {
         return { props: { notFound: true } };
       }

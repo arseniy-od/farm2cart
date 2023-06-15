@@ -1,25 +1,20 @@
-import {Model, DataTypes} from "sequelize";
-import sequelize from './connection'
+import { Model, DataTypes } from "sequelize";
 
 
-export default class Company extends Model {
-  /**
-   * Helper method for defining associations.
-   * This method is not a part of Sequelize lifecycle.
-   * The `models/index` file will call this method automatically.
-   */
-  static associate(models) {
-    // define association here
-  }
+const CompanyModel = (ctx) => {
+  const Company = ctx.db.define('Company', {
+    name: { type: DataTypes.STRING, allowNull: false },
+    description: DataTypes.TEXT,
+    address: DataTypes.STRING,
+    email: DataTypes.STRING
+  },
+    {
+      timestamps: false,
+      tableName: 'companies',
+    }
+  );
+  return Company
 }
-Company.init({
-  name: {type: DataTypes.STRING, allowNull: false},
-  description: DataTypes.TEXT,
-  address: DataTypes.STRING,
-  email: DataTypes.STRING
-}, {
-  sequelize,
-  modelName: 'Company',
-  tableName: 'companies',
-  timestamps: false,
-});
+
+export default CompanyModel
+
