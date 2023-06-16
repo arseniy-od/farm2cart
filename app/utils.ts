@@ -1,4 +1,4 @@
-function formatDate(dateString:string):string {
+function formatDate(dateString: string | Date):string {
     const date = new Date(dateString);
     const year = date.getFullYear();
     const month = date.getMonth() + 1; // Add 1 because getMonth() returns a zero-based index

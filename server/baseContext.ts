@@ -1,6 +1,5 @@
-export interface IContextContainer {
-    [key: string]: any;
-}
+import { IContextContainer } from "./container";
+
 
 export default class BaseContext {
     protected di: IContextContainer;

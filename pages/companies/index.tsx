@@ -2,10 +2,20 @@ import {createRouter} from "next-connect";
 
 import Layout from '@/app/layout'
 import container from '@/server/container'
+import { CompanyProps } from "@/app/interfaces";
 
 
-export default function Company(props){
+export default function Company(props: CompanyProps){
   const { companies } = props;
+  if (props.notFound) {
+    return (
+      <Layout>
+        <div>
+          Companies not found
+        </div>
+      </Layout>
+    )
+  }
 
   return (
       <Layout>

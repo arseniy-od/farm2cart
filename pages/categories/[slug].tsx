@@ -5,12 +5,10 @@ import Link from 'next/link';
 import Layout from '@/app/layout';
 import GoodCard from '@/app/components/goodCard'
 import container from '@/server/container';
+import { CategoryProps } from '@/app/interfaces';
 
 
-export default function Category(props) {
-    const category = props.parsedData
-    const goods = category.goods
-    
+export default function Category({category, goods}: CategoryProps) {
     return (
         <Layout>
             <div>
@@ -20,7 +18,7 @@ export default function Category(props) {
                 {goods.map((good, i) => (
                     <div key={i}>
                         
-                            <GoodCard good={good} categories={good.Categories}/>
+                            <GoodCard good={good} categories={good.categories}/>
                     
                     </div>
                 ))}
@@ -34,6 +32,7 @@ export default function Category(props) {
     );
 }
 
+
 export const getStaticPaths: GetStaticPaths = async () => {
     const paths = await container.resolve("CategoryService").getAllCategorySlugs()
     // console.log("Paths are: -------------------------\n", paths)
@@ -45,14 +44,11 @@ export const getStaticPaths: GetStaticPaths = async () => {
 
 
 export const getStaticProps: GetStaticProps = async ({ params }) => {
-    // console.log("Got slug: ", params.slug);
     const categoryData = await container.resolve("CategoryService").getCategoryByText(params?.slug);
-    // console.log("goodData is: ", categoryData);
-    const parsedData = JSON.parse(JSON.stringify(categoryData));
-    // console.log("parsedData is: ", parsedData)
+    const category = JSON.parse(JSON.stringify(categoryData));
     return {
         props: {
-            parsedData
+            category
         }
     }
 }

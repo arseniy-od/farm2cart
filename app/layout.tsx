@@ -8,9 +8,11 @@ import { useRouter } from 'next/navigation';
 
 export const siteTitle = 'farm2cart';
 
-export default function Layout({ children, home }) {
+export default function Layout({ children, home=false }) {
     const { push } = useRouter();
-    const [user, setUser] = useState(null);
+    const [user, setUser] = useState({
+
+    });
 
 
     const handleLogout = async (event) => {
@@ -53,7 +55,8 @@ export default function Layout({ children, home }) {
                             </Link>
                         </h2>
                     )}
-                    {!user || user.error ?
+                    {!user || user.error 
+                        ?
                         <div>
                             <Link className="" href="http://localhost:3000/signup">Sign up</Link>
                             <Link className="ml-4" href="http://localhost:3000/login">Login</Link>

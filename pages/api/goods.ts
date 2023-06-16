@@ -18,6 +18,11 @@ const uploadMiddleware = upload.single('file');
 
 const router = createRouter<NextApiRequest, NextApiResponse>();
 
+export type GoodDataType = {
+
+}
+
+
 router
     .use(session)
     .use(passport.initialize())
@@ -42,8 +47,13 @@ router
         res.json(good);
     })
     .delete(async (req, res) => {
-        const good = await container.resolve("GoodService").deleteGood(req.query.id);
-        res.json({ res: "Good deleted" });
+        if (req.query.id) {
+            const good = await container.resolve("GoodService").deleteGood(req.query.id);
+            res.json({ res: "Good deleted" });
+        } else {
+            res.json({error: true, message: "id not found"})
+        }
+        
     });
 
 

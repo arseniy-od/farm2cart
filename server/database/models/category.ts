@@ -14,7 +14,7 @@ export type CategoryType = typeof Model & {
 
 
 const CategoryModel = (ctx: IContextContainer) => {
-  const Category = <CategoryType>ctx.db.define<ICategoryModel>('Category', {
+  const Category = <CategoryType>ctx.db.define<ICategoryModel>('category', {
     text: DataTypes.STRING
   },
     {

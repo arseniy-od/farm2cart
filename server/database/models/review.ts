@@ -8,7 +8,8 @@ export interface IReviewModel extends Model<InferAttributes<IReviewModel>, Infer
   goodId: number,
   text: string,
   score: number,
-  authorId: number
+  authorId: number,
+  datepub: Date
 }
 
 
@@ -22,7 +23,8 @@ const ReviewModel = (ctx: IContextContainer) => {
     goodId: DataTypes.INTEGER,
     text: DataTypes.TEXT,
     score: DataTypes.FLOAT,
-    authorId: DataTypes.INTEGER
+    authorId: DataTypes.INTEGER,
+    datepub: DataTypes.DATE,
   }, 
   { timestamps: false }
   );

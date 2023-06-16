@@ -1,16 +1,30 @@
 import { createRouter } from "next-connect";
+import { NextApiRequest, NextApiResponse } from "next";
 import Link from 'next/link'
 import axios from "axios";
-import { useState } from 'react'
+import { useState, MouseEvent, ChangeEvent } from 'react'
 import { useRouter } from 'next/navigation';
 
 import Layout from '@/app/layout'
 import container from "@/server/container";
+import {category} from '@/app/interfaces'
 
 
-export default function Home({ categories }) {
+interface Good {
+    title: string;
+    description: string;
+    imageUrl: string;
+    price: string;
+    categories: number[];
+    file: File | null;
+    available: string,
+    NewCategory: string;
+}
+
+
+export default function Home({ categories }: { categories: category[] }) {
     const { push } = useRouter();
-    const [good, setGood] = useState({
+    const [good, setGood] = useState<Good>({
         title: '',
         description: '',
         imageUrl: '',
@@ -21,12 +35,16 @@ export default function Home({ categories }) {
         NewCategory: '',
     });
 
-    const handleFileChange = (event) => {
-        const file = event.target.files[0];
-        setGood({ ...good, file });
+    const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
+        if (event.target.files) {
+            const file = event.target.files[0];
+            setGood({ ...good, file });
+        } else {
+            console.error("[File change] File not found")
+        }
     };
 
-    const handleCategoryChange = (event) => {
+    const handleCategoryChange = (event: ChangeEvent<HTMLInputElement>) => {
         const category = parseInt(event.target.name);
         const isChecked = event.target.checked;
         if (isChecked) {
@@ -36,10 +54,15 @@ export default function Home({ categories }) {
         }
     };
 
-    const handleSubmit = async (event) => {
+    const handleSubmit = async (event: MouseEvent<HTMLButtonElement>) => {
         event.preventDefault();
         const formData = new FormData();
-        console.log("GOOD FILE: ", good.file)
+        // console.log("GOOD FILE: ", good.file)
+        if (!good.file) {
+            console.error("[submit] File not found")
+            return
+        }
+
         formData.append("file", good.file);
         formData.append("title", good.title);
         formData.append("description", good.description);
@@ -50,13 +73,9 @@ export default function Home({ categories }) {
         formData.append("active", "1")
 
         good.categories.forEach((category) => {
-            formData.append("categories", category);
+            formData.append("categories", category.toString());
         });
-
-
-        console.log("Good object: ", good)
-
-
+        // console.log("Good object: ", good)
         const config = {
             headers: { 'content-type': 'multipart/form-data' },
         };
@@ -79,7 +98,7 @@ export default function Home({ categories }) {
                                     <label htmlFor="title">Title: </label>
                                 </div>
                                 <input type="text" id="title" value={good.title} onChange={(event) => setGood({ ...good, title: event.target.value })}
-                                    className="mt-2 px-4 py-3 w-full max-w-xs border-2" placeholder="title" />
+                                    className="mt-2 px-4 py-3 w-full max-w-xs border-2" placeholder="title" required/>
                             </div>
                             <div>
                                 <div><label htmlFor="description">Description: </label></div>
@@ -88,12 +107,12 @@ export default function Home({ categories }) {
                                     className="mt-2 px-4 py-3 w-full max-w-xs border-2" placeholder="description" />
                             </div>
                             <div>
-                                <input type="file" name="file" onChange={handleFileChange} />
+                                <input type="file" name="file" onChange={handleFileChange} required/>
                             </div>
                             <div>
                                 <div><label htmlFor="price">Price: </label></div>
                                 <input type="number" min="0" step="0.05" id="price" value={good.price} onChange={(event) => setGood({ ...good, price: event.target.value })}
-                                    className="mt-2 px-4 py-3 w-full max-w-xs border-2" placeholder="price" />
+                                    className="mt-2 px-4 py-3 w-full max-w-xs border-2" placeholder="price" required/>
                             </div>
                             <div>
                                 <div><label htmlFor="available">available: </label></div>
@@ -106,8 +125,8 @@ export default function Home({ categories }) {
                                 {categories.map((category, i) => (
                                     <div key={i}>
                                         <p>
-                                            <input type="checkbox" name={category.id} checked={good.categories.includes(category.id)} onChange={handleCategoryChange} />
-                                            <label htmlFor={category.id}> {category.text}</label>
+                                            <label htmlFor={category.id.toString()}> {category.text}</label>
+                                            <input type="checkbox" name={category.id.toString()} checked={good.categories.includes(category.id)} onChange={handleCategoryChange} />
                                         </p>
                                     </div>
 
@@ -137,7 +156,7 @@ export default function Home({ categories }) {
 
 
 
-const router = createRouter()
+const router = createRouter<NextApiRequest, NextApiResponse>()
     .get(async (req, res) => {
         const categories = await container.resolve("CategoryService").getCategories();
         if (!categories) {

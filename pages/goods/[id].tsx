@@ -1,6 +1,6 @@
 import { GetServerSideProps } from 'next'
-import { useState } from 'react'
 import { useRouter } from 'next/navigation';
+import { useState, MouseEvent } from "react";
 
 import Image from 'next/image';
 import Link from 'next/link';
@@ -9,23 +9,23 @@ import Layout from '@/app/layout';
 import GoodCard from '@/app/components/goodCard'
 import { formatDate } from '@/app/utils'
 import container from '@/server/container'
+import { GoodProps, good } from '@/app/interfaces';
 
 
-export default function Good(props) {
-    const good = props.parsedData;
-    const categories = good.Categories;
+export default function Good({ good }: GoodProps) {
+    const categories = good.categories;
 
     const { push } = useRouter();
     const [review, setReview] = useState({
         goodId: good.id,
         text: "",
-        score: null
+        score: ""
     });
 
     const [reviews, setReviews] = useState(good.reviews);
     // setReviews(reviews.sort((a, b) => a.score - b.score))
 
-    const handleDelete = async (event) => {
+    const handleDelete = async (event: MouseEvent<HTMLButtonElement>) => {
         const res = await fetch(`/api/goods/?id=${good.id}`, {
             method: 'DELETE',
             headers: {
@@ -41,9 +41,9 @@ export default function Good(props) {
             console.log("Good not deleted")
         }
     };
-    const handleSubmit = async (event) => {
+    const handleSubmit = async (event: MouseEvent<HTMLButtonElement>) => {
         event.preventDefault();
-        
+
 
         const res = await fetch('/api/reviews', {
             method: 'POST',
@@ -54,20 +54,29 @@ export default function Good(props) {
         });
 
         if (res.ok) {
-            const newReview = await res.json();
-            console.log("--------------NEW--------------");
-            console.log(newReview);
+            let newReview = await res.json();
+            newReview = { ...newReview, new: true }
             setReviews([...reviews, newReview]);
             setReview({
                 goodId: good.id,
                 text: "",
-                score: null
+                score: ""
             });
             console.log("Review creation ok")
         } else {
             console.log("Review creation not ok")
         }
     };
+
+    if (good.notFound) {
+        return (
+            <Layout>
+                <div className='ml-6 mt-6 text-2xl font-semibold'>
+                    Good not found
+                </div>
+            </Layout>
+        );
+    }
 
     return (
         <Layout>
@@ -77,26 +86,34 @@ export default function Good(props) {
             </div>
 
             <div>
-                {reviews.length !== 0 
-                ? reviews.map((review, i) => (
-                    <div key={i}>
-                        <div className='ml-5 mt-3 px-4 py-4 border-2 border-gray-200 max-w-xs rounded-lg'>
-                            <div className='px-3 py-2 flex justify-between'>
-                            <Link href={'/users/' + review.author.id}>
-                                <div>{review.author.username}</div>
-                            </Link>
-                            <div className="text-gray-700">{formatDate(review.datepub)}</div>
+                {reviews.length !== 0
+                    ? reviews.map((review, i) => (
+                        <div key={i}>
+                            <div className='ml-5 mt-3 px-4 py-4 border-2 border-gray-200 max-w-xs rounded-lg'>
+                                <div>
+                                    {review.new
+                                        ?
+                                        <div className='px-3 py-2 flex justify-between'>
+                                            <div>You</div>
+                                            <div className="text-gray-700">Now</div>
+                                        </div>
+                                        : <div className='px-3 py-2 flex justify-between'>
+                                            <Link href={'/users/' + review.author.id}>
+                                                <div>{review.author.username}</div>
+                                            </Link>
+                                            <div className="text-gray-700">{formatDate(review.datepub)}</div>
+                                        </div>}
+                                </div>
+                                <div>Score: {review.score}</div>
+                                <div className="px-4 py-3 shadow-lg rounded-lg">
+
+                                    <p className=''>{review.text}</p>
+                                </div>
+
                             </div>
-                            <div>Score: {review.score}</div>
-                            <div className="px-4 py-3 shadow-lg rounded-lg">
-                                
-                                <p className=''>{review.text}</p>
-                            </div>
-                            
                         </div>
-                    </div>
-                ))
-                : null
+                    ))
+                    : null
                 }
                 <div className="mt-6">
                     <form className="text-center">
@@ -104,16 +121,16 @@ export default function Good(props) {
                         <div>
                             <label htmlFor="score">Score: </label>
                             <input type="number" id="score" value={review.score} onChange={(event) => setReview({ ...review, score: event.target.value })}
-                                className="mt-2 px-4 py-3 w-full max-w-xs border-2" />
-        
+                                className="mt-2 px-4 py-3 w-full max-w-xs border-2" required/>
+
                         </div>
                         <div>
                             <label htmlFor="review">Review: </label>
-                            <textarea 
-                            id="review" 
-                                value={review.text} 
+                            <textarea
+                                id="review"
+                                value={review.text}
                                 onChange={(event) => setReview({ ...review, text: event.target.value })}
-                                className="w-full h-48 px-3 py-2 placeholder-gray-400 text-gray-700 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent" placeholder="Enter your text here">          
+                                className="w-full h-48 px-3 py-2 placeholder-gray-400 text-gray-700 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent" placeholder="Enter your text here">
                             </textarea>
                         </div>
                         <button
@@ -122,30 +139,23 @@ export default function Good(props) {
                     </form>
                 </div>
             </div>
-            
+
         </Layout>
     );
 }
 
-// export const getStaticPaths: GetStaticPaths = async () => {
-//     const paths = await container.resolve("GoodService").getAllGoodIds()
-//     return {
-//         paths,
-//         fallback: false
-//     }
-// }
-
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
-    const { id } = ctx.query; 
-    const goodData = await container.resolve("GoodService").findGoodById(id);
-    const parsedData = goodData;
+    const { id } = ctx.query;
+    if (!id || id instanceof Array) { return { props: { good: {notFound: true }} } }
+
+    const good: good = await container.resolve("GoodService").findGoodById(id);
     // console.log("Before", parsedData.reviews)
-    parsedData.reviews.sort((a, b,) => new Date(a.datepub) - new Date(b.datepub))
+    good.reviews.sort((a, b) => new Date(a.datepub).getTime() - new Date(b.datepub).getTime())
     // console.log("After", parsedData.reviews)
     return {
         props: {
-            parsedData
+            good
         }
     }
 }

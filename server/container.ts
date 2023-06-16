@@ -1,11 +1,11 @@
 import * as awilix from 'awilix';
 import { Sequelize } from 'sequelize';
+import mysql2 from 'mysql2';
+
 import modelContainer, { IModelContainer }  from './database/models';
-
-
 import services, { IServicesContainer } from './services';
 // import controllers, { IControllerContainer } from './controllers';
-import mysql2 from 'mysql2';
+
 
 export interface IContextContainer extends IModelContainer, IServicesContainer {
     db: Sequelize;

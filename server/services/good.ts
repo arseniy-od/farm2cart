@@ -1,8 +1,7 @@
 import { Sequelize } from 'sequelize';
-import BaseContext from '../baseContext';
-// import { User, Review, Good, Order, OrderGood, Category, CategoryGood, Company } from '@/server/database/models'
-// import sequelize from '@/server/database/models/connection';
 
+import BaseContext from '../baseContext';
+import {GoodDataType} from '@/pages/api/goods'
 
 export default class GoodService extends BaseContext {
     
@@ -12,11 +11,17 @@ export default class GoodService extends BaseContext {
     private Category = this.di.Category;
     private Order = this.di.Order;
 
-    private goodOpts = {
-        attributes: ["id", "title", "description", "price", "imageUrl", "available", "active",
-            [Sequelize.fn("avg", Sequelize.col("reviews.score")), "averageScore"],
-            [Sequelize.fn("count", Sequelize.col("reviews.id")), "reviewsCount"]],
-            group: ['good.id', 'title', 'Categories.text', 'Categories.id'],
+
+    async getGoods() {    
+        
+        const goods = await this.Good.findAll({
+            where: {active: 1},
+            attributes: [
+                "id", "title", "description", "price", "imageUrl", "available", "active",
+                [Sequelize.fn("avg", Sequelize.col("reviews.score")), "averageScore"],
+                [Sequelize.fn("count", Sequelize.col("reviews.id")), "reviewsCount"]
+            ],
+            group: ['good.id', 'title', 'categories.text', 'categories.id'],
             include: [
                 {
                     attributes: [
@@ -37,19 +42,12 @@ export default class GoodService extends BaseContext {
                     attributes: [],
                 },
             ],
-    }
-
-    async getGoods() {    
-        const goods = await this.Good.findAll({
-            where: {active: 1},
-            ...this.goodOpts
         });
         return goods;
     }
 
     async findGoodById(id: string) {
-        const good = await this.Good.findOne(
-            {
+        const good = await this.Good.findOne({
                 where: { id },
                 include: [
                     {
@@ -72,7 +70,7 @@ export default class GoodService extends BaseContext {
                         include: [
                             {
                                 model: this.User,
-                                attributes: ['id', 'username'],
+                                attributes: ['id', 'username', 'email'],
                                 as: "author"
                             }
                         ],
@@ -90,19 +88,8 @@ export default class GoodService extends BaseContext {
         if (good) { return {...JSON.parse(JSON.stringify(good)), ...JSON.parse(JSON.stringify(avgScore))}}
         return { error: true, message: "Good not found" }
     }
-    
-    // async getAllGoodIds() {
-    //     const goods = await this.Good.findAll()
-    //     return goods.map(good => {
-    //         return {
-    //             params: {
-    //                 id: good.id.toString()
-    //             }
-    //         }
-    //     })
-    // }
-    
-    async createGood(goodData) {
+
+    async createGood(goodData:GoodDataType) {
         const newGood = await this.Good.create(goodData);
         await goodData.categories.forEach(async catId => {
             const categoryGood = await this.Category.findOne({ where: { id: catId } })
@@ -115,16 +102,41 @@ export default class GoodService extends BaseContext {
         return newGood
     }
     
-    async getGoodsForUser(userId) { 
+    async getGoodsForUser(id: number) { 
         const goods = await this.Good.findAll({
-            where: { seller_id: userId },
-            ...this.goodOpts
+            where: { seller_id: id },
+            attributes: [
+                "id", "title", "description", "price", "imageUrl", "available", "active",
+                [Sequelize.fn("avg", Sequelize.col("reviews.score")), "averageScore"],
+                [Sequelize.fn("count", Sequelize.col("reviews.id")), "reviewsCount"]
+            ],
+            group: ['good.id', 'title', 'categories.text', 'categories.id'],
+            include: [
+                {
+                    attributes: [
+                        'id',
+                        'username',
+                        'email',
+                    ],
+                    model: this.User,
+                    as: 'seller'
+                },
+                {
+                    model: this.Category,
+                    attributes: ['text'],
+                },
+                {
+                    model: this.Review,
+                    as: "reviews",
+                    attributes: [],
+                },
+            ],
         });
             return goods;
         };
     
     
-    async deleteGood(id) {
+    async deleteGood(id: string) {
         console.log('======================================')
         console.log("Desactivating good with id: ", id)
         const good = await this.Good.findOne({ where: { id } })

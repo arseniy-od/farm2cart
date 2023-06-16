@@ -1,13 +1,14 @@
-import { useState } from "react";
+import { useState, MouseEvent } from "react";
 import axios from "axios";
 
 import Layout from "@/app/layout";
+import {category} from "@/app/interfaces" 
 
 
 export default function CategoryCreate() {
     const [text, setText] = useState('');
 
-    async function handleSubmit(event) {
+    async function handleSubmit(event: MouseEvent<HTMLButtonElement>): Promise<object> {
         event.preventDefault();
         console.log(text)
         const config = {
@@ -15,7 +16,7 @@ export default function CategoryCreate() {
         };
 
         const response = await axios.post('/api/categories', { text }, config);
-        return await response.json()
+        return await response.data.json()
     }
 
     return (
