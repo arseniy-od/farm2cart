@@ -7,7 +7,9 @@ export default function GoodCard({ good, categories }) {
     const [inCart, setInCart] = useState(false)
     const isInCart = async () => {
         const cart = await fetch('/api/cart')
+        // console.log("[GoodCard] cart is: ", cart)
         const cartContent = await cart.json()
+        // console.log("[GoodCard] cart.json is: ", cartContent)
         if (!cartContent.blank) {
             let isFound = false
             for (let product of cartContent) {

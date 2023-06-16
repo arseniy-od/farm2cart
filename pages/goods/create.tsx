@@ -17,7 +17,8 @@ export default function Home({ categories }) {
         price: '',
         categories: [],
         file: null,
-        available: '1'
+        available: '1',
+        NewCategory: '',
     });
 
     const handleFileChange = (event) => {
@@ -35,16 +36,6 @@ export default function Home({ categories }) {
         }
     };
 
-
-    // const onChange = async (formData) => {
-    //     const config = {
-    //       headers: { 'content-type': 'multipart/form-data' },
-    //     };
-
-    // const response = await axios.post('/api/goods', formData, config);
-
-
-
     const handleSubmit = async (event) => {
         event.preventDefault();
         const formData = new FormData();
@@ -55,6 +46,8 @@ export default function Home({ categories }) {
         formData.append("imageUrl", good.imageUrl);
         formData.append("price", good.price);
         formData.append("available", good.available);
+        formData.append("NewCategory", good.NewCategory);
+        formData.append("active", "1")
 
         good.categories.forEach((category) => {
             formData.append("categories", category);
@@ -85,14 +78,13 @@ export default function Home({ categories }) {
                                 <div>
                                     <label htmlFor="title">Title: </label>
                                 </div>
-
                                 <input type="text" id="title" value={good.title} onChange={(event) => setGood({ ...good, title: event.target.value })}
                                     className="mt-2 px-4 py-3 w-full max-w-xs border-2" placeholder="title" />
                             </div>
                             <div>
                                 <div><label htmlFor="description">Description: </label></div>
                                 
-                                <input type="text" id="description" value={good.description} onChange={(event) => setGood({ ...good, description: event.target.value })}
+                                <textarea id="description" value={good.description} onChange={(event) => setGood({ ...good, description: event.target.value })}
                                     className="mt-2 px-4 py-3 w-full max-w-xs border-2" placeholder="description" />
                             </div>
                             <div>
@@ -120,6 +112,14 @@ export default function Home({ categories }) {
                                     </div>
 
                                 ))}
+
+                            </div>
+                            <div>
+                                <div>
+                                    <label htmlFor="categoryNew">Create new category: </label>
+                                </div>
+                                <input type="text" id="categoryNew " value={good.NewCategory} onChange={(event) => setGood({ ...good, NewCategory: event.target.value })}
+                                    className="mt-2 px-4 py-3 w-full max-w-xs border-2" placeholder="new category" />
                             </div>
                             
                         </div>

@@ -105,9 +105,13 @@ export default class GoodService extends BaseContext {
     async createGood(goodData) {
         const newGood = await this.Good.create(goodData);
         await goodData.categories.forEach(async catId => {
-            const categoryGood = await Category.findOne({ where: { id: catId } })
+            const categoryGood = await this.Category.findOne({ where: { id: catId } })
             await newGood.addCategory(categoryGood)
         })
+        if (goodData.NewCategory) {
+            const NewCategory = await this.Category.create({text: goodData.NewCategory})
+            await newGood.addCategory(NewCategory)
+        }
         return newGood
     }
     

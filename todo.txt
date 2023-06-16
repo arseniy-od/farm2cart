@@ -1,5 +1,4 @@
 - Soft delete for goods:
-    * read docs on paranoid sequelize
 
 - Create category form at good creation:
     * read docs on get or create
@@ -10,5 +9,5 @@
 - Add styles
 
 
-Make goods/[id] serverside not static
+Make goods/[id] serverside not static + 
 categories too

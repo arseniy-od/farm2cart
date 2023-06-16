@@ -7,11 +7,10 @@ import GoodCard from '@/app/components/goodCard'
 import container from '@/server/container';
 
 
-export default function Good(props) {
+export default function Category(props) {
     const category = props.parsedData
     const goods = category.goods
-    console.log("[fg2g231g] Goods are: ", goods)
-
+    
     return (
         <Layout>
             <div>

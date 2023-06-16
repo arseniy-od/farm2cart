@@ -1,8 +1,24 @@
-import { Model, DataTypes } from "sequelize";
+import { BuildOptions, Model, DataTypes } from "sequelize";
+import { InferAttributes, InferCreationAttributes } from "sequelize";
+
+import { IContextContainer } from '../../container';
+import { IGoodModel } from "./good";
 
 
-const OrderModel = (ctx) => {
-  const Order = ctx.db.define('order', {
+export interface IOrderModel extends Model<InferAttributes<IOrderModel>, InferCreationAttributes<IOrderModel>>{
+  customerId: number
+  total: number
+  paymentStatus: string
+}
+
+
+export type OrderType = typeof Model & {
+  new(values?: object, options?: BuildOptions): IOrderModel
+}
+
+
+const OrderModel = (ctx: IContextContainer) => {
+  const Order = <OrderType>ctx.db.define<IOrderModel>('order', {
     customerId: DataTypes.INTEGER,
     total: DataTypes.FLOAT,
     paymentStatus: DataTypes.STRING

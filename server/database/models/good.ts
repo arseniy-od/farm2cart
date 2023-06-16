@@ -1,38 +1,27 @@
-// import {Model, DataTypes} from "sequelize";
-// import sequelize from './connection'
-// import { InferAttributes, InferCreationAttributes } from "sequelize";
+import { BuildOptions, Model, DataTypes } from "sequelize";
+import { InferAttributes, InferCreationAttributes } from "sequelize";
 
-// interface User {
-//   title: string
-//   imageUrl: string
-//   description: string
-//   price: number
-//   seller_id: number
-// }
+import { IContextContainer } from '../../container';
 
 
-// export interface IGoodModel extends Model<InferAttributes<IGoodModel>, InferCreationAttributes<IGoodModel>> {
-//   title: string
-//   imageUrl: string
-//   description: string
-//   price: number
-//   seller_id: number
-// }
+export interface IGoodModel extends Model<InferAttributes<IGoodModel>, InferCreationAttributes<IGoodModel>> {
+  title: string
+  imageUrl: string
+  description: string
+  price: number
+  seller_id: number
+  available: number
+  active: boolean
+}
 
 
-
-// class User extends Model<InferAttributes<User>, InferCreationAttributes<User>> {}
-
-
-// export interface IUserModel extends Model<InferAttributes<IGood>, InferCreationAttributes<IGood>> {}
+export type GoodType = typeof Model & {
+  new(values?: object, options?: BuildOptions): IGoodModel;
+}
 
 
-
-import { Model, DataTypes } from "sequelize";
-
-
-const GoodModel = (ctx) => {
-  const Good = ctx.db.define('good', {
+const GoodModel = (ctx: IContextContainer) => {
+  const Good = <GoodType>ctx.db.define<IGoodModel>('good', {
     title: {type: DataTypes.STRING, allowNull: false},
     imageUrl: DataTypes.STRING,
     description: DataTypes.TEXT,
@@ -40,12 +29,7 @@ const GoodModel = (ctx) => {
     seller_id: {type: DataTypes.INTEGER, allowNull: false},
     available: {type: DataTypes.INTEGER, allowNull: false},
     active: {type: DataTypes.TINYINT, allowNull: false}
-  },
-    {
-      // paranoid: true,
-      // timestamps: false,
-    }
-  );
+  }, {});
 
   ctx.User.hasMany(Good, { foreignKey: 'seller_id', as: 'goods', });
   Good.belongsTo(ctx.User, { foreignKey: 'seller_id', as: 'seller', });
@@ -53,28 +37,3 @@ const GoodModel = (ctx) => {
 }
 
 export default GoodModel
-
-
-
-//! Old
-
-// export default class Good extends Model {
-//   // declare title: string
-//   // imageUrl: string
-//   // description: string
-//   // price: number
-//   // seller_id: number
-// }
-// Good.init({
-//   title: {type: DataTypes.STRING, allowNull: false},
-//   imageUrl: DataTypes.STRING,
-//   description: DataTypes.TEXT,
-//   price: {type: DataTypes.FLOAT, allowNull:false},
-//   seller_id: {type: DataTypes.INTEGER, allowNull: false},
-//   available: {type: DataTypes.INTEGER, allowNull: false}
-// }, {
-//   sequelize,
-//   modelName: 'good',
-//   paranoid: true,
-//   // timestamps: false,
-// });

@@ -2,7 +2,7 @@ import { asFunction } from 'awilix'
 
 import UserModel from './user'
 import CompanyModel from './company'
-import GoodModel from './good'
+import GoodModel, {GoodType} from './good'
 import ReviewModel from './review'
 import CategoryModel from './category'
 import CategoryGoodModel from './categorygood'
@@ -10,6 +10,16 @@ import OrderGoodModel from './ordergood'
 import OrderModel from './order'
 
 
+export interface IModelContainer {
+    Company: CompanyModel
+    User: UserModel
+    Good: GoodType
+    Review: ReviewModel
+    CategoryGood: CategoryGoodModel
+    Category: CategoryModel
+    OrderGood: OrderGoodModel
+    Order: OrderModel
+}
 
 
 const modelContainer = {

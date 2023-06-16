@@ -1,10 +1,28 @@
-import { Model, DataTypes, BuildOptions } from "sequelize";
-import sequelize from './connection'
-import { IContextContainer } from '../../container';
-// import { IStoreModel } from '../../interfaces/stores';
+import { BuildOptions, Model, DataTypes } from "sequelize";
+import { InferAttributes, InferCreationAttributes } from "sequelize";
 
-const UserModel = (ctx) => {
-  const User = ctx.db.define('user', {
+import { IContextContainer } from '../../container';
+
+
+export interface IUserModel extends Model<InferAttributes<IUserModel>, InferCreationAttributes<IUserModel>> {
+  firstName: string
+  lastName: string
+  username: string
+  password: string
+  email: string
+  phoneNumber: string
+  role: string
+  companyId: number
+}
+
+
+export type UserType = typeof Model & {
+  new(values?: object, options?: BuildOptions): IUserModel
+}
+
+
+const UserModel = (ctx: IContextContainer) => {
+  const User = <UserType>ctx.db.define<IUserModel>('user', {
     firstName: DataTypes.STRING,
     lastName: DataTypes.STRING,
     username: DataTypes.STRING,
