@@ -166,6 +166,6 @@ const router = createRouter<NextApiRequest, NextApiResponse>()
     });
 
 
-export async function getServerSideProps({ req, res }) {
+export async function getServerSideProps({ req, res }: {req: NextApiRequest, res: NextApiResponse}) {
     return await router.run(req, res)
 }

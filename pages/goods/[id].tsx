@@ -149,7 +149,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
     const { id } = ctx.query;
     if (!id || id instanceof Array) { return { props: { good: {notFound: true }} } }
 
-    const good: good = await container.resolve("GoodService").findGoodById(id);
+    const good: good = await container.resolve("GoodService").getGoodById(id);
     // console.log("Before", parsedData.reviews)
     good.reviews.sort((a, b) => new Date(a.datepub).getTime() - new Date(b.datepub).getTime())
     // console.log("After", parsedData.reviews)

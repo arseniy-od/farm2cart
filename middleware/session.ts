@@ -53,7 +53,7 @@ const passportSession = passport.session();
 
 export const middlewares = [
   async (req, res, next) => {
-    const f = {}
+    const f: {resolve: (value?: unknown) => void} = {resolve: () => null}
     const pr: Promise<unknown> = new Promise((resolve, reject) => {
         f.resolve = resolve;
     });

@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import { useRouter } from 'next/navigation';
-import { useState } from 'react'
+import { useState, MouseEvent } from 'react'
 
 import Layout from '../app/layout'
 
@@ -19,7 +19,7 @@ export default function Home() {
 
 
 
-    const handleSubmit = async (event) => {
+    const handleSubmit = async (event: MouseEvent<HTMLButtonElement>) => {
         event.preventDefault();
 
         const res = await fetch('/api/users', {
@@ -57,11 +57,11 @@ export default function Home() {
                         </div>
                         <div>
                             <input type="text" value={user.email} onChange={(event) => setUser({ ...user, email: event.target.value })}
-                                className="mt-2 px-4 py-3 w-full max-w-xs border-2" placeholder="email" />
+                                className="mt-2 px-4 py-3 w-full max-w-xs border-2" placeholder="email" autoComplete='email'/>
                         </div>
                         <div>
                             <input type="text" value={user.username} onChange={(event) => setUser({ ...user, username: event.target.value })}
-                                className="mt-2 px-4 py-3 w-full max-w-xs border-2" placeholder="username" />
+                                className="mt-2 px-4 py-3 w-full max-w-xs border-2" placeholder="username" autoComplete='off'/>
                         </div>
                         <div>
                             <input type="password" value={user.password} onChange={(event) => setUser({ ...user, password: event.target.value })}

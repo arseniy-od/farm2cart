@@ -3,9 +3,10 @@ import Link from "next/link";
 
 import Layout from '@/app/layout'
 import container from '@/server/container'
+import { NextApiRequest, NextApiResponse } from "next";
 
 
-export default function Category(props){
+export default function Category(props: {categories: {id: number, text: string}[]}){
   const { categories } = props;
 
   return (
@@ -35,6 +36,6 @@ const router = createRouter()
     });
 
 
-export async function getServerSideProps({ req, res }) {
+export async function getServerSideProps({ req, res }: {req: NextApiRequest, res: NextApiResponse}) {
   return await router.run(req, res);
 }

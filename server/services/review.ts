@@ -1,3 +1,4 @@
+import { review } from "@/app/interfaces";
 import BaseContext from "../baseContext";
 
 export default class ReviewService extends BaseContext {
@@ -26,7 +27,7 @@ export default class ReviewService extends BaseContext {
     }
     
     
-    async getReviewById(id) {
+    async getReviewById(id: string|number) {
         return await this.Review.findOne({
                 where: {id},
                 attributes: ['text', 'score', 'datepub'],
@@ -46,8 +47,7 @@ export default class ReviewService extends BaseContext {
             });
     }
     
-    async createReview(reviewData) {
+    async createReview(reviewData: review) {
         return await this.Review.create(reviewData);
-
     }   
 }

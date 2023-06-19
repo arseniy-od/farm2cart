@@ -11,3 +11,8 @@
 
 Make goods/[id] serverside not static + 
 categories too
+
+
+Add logic for companies:
+ - create
+ - show

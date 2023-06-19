@@ -1,9 +1,10 @@
-import {BuildOptions, Model, DataTypes } from "sequelize";
+import {BuildOptions, Model, DataTypes, CreationOptional } from "sequelize";
 import { IContextContainer } from '../../container';
 import { InferAttributes, InferCreationAttributes } from "sequelize";
 
 
 export interface ICompanyModel extends Model<InferAttributes<ICompanyModel>, InferCreationAttributes<ICompanyModel>> {
+  id: CreationOptional<number>;
   name: string
   description: string
   address: string,
@@ -18,6 +19,12 @@ export type CompanyType = typeof Model & {
 
 const CompanyModel = (ctx: IContextContainer) => {
   const Company = <CompanyType>ctx.db.define<ICompanyModel>('Company', {
+    id: {
+      allowNull: false,
+      autoIncrement: true,
+      primaryKey: true,
+      type: DataTypes.INTEGER
+    },
     name: { type: DataTypes.STRING, allowNull: false },
     description: DataTypes.TEXT,
     address: DataTypes.STRING,

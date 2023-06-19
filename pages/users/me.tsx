@@ -7,10 +7,14 @@ import Link from "next/link";
 import { isConstructorDeclaration } from "typescript";
 import GoodCard from "@/app/components/goodCard";
 import container from "@/server/container";
+import { NextApiRequest, NextApiResponse } from "next";
+import { GoodsProps, user } from "@/app/interfaces";
+import OrderCard from "@/app/components/orderCard";
 
 
-export default function User({ goods }) {
-    const [user, setUser] = useState(null);
+export default function User({ goods, orders }: GoodsProps) {
+    type userType = user & { error?: string, message?: string }
+    const [user, setUser] = useState(null as null | userType);
     const [isLoading, setLoading] = useState(false);
     function fetchUser() {
         setLoading(true);
@@ -24,8 +28,8 @@ export default function User({ goods }) {
 
     useEffect(fetchUser, []);
 
-    if (isLoading) return <Layout></Layout>;
-    if (!user) return <Layout></Layout>;
+    if (isLoading) return <Layout><div>loading...</div></Layout>;
+    if (!user) return <Layout><div>User not found</div></Layout>;
 
     if (user.error) {
         return <Layout><h2 className="ml-5 mt-5 text-2xl">{user.message}</h2></Layout>
@@ -39,14 +43,19 @@ export default function User({ goods }) {
             <div>
                 {user.role === "seller" || "admin"
                     ? <div>
-                        <div>
-                            <Link href="/goods/create">Add new product</Link>
-                        </div>
                         <h3 className="ml-5 mt-3 text-xl">Your products:</h3>
                         {goods.map((good, i) => (
                             <div key={i}>
                                 <div>
-                                    <GoodCard good={good} categories={good.Categories}/>
+                                    <GoodCard good={good} categories={good.categories} />
+                                </div>
+                            </div>
+                        ))}
+
+                        {orders.map((order, i) => (
+                            <div key={i}>
+                                <div key={i}>
+                                    <OrderCard order={order}/>
                                 </div>
                             </div>
                         ))}
@@ -67,22 +76,23 @@ const router = createRouter()
     .use(middlewares[0])
     .use(middlewares[1])
     .get(async (req, res) => {
-        // console.log("session: ", req.session);
-
-        const goods = await container.resolve("GoodService").getGoodsForUser(req.user.id);
+        const goods = await container.resolve("GoodService").getGoodsBySellerId(req.user.id);
+        const orders = await container.resolve("OrderService").getOrdersByCustomerId(req.user.id)
         const parsedGoods = JSON.parse(JSON.stringify(goods))
-        // console.log("-----------------------------------------------\n\n")
-        // console.log("Goods are: ", parsedGoods)
+        const parsedOrders = JSON.parse(JSON.stringify(orders))
         if (!goods) {
             return { props: { notFound: true } };
         }
-        return { props: { goods: parsedGoods, } };
+        return {
+            props: {
+                goods: parsedGoods,
+                orders: parsedOrders
+            }
+        };
     });
 
 
-export async function getServerSideProps({ req, res }) {
-    // console.log("<<<<<<<<<<<<<<<<SSR>>>>>>>>>>>>>>>>>>>>")
+export async function getServerSideProps({ req, res }: { req: NextApiRequest, res: NextApiResponse }) {
     const response = await router.run(req, res);
-    // console.log("[SSR] response: ", response)
     return response
 }

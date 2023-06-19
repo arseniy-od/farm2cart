@@ -4,7 +4,7 @@ import Layout from '../app/layout'
 
 export default function Home() {
 
-    function SiteLink({href, text}) {
+    function SiteLink({href, text}: {href: string, text: string}) {
         return (
             <div className="ml-3 mt-2 max-w-xs">
                 <Link className="px-5 py-3 text-gray-900 inline-block bg-gray-300 hover:bg-gray-400 min-w-full border-2 rounded-lg text-center" href={href}>{text}</Link>

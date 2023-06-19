@@ -49,6 +49,7 @@
   },
   "devDependencies": {
     "@types/multer": "^1.4.7",
-    "@types/passport": "^1.0.12"
+    "@types/passport": "^1.0.12",
+    "@types/passport-local": "^1.0.35"
   }
 }

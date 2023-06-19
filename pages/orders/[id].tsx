@@ -2,23 +2,21 @@ import { GetServerSideProps } from 'next'
 
 import Layout from '@/app/layout';
 import container from '@/server/container';
+import { OrderProps } from '@/app/interfaces';
+import OrderCard from '@/app/components/orderCard';
 
 
-export default function Order({order}) {
+export default function Order({order}: OrderProps) {
+    if (order.notFound) {
+        return (
+            <Layout>
+                <h1 className='text-2xl font-semibold'>Order not found</h1>
+            </Layout>
+        )
+    }
     return (
         <Layout>
-            <div>Order #{order.id}</div>
-            <div>total: {order.total}</div>
-            <div>
-                <div>Goods: </div>
-                {order.goods.map((good, i) => (
-                    <div key={i}>
-                        <div>
-                            {good.OrderGood.quantity}x {good.title} for {good.price} each
-                        </div>
-                    </div>
-                ))}
-            </div>
+            <OrderCard order={order}/>
         </Layout>
     );
 }
@@ -27,6 +25,8 @@ export default function Order({order}) {
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
     // console.log("Got slug: ", params.slug);
     const { id } = ctx.query;
+    if (!id || id instanceof Array) { return { props: { order: {notFound: true }} } }
+    
     let orderData = await container.resolve("OrderService").getOrderById(id);
     // console.log("goodData is: ", categoryData);
     orderData = JSON.parse(JSON.stringify(orderData));

@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import Layout from '../app/layout'
-import { useState } from 'react'
+import { useState, MouseEvent } from 'react'
 import { useRouter } from 'next/navigation';
 
 
@@ -11,7 +11,7 @@ export default function Home() {
         password: '',
     });
 
-    const handleSubmit = async (event) => {
+    const handleSubmit = async (event: MouseEvent<HTMLButtonElement>) => {
         event.preventDefault();
         
 
@@ -43,11 +43,11 @@ export default function Home() {
                         <h3 className="text-xl">Login</h3>
                         <div>
                             <input type="text" value={user.email} onChange={(event) => setUser({ ...user, email: event.target.value })}
-                                className="mt-2 px-4 py-3 w-full max-w-xs border-2" placeholder="email" />
+                                className="mt-2 px-4 py-3 w-full max-w-xs border-2" placeholder="email" autoComplete='email'/>
                         </div>
                         <div>
                             <input type="password" value={user.password} onChange={(event) => setUser({ ...user, password: event.target.value })}
-                                className="mt-2 px-4 py-3 w-full max-w-xs border-2" placeholder="password" />
+                                className="mt-2 px-4 py-3 w-full max-w-xs border-2" placeholder="password" autoComplete='password'/>
                         </div>
                         <button
                             onClick={handleSubmit}

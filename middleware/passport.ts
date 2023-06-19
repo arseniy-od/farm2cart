@@ -4,9 +4,9 @@ import container from '@/server/container';
 import { NextApiRequest } from 'next';
 
 
-passport.serializeUser((user, callback) => {
+passport.serializeUser((user, done) => {
     console.log('passport serialize, userid=', user.id);
-    callback(null, user.id);
+    done(null, user.id);
 });
 
 
@@ -19,21 +19,22 @@ passport.deserializeUser((req:NextApiRequest, id:number, done) => {
 
 passport.use(
     new LocalStrategy({usernameField: 'email', passReqToCallback: true,},
-        (req, email, password, done) => {
-            // console.log("request to resolve user");
+        (req: NextApiRequest, email: string, password:string, done) => {
             
             container.resolve("UserService").findUserByEmail(email).then((user) => {
-                // console.log("[passport] User found: ", user.username)
+                if (!user) {
+                    done(true, false, { message: 'User not found' });
+                    return 
+                }
                 container.resolve("UserService").validatePassword(user, password).then((isValid)=> {
-                if (user && isValid) {
+                if (isValid) {
                     // console.log("[passport] User password is valid")
                     done(null, user);
                 } else {
-                    done(true, false, { message: 'Email or password is incorrect' });
+                    done(true, false, { message: 'Password is incorrect' });
                 }
             }
             );
-        
     }).catch((err) => done(err));
 }));
 

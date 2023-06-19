@@ -12,10 +12,10 @@ export default class CategoryService extends BaseContext {
                 include: [
                     {
                         model: this.Good,
-                        include : [
-                            {model: this.User, as: "seller"},
-                            {model: this.Category, as: "Categories"}
-                        ]
+                        // include : [
+                        //     {model: this.User, as: "seller"},
+                        //     {model: this.Category, as: "categories"}
+                        // ]
                     }
                 ]
             })
@@ -45,15 +45,15 @@ export default class CategoryService extends BaseContext {
         );
     }
     
-    async createCategory(categoryData) {
+    async createCategory(categoryData: {text: string}) {
         return await this.Category.create(categoryData);
     }
     
-    async deleteCategory(id) {
+    async deleteCategory(id: string|number) {
         return await this.Category.destroy({where: { id }})
     }
     
-    async updateCategory(id, categoryData) {
+    async updateCategory(id: string|number, categoryData: {text: string}) {
         const category = await this.Category.findOne({where: {id}})
         if (!category) {
             return {error: true, message: "Category not found"}

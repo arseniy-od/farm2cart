@@ -1,9 +1,10 @@
 import Layout from "../layout";
 import Link from "next/link";
 import Image from "next/image";
-import { useState } from "react";
+import { useState, MouseEvent } from "react";
+import { category, good } from "../interfaces";
 
-export default function GoodCard({ good, categories }) {
+export default function GoodCard({ good, categories }: {good: good, categories: category[]}) {
     const [inCart, setInCart] = useState(false)
     const isInCart = async () => {
         const cart = await fetch('/api/cart')
@@ -24,7 +25,7 @@ export default function GoodCard({ good, categories }) {
     isInCart()
 
 
-    async function handleAddCart(event) {
+    async function handleAddCart(event: MouseEvent<HTMLButtonElement>) {
         console.log("Before post request")
         const res = await fetch('/api/cart', {
             method: 'POST',
@@ -61,12 +62,11 @@ export default function GoodCard({ good, categories }) {
                     </div>
                     <div className='px-2 py-2 bg-gray-100'>
                         <h3 className="text-xl font-semibold">{good.title}</h3>
-                        <div>{good.active}</div>
-                        {good.averageScore
+                        {good.averageScore && good.reviewsCount
                             ? 
                             <div className="mx-12 flex justify-between">
                                 <div>
-                                    Rating: {good.averageScore}
+                                    Rating: {good.averageScore.toFixed(2)}
                                 </div>
                             
                                 <div className="text-gray-600">
@@ -86,7 +86,7 @@ export default function GoodCard({ good, categories }) {
 
                     </div>
                 </div>
-                {categories && categories.length ? <Category good={good} /> : null}
+                {categories && categories.length ? <Category /> : null}
             </div>
         </div>
     );

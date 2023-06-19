@@ -3,6 +3,7 @@ import {createRouter} from "next-connect";
 import Layout from '@/app/layout'
 import container from '@/server/container'
 import { CompanyProps } from "@/app/interfaces";
+import { NextApiRequest, NextApiResponse } from "next";
 
 
 export default function Company(props: CompanyProps){
@@ -41,6 +42,6 @@ const router = createRouter()
     });
 
 
-export async function getServerSideProps({ req, res }) {
+export async function getServerSideProps({ req, res }: {req: NextApiRequest, res: NextApiResponse}) {
   return await router.run(req, res);
 }

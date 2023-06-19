@@ -5,10 +5,11 @@ import Link from 'next/link';
 import Layout from '@/app/layout';
 import GoodCard from '@/app/components/goodCard'
 import container from '@/server/container';
-import { CategoryProps } from '@/app/interfaces';
+import { CategoryProps, category, good } from '@/app/interfaces';
+import { IGoodModel } from '@/app/interfaces';
 
-
-export default function Category({category, goods}: CategoryProps) {
+export default function Category({category, goods}: {category: category, goods: good[]}) {
+    console.log("Goods: ", goods)
     return (
         <Layout>
             <div>
@@ -44,11 +45,22 @@ export const getStaticPaths: GetStaticPaths = async () => {
 
 
 export const getStaticProps: GetStaticProps = async ({ params }) => {
-    const categoryData = await container.resolve("CategoryService").getCategoryByText(params?.slug);
+    if (!params) {
+        console.error("No params at request")
+        return { props: { category: {notFound: true }} }
+    }
+    const slug = params.slug
+    if (!slug || slug instanceof Array) { return { props: { category: {notFound: true }} } }
+    const categoryData = await container.resolve("CategoryService").getCategoryByText(slug);
     const category = JSON.parse(JSON.stringify(categoryData));
+    const goods: good[] = []
+    for (const good of category.goods) {
+        goods.push(await  container.resolve("GoodService").getGoodById(good.id))
+    }
     return {
         props: {
-            category
+            category,
+            goods
         }
     }
 }

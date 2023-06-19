@@ -1,10 +1,11 @@
-import { BuildOptions, Model, DataTypes } from "sequelize";
+import { BuildOptions, Model, DataTypes, CreationOptional } from "sequelize";
 import { InferAttributes, InferCreationAttributes } from "sequelize";
 
 import { IContextContainer } from '../../container';
 
 
 export interface IUserModel extends Model<InferAttributes<IUserModel>, InferCreationAttributes<IUserModel>> {
+  id: CreationOptional<number>;
   firstName: string
   lastName: string
   username: string
@@ -23,6 +24,12 @@ export type UserType = typeof Model & {
 
 const UserModel = (ctx: IContextContainer) => {
   const User = <UserType>ctx.db.define<IUserModel>('user', {
+    id: {
+      allowNull: false,
+      autoIncrement: true,
+      primaryKey: true,
+      type: DataTypes.INTEGER
+    },
     firstName: DataTypes.STRING,
     lastName: DataTypes.STRING,
     username: DataTypes.STRING,

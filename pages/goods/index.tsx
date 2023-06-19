@@ -1,23 +1,16 @@
 import { createRouter } from "next-connect";
+import { NextApiRequest, NextApiResponse } from "next";
 import Layout from '@/app/layout'
 import Image from "next/image";
 import Link from "next/link";
 
-
 import container from '@/server/container'
-
 import GoodCard from '@/app/components/goodCard'
+import { good } from "@/app/interfaces";
 
-export default function Goods(props) {
+
+export default function Goods(props: {goods: good[]}) {
     const { goods } = props;
-    function Category({ good }) {
-        return (
-            <div>
-                {good.Categories.map((category, i) => (
-                    <div className="inline-block px-1 text-indigo-500" key={i}>{category.text}</div>))}
-            </div>
-        );
-    }
 
     return (
         <Layout>
@@ -27,7 +20,7 @@ export default function Goods(props) {
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
                     {goods.map((good, i) => (
                         <div key={i}>
-                                <GoodCard good={good} categories={good.Categories} />
+                                <GoodCard good={good} categories={good.categories} />
                         </div>
                     ))
                     }
@@ -48,6 +41,6 @@ const router = createRouter()
     });
 
 
-export async function getServerSideProps({ req, res }) {
+export async function getServerSideProps({ req, res }: {req: NextApiRequest, res: NextApiResponse}) {
     return await router.run(req, res);
 }

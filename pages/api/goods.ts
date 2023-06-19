@@ -18,10 +18,6 @@ const uploadMiddleware = upload.single('file');
 
 const router = createRouter<NextApiRequest, NextApiResponse>();
 
-export type GoodDataType = {
-
-}
-
 
 router
     .use(session)

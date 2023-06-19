@@ -1,10 +1,12 @@
 import Layout from '@/app/layout'
 import { createRouter } from "next-connect";
+import { NextApiRequest, NextApiResponse } from "next";
 
 import container from '@/server/container'
+import { ReviewsProps } from '@/app/interfaces';
 
 
-export default function Review({ reviews }) {
+export default function Review({ reviews }: ReviewsProps) {
 
     return (
         <Layout>
@@ -31,7 +33,7 @@ const router = createRouter()
     });
 
 
-export async function getServerSideProps({ req, res }) {
+export async function getServerSideProps({ req, res }: {req: NextApiRequest, res: NextApiResponse}) {
     return await router.run(req, res);
 }
 

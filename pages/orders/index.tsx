@@ -1,11 +1,13 @@
 import {createRouter} from "next-connect";
+import { NextApiRequest, NextApiResponse } from "next";
 import Link from "next/link";
 
 import Layout from "@/app/layout"
 import container from '@/server/container'
+import { OrdersProps } from "@/app/interfaces";
 
 
-export default function Order({orders}){
+export default function Order({orders}: OrdersProps){
   // const { orders } = props;
     console.log("Orders: ", orders)
 
@@ -38,7 +40,7 @@ const router = createRouter()
     });
 
 
-export async function getServerSideProps({ req, res }) {
+export async function getServerSideProps({ req, res }: {req: NextApiRequest, res: NextApiResponse}) {
   return await router.run(req, res);
 }
 
