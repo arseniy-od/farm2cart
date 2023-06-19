@@ -57,7 +57,7 @@ export default function Home() {
                         </div>
                         <div>
                             <input type="text" value={user.email} onChange={(event) => setUser({ ...user, email: event.target.value })}
-                                className="mt-2 px-4 py-3 w-full max-w-xs border-2" placeholder="email" autoComplete='email'/>
+                                className="mt-2 px-4 py-3 w-full max-w-xs border-2" name="email" placeholder="email" autoComplete='email'/>
                         </div>
                         <div>
                             <input type="text" value={user.username} onChange={(event) => setUser({ ...user, username: event.target.value })}

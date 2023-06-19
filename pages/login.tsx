@@ -43,11 +43,11 @@ export default function Home() {
                         <h3 className="text-xl">Login</h3>
                         <div>
                             <input type="text" value={user.email} onChange={(event) => setUser({ ...user, email: event.target.value })}
-                                className="mt-2 px-4 py-3 w-full max-w-xs border-2" placeholder="email" autoComplete='email'/>
+                                className="mt-2 px-4 py-3 w-full max-w-xs border-2" placeholder="email" name="email" autoComplete='email'/>
                         </div>
                         <div>
                             <input type="password" value={user.password} onChange={(event) => setUser({ ...user, password: event.target.value })}
-                                className="mt-2 px-4 py-3 w-full max-w-xs border-2" placeholder="password" autoComplete='password'/>
+                                className="mt-2 px-4 py-3 w-full max-w-xs border-2" placeholder="password" autoComplete='current-password'/>
                         </div>
                         <button
                             onClick={handleSubmit}
