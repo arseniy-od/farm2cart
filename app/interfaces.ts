@@ -64,7 +64,10 @@ type userWithCompany = user & {
     company?: company
 }
 
-export type NextApiRequestWithUser = NextApiRequest & { user?: user }
+export type NextApiRequestWithUser = NextApiRequest & {
+    user?: user
+    session: { [key: string]: any }
+}
 
 export type review = {
     new?: boolean

@@ -1,5 +1,4 @@
-import { createRouter } from 'next-connect'
-import { NextApiRequest, NextApiResponse } from 'next'
+import { GetServerSideProps, NextApiRequest, NextApiResponse } from 'next'
 import Layout from '@/app/layout'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -29,17 +28,7 @@ export default function Goods(props: { goods: good[] }) {
     )
 }
 
-const router = createRouter().get(async (req, res) => {
+export const getServerSideProps: GetServerSideProps = async function (ctx) {
     const goods = await container.resolve('GoodController').getGoods()
     return { props: { goods } }
-})
-
-export async function getServerSideProps({
-    req,
-    res,
-}: {
-    req: NextApiRequest
-    res: NextApiResponse
-}) {
-    return await router.run(req, res)
 }

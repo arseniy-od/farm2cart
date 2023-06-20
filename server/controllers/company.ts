@@ -8,8 +8,8 @@ export default class CompanyController extends BaseContext {
         const result = await this.CompanyService.getCompanies()
         const companies = JSON.parse(JSON.stringify(result))
         if (!companies || !companies.length) {
-            return { props: { notFound: true } }
+            return { notFound: true }
         }
-        return { props: { companies } }
+        return { companies }
     }
 }

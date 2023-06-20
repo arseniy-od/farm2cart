@@ -1,52 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="f0661f64-e28e-47c4-a130-c9e4f586c552" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources.local.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources.local.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.sequelizerc" beforeDir="false" afterPath="$PROJECT_DIR$/.sequelizerc" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/database/config/config.json" beforeDir="false" afterPath="$PROJECT_DIR$/server/database/config/config.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/database/migrations/20230603142854-init.js" beforeDir="false" afterPath="$PROJECT_DIR$/server/database/migrations/20230603142854-init.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/database/models/category.js" beforeDir="false" afterPath="$PROJECT_DIR$/server/database/models/category.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/database/models/categorygood.js" beforeDir="false" afterPath="$PROJECT_DIR$/server/database/models/categorygood.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/database/models/company.js" beforeDir="false" afterPath="$PROJECT_DIR$/server/database/models/company.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/database/models/connection.js" beforeDir="false" afterPath="$PROJECT_DIR$/server/database/models/connection.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/database/models/good.ts" beforeDir="false" afterPath="$PROJECT_DIR$/server/database/models/good.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/database/models/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/server/database/models/index.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/database/models/order.js" beforeDir="false" afterPath="$PROJECT_DIR$/server/database/models/order.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/database/models/ordergood.js" beforeDir="false" afterPath="$PROJECT_DIR$/server/database/models/ordergood.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/database/models/review.js" beforeDir="false" afterPath="$PROJECT_DIR$/server/database/models/review.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/database/models/user.js" beforeDir="false" afterPath="$PROJECT_DIR$/server/database/models/user.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/database/seeders/20230603144131-user.js" beforeDir="false" afterPath="$PROJECT_DIR$/server/database/seeders/20230603144131-user.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/database/seeders/20230604171656-review.js" beforeDir="false" afterPath="$PROJECT_DIR$/server/database/seeders/20230604171656-review.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/database/seeders/20230604172036-category.js" beforeDir="false" afterPath="$PROJECT_DIR$/server/database/seeders/20230604172036-category.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/middleware/passport.ts" beforeDir="false" afterPath="$PROJECT_DIR$/middleware/passport.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pages/api/auth/logout.ts" beforeDir="false" afterPath="$PROJECT_DIR$/pages/api/auth/logout.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pages/api/categories.ts" beforeDir="false" afterPath="$PROJECT_DIR$/pages/api/categories.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pages/api/companies.ts" beforeDir="false" afterPath="$PROJECT_DIR$/pages/api/companies.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pages/api/goods.ts" beforeDir="false" afterPath="$PROJECT_DIR$/pages/api/goods.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pages/api/orders.ts" beforeDir="false" afterPath="$PROJECT_DIR$/pages/api/orders.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pages/api/reviews.ts" beforeDir="false" afterPath="$PROJECT_DIR$/pages/api/reviews.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pages/api/upload.ts" beforeDir="false" afterPath="$PROJECT_DIR$/pages/api/upload.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pages/api/users/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/pages/api/users/index.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pages/api/users/me.ts" beforeDir="false" afterPath="$PROJECT_DIR$/pages/api/users/me.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pages/cart/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/pages/cart/index.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pages/categories/[slug].tsx" beforeDir="false" afterPath="$PROJECT_DIR$/pages/categories/[slug].tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pages/goods/[id].tsx" beforeDir="false" afterPath="$PROJECT_DIR$/pages/goods/[id].tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pages/goods/create.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/pages/goods/create.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pages/goods/index.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/pages/goods/index.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pages/orders/[id].tsx" beforeDir="false" afterPath="$PROJECT_DIR$/pages/orders/[id].tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pages/users/[id].tsx" beforeDir="false" afterPath="$PROJECT_DIR$/pages/users/[id].tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pages/users/me.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/pages/users/me.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/services/category.ts" beforeDir="false" afterPath="$PROJECT_DIR$/server/services/category.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/services/company.ts" beforeDir="false" afterPath="$PROJECT_DIR$/server/services/company.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/services/good.ts" beforeDir="false" afterPath="$PROJECT_DIR$/server/services/good.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/services/order.ts" beforeDir="false" afterPath="$PROJECT_DIR$/server/services/order.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/services/review.ts" beforeDir="false" afterPath="$PROJECT_DIR$/server/services/review.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/services/user.ts" beforeDir="false" afterPath="$PROJECT_DIR$/server/services/user.ts" afterDir="false" />
-    </list>
+    <list default="true" id="f0661f64-e28e-47c4-a130-c9e4f586c552" name="Default Changelist" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -204,11 +159,11 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "WebServerToolWindowFactoryState": "false"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/pages/categories" />
@@ -243,6 +198,7 @@
       <workItem from="1686068384298" duration="12009000" />
       <workItem from="1686741431893" duration="276000" />
       <workItem from="1686759994337" duration="1249000" />
+      <workItem from="1686849144774" duration="160000" />
     </task>
     <servers />
   </component>

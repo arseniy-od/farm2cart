@@ -32,7 +32,7 @@ const router = createRouter().get(async (req, res) => {
     const companies = await container
         .resolve('CompanyController')
         .getCompanies()
-    return companies
+    return { props: companies }
 })
 
 export async function getServerSideProps({
