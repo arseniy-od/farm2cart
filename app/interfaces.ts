@@ -1,15 +1,23 @@
-import { BuildOptions, Model, DataTypes } from "sequelize";
-import { InferAttributes, InferCreationAttributes } from "sequelize";
+import { NextApiRequest } from 'next'
+import { BuildOptions, Model, DataTypes } from 'sequelize'
+import { InferAttributes, InferCreationAttributes } from 'sequelize'
 
-
-export interface IOrderModel extends Model<InferAttributes<IOrderModel>, InferCreationAttributes<IOrderModel>>{
+export interface IOrderModel
+    extends Model<
+        InferAttributes<IOrderModel>,
+        InferCreationAttributes<IOrderModel>
+    > {
     id: number
     customerId: number
     total: number
     paymentStatus: string
 }
 
-export interface IGoodModel extends Model<InferAttributes<IGoodModel>, InferCreationAttributes<IGoodModel>> {
+export interface IGoodModel
+    extends Model<
+        InferAttributes<IGoodModel>,
+        InferCreationAttributes<IGoodModel>
+    > {
     title: string
     imageUrl: string
     description: string
@@ -20,11 +28,11 @@ export interface IGoodModel extends Model<InferAttributes<IGoodModel>, InferCrea
 }
 
 // export interface OrderWithGood extends IOrderModel{
-//     goods: IGoodModel 
-// }  
-
+//     goods: IGoodModel
+// }
 
 type userMin = {
+    notFound?: boolean
     id: number
     username: string
     email: string
@@ -34,12 +42,13 @@ type company = {
     id: number
     name: string
     description: string
-    address: string,
+    address: string
     email: string
     sellers?: userMin
 }
 
 export type user = {
+    notFound?: boolean
     id: number
     firstName: string
     lastName: string
@@ -55,14 +64,15 @@ type userWithCompany = user & {
     company?: company
 }
 
+export type NextApiRequestWithUser = NextApiRequest & { user?: user }
 
 export type review = {
     new?: boolean
     id: number
-    goodId: number,
-    text: string,
-    score: number,
-    authorId: number,
+    goodId: number
+    text: string
+    score: number
+    authorId: number
     datepub: Date
     author: userMin
 }
@@ -107,8 +117,7 @@ type orderWithGoodsAndCustomer = orderWithGoods & {
 }
 
 export type orderWithGoodsCreate = order & {
-    goods: {quantity: number, 
-        id: number}[]
+    goods: { quantity: number; id: number }[]
 }
 
 export type category = {
@@ -123,12 +132,10 @@ export interface CategoryProps {
     goods: object[]
 }
 
-
 export interface CompanyProps {
     notFound?: boolean
     companies: company[]
 }
-
 
 export interface GoodProps {
     good: good
@@ -141,7 +148,6 @@ export interface GoodsProps {
 export interface OrderProps {
     order: orderWithGoods
 }
-
 
 export interface OrdersProps {
     notFound?: boolean
@@ -159,7 +165,14 @@ export interface UserGoodsProps {
     goods: good[]
 }
 
-export interface UsersProps {
+type userType = user & { error?: string; message?: string }
+export interface UserGoodsOrdersProps {
     notFound?: boolean
+    user: userType
+    goods: good[]
+    orders: orderWithGoods[]
+}
+
+export interface UsersProps {
     users: userWithCompany[]
 }

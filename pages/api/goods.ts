@@ -1,23 +1,12 @@
-import { NextApiRequest, NextApiResponse } from "next";
-import { createRouter } from "next-connect";
-import multer from 'multer'
+import { NextApiRequest, NextApiResponse } from 'next'
+import { createRouter } from 'next-connect'
 
-import session from "@/middleware/session";
-import passport from "@/middleware/passport";
-import container from "@/server/container";
+import session from '@/middleware/session'
+import passport from '@/middleware/passport'
+import uploadMiddleware from '@/middleware/upload'
+import container from '@/server/container'
 
-
-const upload = multer({
-    storage: multer.diskStorage({
-        destination: './public/uploads',
-        filename: (req, file, cb) => cb(null, file.originalname),
-    }),
-});
-
-const uploadMiddleware = upload.single('file');
-
-const router = createRouter<NextApiRequest, NextApiResponse>();
-
+const router = createRouter<NextApiRequest, NextApiResponse>()
 
 router
     .use(session)
@@ -25,46 +14,28 @@ router
     .use(passport.session())
     .use(uploadMiddleware)
     .get(async (req, res) => {
-        const goods = await container.resolve("GoodService").getGoods();
-        res.json(goods);
+        const goods = await container.resolve('GoodController').getGoods()
+        res.json(goods)
     })
     .post(async (req, res) => {
-        const goodData = { ...req.body, seller_id: req.user.id }
-
-        const file = req.file;
-        if (file) {
-            // Store the file information (e.g., file path) in the `goodData` object
-            goodData.imageUrl = file.path.replace('public', '');
-        }
-        console.log("[api/goods] goodData: ", goodData)
-
-        const good = await container.resolve("GoodService").createGood(goodData);
-        console.log("[api/goods] Good: ", good)
-        res.json(good);
+        const good = await container.resolve('GoodController').createGood(req)
+        res.json(good)
     })
     .delete(async (req, res) => {
-        if (req.query.id) {
-            const good = await container.resolve("GoodService").deleteGood(req.query.id);
-            res.json({ res: "Good deleted" });
-        } else {
-            res.json({error: true, message: "id not found"})
-        }
-        
-    });
-
-
+        const result = await container.resolve('GoodController').deleteGood(req)
+        res.json(result)
+    })
 
 export const config = {
     api: {
-        bodyParser: false
+        bodyParser: false,
         // {sizeLimit: '4mb'}
-    }
+    },
 }
-
 
 export default router.handler({
     onError: (err, req, res) => {
-        console.error(err.stack);
-        res.status(err.statusCode || 500).end(err.message);
+        console.error(err.stack)
+        res.status(err.statusCode || 500).end(err.message)
     },
-});
+})
