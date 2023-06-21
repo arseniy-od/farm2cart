@@ -19,7 +19,7 @@ export default class UserController extends BaseContext {
         if (!users || !users.length) {
             return { props: { notFound: true } }
         }
-        return users
+        return { users }
     }
 
     async createUser(req: NextApiRequest) {

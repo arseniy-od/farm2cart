@@ -21,6 +21,5 @@ export default function Order({ order }: OrderProps) {
 }
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
-    // console.log("Got slug: ", params.slug);
     return await container.resolve('OrderController').getOrder(ctx)
 }

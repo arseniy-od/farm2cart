@@ -3,7 +3,7 @@ import { createRouter } from 'next-connect'
 import Layout from '@/app/layout'
 import container from '@/server/container'
 import { CompanyProps } from '@/app/interfaces'
-import { NextApiRequest, NextApiResponse } from 'next'
+import { GetServerSideProps, NextApiRequest, NextApiResponse } from 'next'
 
 export default function Company(props: CompanyProps) {
     const { companies } = props
@@ -28,19 +28,9 @@ export default function Company(props: CompanyProps) {
     )
 }
 
-const router = createRouter().get(async (req, res) => {
+export const getServerSideProps: GetServerSideProps = async function (ctx) {
     const companies = await container
         .resolve('CompanyController')
         .getCompanies()
     return { props: companies }
-})
-
-export async function getServerSideProps({
-    req,
-    res,
-}: {
-    req: NextApiRequest
-    res: NextApiResponse
-}) {
-    return await router.run(req, res)
 }

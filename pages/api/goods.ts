@@ -5,6 +5,7 @@ import session from '@/middleware/session'
 import passport from '@/middleware/passport'
 import uploadMiddleware from '@/middleware/upload'
 import container from '@/server/container'
+import { log } from 'console'
 
 const router = createRouter<NextApiRequest, NextApiResponse>()
 
@@ -14,6 +15,7 @@ router
     .use(passport.session())
     .use(uploadMiddleware)
     .get(async (req, res) => {
+        log('[api] get goods')
         const goods = await container.resolve('GoodController').getGoods()
         res.json(goods)
     })

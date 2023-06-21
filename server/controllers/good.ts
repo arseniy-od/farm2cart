@@ -17,7 +17,7 @@ export default class GoodController extends BaseContext {
         if (!goods || !goods.length) {
             return { notFound: true }
         }
-        return goods
+        return { goods }
     }
 
     async createGood(req: NextApiRequestWithUser) {

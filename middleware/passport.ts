@@ -1,7 +1,9 @@
 import passport from 'passport'
 import LocalStrategy from 'passport-local'
 import container from '@/server/container'
-import { NextApiRequest } from 'next'
+import { NextApiRequest, NextApiResponse } from 'next'
+import { NextHandler } from 'next-connect'
+import { NextApiRequestWithUser } from '@/app/interfaces'
 
 passport.serializeUser((user, done) => {
     console.log('passport serialize, userid=', user.id)
@@ -50,5 +52,32 @@ passport.use(
     )
 )
 
-// export const passportAuth = passport.authenticate('local');
+export const passportAuth = (
+    req: NextApiRequestWithUser,
+    res: NextApiResponse,
+    next: NextHandler
+) => {
+    passport.authenticate('local', (err, user, info) => {
+        if (err) {
+            console.error('\nPassport authenticate error:\n', err)
+            return next()
+        }
+        if (!user) {
+            console.error('No user')
+            return res
+                .status(500)
+                .json({ error: true, message: 'User not found' })
+        }
+        req.logIn(user, (err) => {
+            if (err) {
+                console.log('\nDev: LogIn Error: \n', err)
+                return next()
+            }
+            return res.json({ user })
+        })
+
+        console.log('\n\n[api/auth/index] Request User is:\n', req.user)
+    })(req, res, next)
+}
+
 export default passport

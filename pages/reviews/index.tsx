@@ -1,13 +1,11 @@
 import Layout from '@/app/layout'
-import { createRouter } from "next-connect";
-import { NextApiRequest, NextApiResponse } from "next";
+import { createRouter } from 'next-connect'
+import { GetServerSideProps, NextApiRequest, NextApiResponse } from 'next'
 
 import container from '@/server/container'
-import { ReviewsProps } from '@/app/interfaces';
-
+import { ReviewsProps } from '@/app/interfaces'
 
 export default function Review({ reviews }: ReviewsProps) {
-
     return (
         <Layout>
             {reviews.map((review, i) => (
@@ -18,22 +16,12 @@ export default function Review({ reviews }: ReviewsProps) {
                 </div>
             ))}
         </Layout>
-
-    );
+    )
 }
 
+const router = createRouter().get(async (req, res) => {})
 
-const router = createRouter()
-    .get(async (req, res) => {
-        const reviews = await container.resolve("ReviewService").getReviews();
-        if (!reviews) {
-            return { props: { notFound: true } };
-        }
-        return { props: { reviews: JSON.parse(JSON.stringify(reviews)) } };
-    });
-
-
-export async function getServerSideProps({ req, res }: {req: NextApiRequest, res: NextApiResponse}) {
-    return await router.run(req, res);
+export const getServerSideProps: GetServerSideProps = async function (ctx) {
+    const reviews = await container.resolve('ReviewController').getReviews()
+    return { props: reviews }
 }
-

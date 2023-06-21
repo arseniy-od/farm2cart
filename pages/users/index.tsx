@@ -3,7 +3,7 @@ import Link from 'next/link'
 
 import Layout from '@/app/layout'
 import container from '@/server/container'
-import { NextApiRequest, NextApiResponse } from 'next'
+import { GetServerSideProps, NextApiRequest, NextApiResponse } from 'next'
 import { UsersProps } from '@/app/interfaces'
 
 export default function User({ users }: UsersProps) {
@@ -25,17 +25,7 @@ export default function User({ users }: UsersProps) {
     )
 }
 
-const router = createRouter().get(async (req, res) => {
+export const getServerSideProps: GetServerSideProps = async function (ctx) {
     const users = await container.resolve('UserController').getUsers()
-    return { props: { users } }
-})
-
-export async function getServerSideProps({
-    req,
-    res,
-}: {
-    req: NextApiRequest
-    res: NextApiResponse
-}) {
-    return await router.run(req, res)
+    return { props: users }
 }

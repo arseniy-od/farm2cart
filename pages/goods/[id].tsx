@@ -178,5 +178,6 @@ export default function Good({ good }: GoodProps) {
 }
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
+    console.log('=========================SSR=================')
     return await container.resolve('GoodController').getGood(ctx)
 }
