@@ -30,7 +30,7 @@ export default function Category(props: {
 export const getServerSideProps: GetServerSideProps = async function (ctx) {
     const categories = await container
         .resolve('CategoryController')
-        .getCategories()
+        .getCategoriesWithGoods()
 
     return { props: categories }
 }

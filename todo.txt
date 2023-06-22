@@ -16,3 +16,11 @@ categories too
 Add logic for companies:
  - create
  - show
+
+
+ If bought all goods make good inactive
+
+ Add good edit page
+
+ Add users/me/orders
+ Add users/me/products

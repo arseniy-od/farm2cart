@@ -1,7 +1,9 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { useState, MouseEvent } from 'react'
+
 import { category, good } from '../interfaces'
+import { HalfStar, BlankStar, Star } from './icons/star'
 
 export default function GoodCard({
     good,
@@ -46,27 +48,31 @@ export default function GoodCard({
         }
     }
 
-    function Category() {
-        return (
-            <div>
-                {categories.map((category, i) => (
-                    <Link
-                        href={'/categories/' + category.text.toLowerCase()}
-                        className="inline-block px-1 text-indigo-500"
-                        key={i}
-                    >
-                        {category.text}
-                    </Link>
-                ))}
-            </div>
-        )
+    function roundHalf(num: number) {
+        return Math.round(num * 2) / 2
+    }
+
+    let stars = []
+    if (good.averageScore) {
+        let score = roundHalf(good.averageScore)
+        for (let i = 0; i < 5; i++) {
+            if (score === 0.5) {
+                stars.push(<HalfStar />)
+                score = 0
+            } else if (score === 0) {
+                stars.push(<BlankStar />)
+            } else {
+                stars.push(<Star />)
+                score -= 1
+            }
+        }
     }
 
     return (
         <div className="mt-4 mx-3">
-            <div className="px-4 py-2 max-w-xs w-full text-lg justify-center bg-gray-100">
+            <div className="px-4 py-2 max-w-xs w-full text-lg bg-gray-100">
                 <div className="shadow-lg">
-                    <div className="z-0 relative flex items-center justify-center w-72 h-72  overflow-hidden">
+                    <div className="z-0 relative flex items-center justify-center overflow-hidden w-full h-56">
                         <Link
                             href={'/goods/' + good.id}
                             className="w-full h-full"
@@ -106,6 +112,7 @@ export default function GoodCard({
                             </div>
                         </div>
                     </div>
+
                     <div className="px-2 py-2 bg-gray-100">
                         <Link
                             href={'/users/' + good.seller.id}
@@ -119,14 +126,15 @@ export default function GoodCard({
                             </h3>
 
                             {good.averageScore && good.reviewsCount ? (
-                                <div className="mx-12 flex justify-between">
-                                    <div>
-                                        Rating: {good.averageScore.toFixed(1)}
+                                <div className=" flex items-center justify-left">
+                                    <div className="flex">
+                                        {stars.map((star, i) => (
+                                            <div key={i}>{star}</div>
+                                        ))}
                                     </div>
 
-                                    <div className="text-gray-600">
-                                        {good.reviewsCount} review
-                                        {good.reviewsCount > 1 ? 's' : null}
+                                    <div className="ml-2 text-gray-600">
+                                        {good.reviewsCount}
                                     </div>
                                 </div>
                             ) : null}
@@ -140,7 +148,6 @@ export default function GoodCard({
                         </Link>
                     </div>
                 </div>
-                {/* {categories && categories.length ? <Category /> : null} */}
             </div>
         </div>
     )

@@ -21,6 +21,23 @@ export default class CategoryController extends BaseContext {
         return { categories }
     }
 
+    async getCategoriesWithGoods() {
+        const result = await this.CategoryService.getCategoriesWithGoods()
+        const categories = JSON.parse(JSON.stringify(result))
+        if (!categories || !categories.length) {
+            return { notFound: true }
+        }
+        return { categories }
+    }
+
+    async getStaticPaths() {
+        const paths = await this.CategoryService.getAllCategorySlugs()
+        return {
+            paths,
+            fallback: false,
+        }
+    }
+
     async getCategoryWithGoods(
         ctx: GetServerSidePropsContext<ParsedUrlQuery, PreviewData>
     ) {
@@ -37,6 +54,9 @@ export default class CategoryController extends BaseContext {
 
         const categoryData = await this.CategoryService.getCategoryByText(slug)
         const category = JSON.parse(JSON.stringify(categoryData))
+        console.log('=====================')
+        console.log(category)
+
         const goods: good[] = []
         for (const good of category.goods) {
             goods.push(await this.GoodService.getGoodById(good.id))

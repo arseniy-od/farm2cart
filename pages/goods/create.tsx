@@ -1,5 +1,11 @@
 import { createRouter } from 'next-connect'
-import { GetServerSideProps, NextApiRequest, NextApiResponse } from 'next'
+import {
+    GetServerSideProps,
+    GetStaticPaths,
+    GetStaticProps,
+    NextApiRequest,
+    NextApiResponse,
+} from 'next'
 import Link from 'next/link'
 import axios from 'axios'
 import { useState, MouseEvent, ChangeEvent } from 'react'
@@ -17,7 +23,7 @@ interface Good {
     categories: number[]
     file: File | null
     available: string
-    NewCategory: string
+    // NewCategory: string
 }
 
 export default function Home({ categories }: { categories: category[] }) {
@@ -30,7 +36,7 @@ export default function Home({ categories }: { categories: category[] }) {
         categories: [],
         file: null,
         available: '1',
-        NewCategory: '',
+        // NewCategory: '',
     })
 
     const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -70,7 +76,7 @@ export default function Home({ categories }: { categories: category[] }) {
         formData.append('imageUrl', good.imageUrl)
         formData.append('price', good.price)
         formData.append('available', good.available)
-        formData.append('NewCategory', good.NewCategory)
+        // formData.append('NewCategory', good.NewCategory)
         formData.append('active', '1')
 
         good.categories.forEach((category) => {
@@ -205,7 +211,7 @@ export default function Home({ categories }: { categories: category[] }) {
                                     </div>
                                 ))}
                             </div>
-                            <div>
+                            {/* <div>
                                 <div>
                                     <label htmlFor="categoryNew">
                                         Create new category:{' '}
@@ -224,7 +230,7 @@ export default function Home({ categories }: { categories: category[] }) {
                                     className="mt-2 px-4 py-3 w-full max-w-xs border-2"
                                     placeholder="new category"
                                 />
-                            </div>
+                            </div> */}
                         </div>
 
                         <button
@@ -241,9 +247,17 @@ export default function Home({ categories }: { categories: category[] }) {
     )
 }
 
-export const getServerSideProps: GetServerSideProps = async function (ctx) {
+//TODO: Change to static
+// export const getServerSideProps: GetServerSideProps = async function (ctx) {
+//     const categories = await container
+//         .resolve('CategoryController')
+//         .getCategories()
+//     return { props: categories }
+// }
+
+export const getStaticProps: GetStaticProps = async ({ params }) => {
     const categories = await container
         .resolve('CategoryController')
-        .getCategories()
+        .getCategoriesWithGoods()
     return { props: categories }
 }

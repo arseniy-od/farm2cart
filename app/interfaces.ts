@@ -1,5 +1,5 @@
 import { NextApiRequest } from 'next'
-import { BuildOptions, Model, DataTypes } from 'sequelize'
+import { Model } from 'sequelize'
 import { InferAttributes, InferCreationAttributes } from 'sequelize'
 
 export interface IOrderModel
