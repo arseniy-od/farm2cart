@@ -1,65 +1,67 @@
-import { BuildOptions, Model, DataTypes, CreationOptional } from "sequelize";
-import { InferAttributes, InferCreationAttributes } from "sequelize";
+import { BuildOptions, Model, DataTypes, CreationOptional } from 'sequelize'
+import { InferAttributes, InferCreationAttributes } from 'sequelize'
 
-import { IContextContainer } from '../../container';
+import { IContextContainer } from '../../container'
 
-
-export interface IUserModel extends Model<InferAttributes<IUserModel>, InferCreationAttributes<IUserModel>> {
-  id: CreationOptional<number>;
-  firstName: string
-  lastName: string
-  username: string
-  password: string
-  email: string
-  phoneNumber: string
-  role: string
-  companyId: number
+export interface IUserModel
+    extends Model<
+        InferAttributes<IUserModel>,
+        InferCreationAttributes<IUserModel>
+    > {
+    id: CreationOptional<number>
+    firstName: string
+    lastName: string
+    username: string
+    password: string
+    email: string
+    phoneNumber: string
+    role: string
+    companyId: number
+    registrationDate: Date
 }
-
 
 export type UserType = typeof Model & {
-  new(values?: object, options?: BuildOptions): IUserModel
+    new (values?: object, options?: BuildOptions): IUserModel
 }
 
-
 const UserModel = (ctx: IContextContainer) => {
-  const User = <UserType>ctx.db.define<IUserModel>('user', {
-    id: {
-      allowNull: false,
-      autoIncrement: true,
-      primaryKey: true,
-      type: DataTypes.INTEGER
-    },
-    firstName: DataTypes.STRING,
-    lastName: DataTypes.STRING,
-    username: DataTypes.STRING,
-    password: DataTypes.STRING,
-    email: {
-      type: DataTypes.STRING,
-      validate: { isEmail: true }
-    },
-    phoneNumber: DataTypes.STRING,
-    role: {
-      type: DataTypes.STRING,
-      validate: { isIn: [['customer', 'seller', 'admin']] }
-    },
-    companyId: DataTypes.INTEGER
-  },
-    {
-      timestamps: false,
-    }
-  );
+    const User = <UserType>ctx.db.define<IUserModel>(
+        'user',
+        {
+            id: {
+                allowNull: false,
+                autoIncrement: true,
+                primaryKey: true,
+                type: DataTypes.INTEGER,
+            },
+            firstName: DataTypes.STRING,
+            lastName: DataTypes.STRING,
+            username: DataTypes.STRING,
+            password: DataTypes.STRING,
+            email: {
+                type: DataTypes.STRING,
+                validate: { isEmail: true },
+            },
+            phoneNumber: DataTypes.STRING,
+            role: {
+                type: DataTypes.STRING,
+                validate: { isIn: [['customer', 'seller', 'admin']] },
+            },
+            companyId: DataTypes.INTEGER,
+            registrationDate: DataTypes.DATE,
+        },
+        {
+            timestamps: false,
+        }
+    )
 
-  ctx.Company.hasMany(User, { foreignKey: 'companyId', as: 'sellers' });
-  User.belongsTo(ctx.Company, { foreignKey: 'companyId', as: 'company' })
-  
-  return User
+    ctx.Company.hasMany(User, { foreignKey: 'companyId', as: 'sellers' })
+    User.belongsTo(ctx.Company, { foreignKey: 'companyId', as: 'company' })
+
+    return User
 }
 
 export default UserModel
-
-
-
 
 //! Old
 
@@ -85,10 +87,7 @@ export default UserModel
 //     timestamps: false,
 //   });
 
-
 //! Copied from tg
-
-
 
 // export type StoreType = typeof Model & {
 //   new(values?: object, options?: BuildOptions): IStoreModel;

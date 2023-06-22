@@ -10,6 +10,7 @@ import container from '@/server/container'
 import { NextApiRequest, NextApiResponse } from 'next'
 import { GoodsProps, UserGoodsOrdersProps, user } from '@/app/interfaces'
 import OrderCard from '@/app/components/orderCard'
+import { formatDate, toTitle } from '@/app/utils'
 
 export default function User({ user, goods, orders }: UserGoodsOrdersProps) {
     if (user.error) {
@@ -22,35 +23,17 @@ export default function User({ user, goods, orders }: UserGoodsOrdersProps) {
 
     return (
         <Layout>
-            <div className="mt-4 ml-4 px-4 py-3 text-lg border-2 max-w-xs text-center bg-gray-200 rounded-lg">
-                Username:{' '}
-                <span className="text-indigo-500">@{user.username}</span>
+            <div className="mt-4 ml-4 px-4 py-3 text-lg max-w-xs bg-gray-100 shadow-lg">
+                <div className="text-indigo-500">@{user.username}</div>
+                <p>
+                    {toTitle(user.firstName)} {toTitle(user.lastName)}
+                </p>
+                <p>{user.email}</p>
+                <p>phone: {user.phoneNumber}</p>
+                <p>Registration date: {formatDate(user.registrationDate)}</p>
             </div>
-            <div>
-                {user.role === 'seller' || 'admin' ? (
-                    <div>
-                        <h3 className="ml-5 mt-3 text-xl">Your products:</h3>
-                        {goods.map((good, i) => (
-                            <div key={i}>
-                                <div>
-                                    <GoodCard
-                                        good={good}
-                                        categories={good.categories}
-                                    />
-                                </div>
-                            </div>
-                        ))}
 
-                        {orders.map((order, i) => (
-                            <div key={i}>
-                                <div key={i}>
-                                    <OrderCard order={order} />
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-                ) : null}
-            </div>
+            <div>{user.role === 'seller' || 'admin' ? <div></div> : null}</div>
         </Layout>
     )
 }

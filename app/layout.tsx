@@ -73,7 +73,9 @@ export default function Layout({ children, home = false }) {
                 </header>
 
                 {/* Sidebar menu */}
-                {isMenuOpen && <Sidebar setIsMenuOpen={setIsMenuOpen} />}
+                {isMenuOpen && (
+                    <Sidebar setIsMenuOpen={setIsMenuOpen} home={home} />
+                )}
 
                 <main className="">{children}</main>
             </div>

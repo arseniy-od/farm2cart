@@ -11,8 +11,10 @@ import { category, user } from '../interfaces'
 
 export default function Sidebar({
     setIsMenuOpen,
+    home,
 }: {
     setIsMenuOpen: Dispatch<SetStateAction<boolean>>
+    home: boolean
 }) {
     const [user, setUser] = useState<user | object>({})
     const [categories, setCategories] = useState<category[]>([])
@@ -105,7 +107,7 @@ export default function Sidebar({
                                 <>
                                     <Link
                                         className="mt-2 px-4  block"
-                                        href="users/me/goods"
+                                        href="/users/me/goods"
                                     >
                                         My products
                                     </Link>
@@ -121,20 +123,34 @@ export default function Sidebar({
                     )}
                 </div>
 
-                <div>
-                    <div className="ml-4 mt-2 font-semibold">Categories:</div>
-                    {categories.length &&
-                        categories.map((category, i) => (
-                            <div key={i}>
-                                <div className="ml-4 mt-1">
-                                    <Link
-                                        href={`/categories/${category.text.toLowerCase()}`}
-                                    >
-                                        {category.text}
-                                    </Link>
+                <div className="flex flex-col justify-between">
+                    <div>
+                        <div className="ml-4 mt-2 font-semibold">
+                            Categories:
+                        </div>
+                        {categories.length &&
+                            categories.map((category, i) => (
+                                <div key={i}>
+                                    <div className="ml-4 mt-1">
+                                        <Link
+                                            href={`/categories/${category.text.toLowerCase()}`}
+                                        >
+                                            {category.text}
+                                        </Link>
+                                    </div>
                                 </div>
-                            </div>
-                        ))}
+                            ))}
+                    </div>
+                    <div className="mt-6">
+                        {!home && (
+                            <Link
+                                href="/"
+                                className="ml-4 px-4 py-2 bg-gray-200 w-1/2 shadow-lg block"
+                            >
+                                Home page
+                            </Link>
+                        )}
+                    </div>
                 </div>
             </div>
 
