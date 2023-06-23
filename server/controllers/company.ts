@@ -1,15 +1,26 @@
 import { NextApiRequest, NextApiResponse } from 'next'
-import BaseContext from '../baseContext'
+import BaseController from './baseController'
+import GET from '../decorators/get'
+import POST from '../decorators/post'
 
-export default class CompanyController extends BaseContext {
+export default class CompanyController extends BaseController {
     private CompanyService = this.di.CompanyService
 
+    @GET('/api/companies')
     async getCompanies() {
         const result = await this.CompanyService.getCompanies()
-        const companies = JSON.parse(JSON.stringify(result))
-        if (!companies || !companies.length) {
-            return { notFound: true }
-        }
-        return { companies }
+        return result
+        // const companies = JSON.parse(JSON.stringify(result))
+        // if (!companies || !companies.length) {
+        //     return { notFound: true }
+        // }
+        // return { companies }
+    }
+
+    @POST('/api/companies')
+    async createCompany({ body }) {
+        console.log('==============[POST]=============')
+        console.log(body)
+        return { status: 'ok' }
     }
 }

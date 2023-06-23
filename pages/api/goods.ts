@@ -23,6 +23,11 @@ router
         const good = await container.resolve('GoodController').createGood(req)
         res.json(good)
     })
+    .put(async (req, res) => {
+        console.log('\n\n=================[PUT]=============')
+        const good = await container.resolve('GoodController').updateGood(req)
+        res.json(good)
+    })
     .delete(async (req, res) => {
         const result = await container.resolve('GoodController').deleteGood(req)
         res.json(result)

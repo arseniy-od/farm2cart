@@ -1,4 +1,5 @@
 import BaseContext from '../baseContext'
+import GET from '../decorators/get'
 
 export default class CompanyService extends BaseContext {
     private User = this.di.User

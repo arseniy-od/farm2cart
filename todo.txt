@@ -1,26 +1,25 @@
-- Soft delete for goods:
+Soft delete for goods:
+ - if bought all goods make good inactive
 
-- Create category form at good creation:
-    * read docs on get or create
+Add categories to product page
 
-- Show only orders for user
+Check for validators on inputs
 
-- Add validators on inputs
-- Add styles
-
-
-Make goods/[id] serverside not static + 
-categories too
-
+Make all categories static
 
 Add logic for companies:
  - create
  - show
 
+Add good edit page
 
- If bought all goods make good inactive
+Refactor users/me props type
 
- Add good edit page
+Refactor sign up page
 
- Add users/me/orders
- Add users/me/products
+Move fetching from sidebar to layout
+
+Styling:
+ - style goods/create page
+ - add flex & grid to all pages with goods
+ - add footer to layout

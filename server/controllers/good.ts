@@ -45,6 +45,34 @@ export default class GoodController extends BaseContext {
         console.log('[api/goods] Good: ', good)
     }
 
+    async updateGood(req: NextApiRequestWithUser) {
+        console.log('==========[GoodController]==============')
+
+        if (!req.user) {
+            return {
+                props: {
+                    user: { error: true, message: 'You are not logged in' },
+                },
+            }
+        }
+        const goodData = { ...req.body, seller_id: req.user.id }
+        console.log('[api/goods] goodData before: ', goodData)
+        if (!(goodData.categories instanceof Array)) {
+            goodData.categories = [goodData.categories]
+        }
+        console.log('[api/goods] goodData after:', goodData)
+
+        const file = req.file
+        if (file) {
+            goodData.imageUrl = file.path.replace('public', '')
+        }
+        console.log('[api/goods] goodData: ', goodData)
+
+        const good = await this.GoodService.updateGood(goodData)
+        console.log('[api/goods] Good: ', good)
+        return good
+    }
+
     async deleteGood(req: NextApiRequest) {
         if (req.query.id && typeof req.query.id === 'string') {
             const good = await this.GoodService.deleteGood(req.query.id)
@@ -67,10 +95,6 @@ export default class GoodController extends BaseContext {
                     new Date(b.datepub).getTime()
             )
         }
-        return {
-            props: {
-                good,
-            },
-        }
+        return { good }
     }
 }

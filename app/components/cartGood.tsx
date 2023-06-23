@@ -94,8 +94,8 @@ export default function CartGood({
                     <Image
                         src={good.imageUrl}
                         alt="image of product"
-                        width="100"
-                        height="100"
+                        width="255"
+                        height="255"
                         className="w-full h-full object-cover object-center"
                     />
                 </div>

@@ -12,7 +12,7 @@ import { GoodsProps, UserGoodsOrdersProps, user } from '@/app/interfaces'
 import OrderCard from '@/app/components/orderCard'
 import { formatDate, toTitle } from '@/app/utils'
 
-export default function User({ user, goods, orders }: UserGoodsOrdersProps) {
+export default function User({ user }: UserGoodsOrdersProps) {
     if (user.error) {
         return (
             <Layout>
@@ -33,7 +33,24 @@ export default function User({ user, goods, orders }: UserGoodsOrdersProps) {
                 <p>Registration date: {formatDate(user.registrationDate)}</p>
             </div>
 
-            <div>{user.role === 'seller' || 'admin' ? <div></div> : null}</div>
+            <div>
+                {user.role === 'seller' || 'admin' ? (
+                    <div>
+                        <Link
+                            className="ml-4 mt-2 px-4 py-3 block w-32 shadow-lg"
+                            href="/users/me/goods"
+                        >
+                            My products
+                        </Link>
+                    </div>
+                ) : null}
+            </div>
+            <Link
+                className="ml-4 mt-2 px-4 py-3 block w-32 shadow-lg"
+                href="/users/me/orders"
+            >
+                My orders
+            </Link>
         </Layout>
     )
 }
@@ -43,9 +60,7 @@ const router = createRouter()
     .use(middlewares[0])
     .use(middlewares[1])
     .get(async (req, res) => {
-        return await container
-            .resolve('UserController')
-            .getGoodsAndOrdersForUser(req)
+        return await container.resolve('UserController').getUserByReq(req)
     })
 
 export async function getServerSideProps({

@@ -14,6 +14,7 @@ import ReviewCard from '@/app/components/reviewCard'
 import { BlankStar, HalfStar, Star } from '@/app/components/icons/star'
 import CreateReview from '@/app/components/createReview'
 import CartHandler from '@/app/components/cartHandler'
+import goods from '@/pages/api/goods'
 
 export default function Good({ good }: GoodProps) {
     const categories = good.categories
@@ -107,6 +108,12 @@ export default function Good({ good }: GoodProps) {
                                 <div className="mr-3 mb-3 absolute flex right-0 bottom-0 bg-gray-100 min-w-[2rem;] min-h-[2rem;] rounded-full items-center justify-center">
                                     <CartHandler good={good} />
                                 </div>
+
+                                {!good.active || !good.available ? (
+                                    <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-5/6 h-10 bg-white text-gray-900 text-center flex justify-center items-center font-semibold text-xl">
+                                        Product is not active
+                                    </div>
+                                ) : null}
                             </div>
                             <div className="mt-2">
                                 <p>{good.description}</p>
@@ -154,5 +161,6 @@ export default function Good({ good }: GoodProps) {
 }
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
-    return await container.resolve('GoodController').getGood(ctx)
+    const good = await container.resolve('GoodController').getGood(ctx)
+    return { props: good }
 }

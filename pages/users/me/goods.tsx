@@ -11,7 +11,7 @@ import { NextApiRequest, NextApiResponse } from 'next'
 import { GoodsProps, UserGoodsOrdersProps, user } from '@/app/interfaces'
 import OrderCard from '@/app/components/orderCard'
 
-export default function User({ user, goods, orders }: UserGoodsOrdersProps) {
+export default function User({ user, goods }: UserGoodsOrdersProps) {
     if (user.error) {
         return (
             <Layout>
@@ -52,9 +52,7 @@ const router = createRouter()
     .use(middlewares[0])
     .use(middlewares[1])
     .get(async (req, res) => {
-        return await container
-            .resolve('UserController')
-            .getGoodsAndOrdersForUser(req)
+        return await container.resolve('UserController').getGoodsForUser(req)
     })
 
 export async function getServerSideProps({

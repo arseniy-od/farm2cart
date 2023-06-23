@@ -60,7 +60,23 @@ export default class UserController extends BaseContext {
         }
     }
 
-    async getGoodsAndOrdersForUser(req: NextApiRequestWithUser) {
+    async getUserByReq(req: NextApiRequestWithUser) {
+        if (!req.user) {
+            return {
+                props: {
+                    user: { error: true, message: 'You are not logged in' },
+                },
+            }
+        }
+        const user = JSON.parse(JSON.stringify(req.user))
+        return {
+            props: {
+                user,
+            },
+        }
+    }
+
+    async getGoodsForUser(req: NextApiRequestWithUser) {
         if (!req.user) {
             return {
                 props: {
@@ -69,16 +85,32 @@ export default class UserController extends BaseContext {
             }
         }
         const goods = await this.GoodService.getGoodsBySellerId(req.user.id)
-        const orders = await this.OrderService.getOrdersByCustomerId(
-            req.user.id
-        )
         const parsedUser = JSON.parse(JSON.stringify(req.user))
         const parsedGoods = JSON.parse(JSON.stringify(goods))
-        const parsedOrders = JSON.parse(JSON.stringify(orders))
         return {
             props: {
                 user: parsedUser,
                 goods: parsedGoods,
+            },
+        }
+    }
+
+    async getOrdersForUser(req: NextApiRequestWithUser) {
+        if (!req.user) {
+            return {
+                props: {
+                    user: { error: true, message: 'You are not logged in' },
+                },
+            }
+        }
+        const orders = await this.OrderService.getOrdersByCustomerId(
+            req.user.id
+        )
+        const parsedUser = JSON.parse(JSON.stringify(req.user))
+        const parsedOrders = JSON.parse(JSON.stringify(orders))
+        return {
+            props: {
+                user: parsedUser,
                 orders: parsedOrders,
             },
         }

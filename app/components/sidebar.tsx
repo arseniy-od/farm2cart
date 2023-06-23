@@ -58,13 +58,13 @@ export default function Sidebar({
                     {Object.keys(user).length === 0 || user.error ? (
                         <div>
                             <Link
-                                className="block "
+                                className="block ml-4 w-2/3 hover:shadow-lg"
                                 href="http://localhost:3000/signup"
                             >
                                 Sign up
                             </Link>
                             <Link
-                                className="block "
+                                className="block ml-4 mt-2 w-2/3 hover:shadow-lg"
                                 href="http://localhost:3000/login"
                             >
                                 Login
@@ -76,7 +76,7 @@ export default function Sidebar({
                                 className="block ml-4"
                                 href="http://localhost:3000/users/me"
                             >
-                                <div className="mt-2 flex items-center">
+                                <div className="mt-2 flex items-center w-2/3 hover:shadow-lg">
                                     <svg
                                         xmlns="http://www.w3.org/2000/svg"
                                         height="1em"
@@ -91,13 +91,13 @@ export default function Sidebar({
                             </Link>
 
                             <button
-                                className="mt-2 block px-4"
+                                className="mt-2 block px-4 w-2/3 text-left hover:shadow-lg"
                                 onClick={handleLogout}
                             >
                                 Logout
                             </button>
                             <Link
-                                className="mt-2 px-4 block"
+                                className="mt-2 px-4 block w-2/3 hover:shadow-lg"
                                 href={`/users/me/orders`}
                             >
                                 My orders
@@ -106,13 +106,13 @@ export default function Sidebar({
                             {user.role === 'seller' && (
                                 <>
                                     <Link
-                                        className="mt-2 px-4  block"
+                                        className="mt-2 px-4  block w-2/3 hover:shadow-lg"
                                         href="/users/me/goods"
                                     >
                                         My products
                                     </Link>
                                     <Link
-                                        className="mt-2 block px-4"
+                                        className="mt-2 block px-4 w-2/3 hover:shadow-lg"
                                         href="/goods/create"
                                     >
                                         Add new product
@@ -131,7 +131,7 @@ export default function Sidebar({
                         {categories.length &&
                             categories.map((category, i) => (
                                 <div key={i}>
-                                    <div className="ml-4 mt-1">
+                                    <div className="ml-4 mt-1 w-2/3 hover:shadow-lg">
                                         <Link
                                             href={`/categories/${category.text.toLowerCase()}`}
                                         >
@@ -145,7 +145,7 @@ export default function Sidebar({
                         {!home && (
                             <Link
                                 href="/"
-                                className="ml-4 px-4 py-2 bg-gray-200 w-1/2 shadow-lg block"
+                                className="ml-4 px-4 py-2 w-1/2 shadow-lg block hover:bg-gray-200"
                             >
                                 Home page
                             </Link>

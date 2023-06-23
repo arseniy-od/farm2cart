@@ -4,8 +4,6 @@ import { useState, useEffect } from 'react'
 import session, { middlewares } from '@/middleware/session'
 import Link from 'next/link'
 
-import { isConstructorDeclaration } from 'typescript'
-import GoodCard from '@/app/components/goodCard'
 import container from '@/server/container'
 import { NextApiRequest, NextApiResponse } from 'next'
 import { GoodsProps, UserGoodsOrdersProps, user } from '@/app/interfaces'
@@ -22,9 +20,8 @@ export default function User({ user, goods, orders }: UserGoodsOrdersProps) {
 
     return (
         <Layout>
-            <div className="mt-4 ml-4 px-4 py-3 text-lg border-2 max-w-xs text-center bg-gray-200 rounded-lg">
-                Username:{' '}
-                <span className="text-indigo-500">@{user.username}</span>
+            <div className="mt-4 ml-4 px-4 py-3 text-lg max-w-xs shadow-lg text-indigo-500">
+                @{user.username}
             </div>
             <div>
                 {user.role === 'seller' || 'admin' ? (
@@ -50,9 +47,7 @@ const router = createRouter()
     .use(middlewares[0])
     .use(middlewares[1])
     .get(async (req, res) => {
-        return await container
-            .resolve('UserController')
-            .getGoodsAndOrdersForUser(req)
+        return await container.resolve('UserController').getOrdersForUser(req)
     })
 
 export async function getServerSideProps({

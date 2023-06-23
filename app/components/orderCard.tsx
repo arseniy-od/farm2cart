@@ -4,9 +4,11 @@ import { order, orderWithGoods, orderWithGoodsCreate } from '../interfaces'
 export default function OrderCard({ order }: { order: orderWithGoods }) {
     return (
         <div className="ml-4 mt-4 px-4 py-3 bg-gray-100 max-w-xs shadow-lg">
-            <div className="text-center text-xl font-semibold">
-                Order #{order.id}
-            </div>
+            <Link href={`/orders/${order.id}`}>
+                <div className="text-center text-xl font-semibold hover:underline">
+                    Order #{order.id}
+                </div>
+            </Link>
             <div>total: ₴{order.total}</div>
             <div className="mt-4">
                 <div>Goods: </div>

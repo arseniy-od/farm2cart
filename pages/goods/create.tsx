@@ -23,7 +23,6 @@ interface Good {
     categories: number[]
     file: File | null
     available: string
-    // NewCategory: string
 }
 
 export default function Home({ categories }: { categories: category[] }) {
@@ -36,7 +35,6 @@ export default function Home({ categories }: { categories: category[] }) {
         categories: [],
         file: null,
         available: '1',
-        // NewCategory: '',
     })
 
     const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -211,26 +209,6 @@ export default function Home({ categories }: { categories: category[] }) {
                                     </div>
                                 ))}
                             </div>
-                            {/* <div>
-                                <div>
-                                    <label htmlFor="categoryNew">
-                                        Create new category:{' '}
-                                    </label>
-                                </div>
-                                <input
-                                    type="text"
-                                    id="categoryNew "
-                                    value={good.NewCategory}
-                                    onChange={(event) =>
-                                        setGood({
-                                            ...good,
-                                            NewCategory: event.target.value,
-                                        })
-                                    }
-                                    className="mt-2 px-4 py-3 w-full max-w-xs border-2"
-                                    placeholder="new category"
-                                />
-                            </div> */}
                         </div>
 
                         <button
@@ -246,14 +224,6 @@ export default function Home({ categories }: { categories: category[] }) {
         </div>
     )
 }
-
-//TODO: Change to static
-// export const getServerSideProps: GetServerSideProps = async function (ctx) {
-//     const categories = await container
-//         .resolve('CategoryController')
-//         .getCategories()
-//     return { props: categories }
-// }
 
 export const getStaticProps: GetStaticProps = async ({ params }) => {
     const categories = await container

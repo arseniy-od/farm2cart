@@ -2,18 +2,20 @@ import { createRouter } from 'next-connect'
 import { NextApiRequest, NextApiResponse } from 'next'
 import container from '@/server/container'
 
-export const router = createRouter<NextApiRequest, NextApiResponse>()
+export default container.resolve('CompanyController').handler('/api/companies')
 
-router.get(async (req: NextApiRequest, res: NextApiResponse) => {
-    const companies = await container
-        .resolve('CompanyController')
-        .getCompanies()
-    res.json(companies)
-})
+// export const router = createRouter<NextApiRequest, NextApiResponse>()
 
-export default router.handler({
-    onError: (err, req, res) => {
-        console.error(err.stack)
-        res.status(err.statusCode || 500).end(err.message)
-    },
-})
+// router.get(async (req: NextApiRequest, res: NextApiResponse) => {
+//     const companies = await container
+//         .resolve('CompanyController')
+//         .getCompanies()
+//     res.json(companies)
+// })
+
+// export default router.handler({
+//     onError: (err, req, res) => {
+//         console.error(err.stack)
+//         res.status(err.statusCode || 500).end(err.message)
+//     },
+// })
