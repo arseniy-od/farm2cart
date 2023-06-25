@@ -5,9 +5,9 @@ import container from '@/server/container'
 import { CompanyProps } from '@/app/interfaces'
 import { GetServerSideProps, NextApiRequest, NextApiResponse } from 'next'
 
-export default function Company(props: CompanyProps) {
-    const { companies } = props
-    if (props.notFound) {
+export default function Company({ data }: CompanyProps) {
+    const companies = data
+    if (data.notFound) {
         return (
             <Layout>
                 <div>Companies not found</div>
@@ -29,8 +29,5 @@ export default function Company(props: CompanyProps) {
 }
 
 export const getServerSideProps: GetServerSideProps = async function (ctx) {
-    const companies = await container
-        .resolve('CompanyController')
-        .getCompanies()
-    return { props: companies }
+    return await container.resolve('CompanyController').run(ctx)
 }

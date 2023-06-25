@@ -6,20 +6,24 @@ import 'reflect-metadata'
 import { NextApiRequestWithUser } from '@/app/interfaces'
 
 export default class BaseController extends BaseContext {
-    // private useClassMiddleware(router) {
-    //     const classMiddleware = Reflect.getMetadata(
-    //         this.constructor.name,
-    //         this.constructor
-    //     );
-    //     const classArgs = Array.isArray(classMiddleware) ? classMiddleware : [];
-    //     for (let i = 0; i < classArgs.length; i++) {
-    //         router.use(classArgs[i]);
-    //     }
-    //     return classArgs;
-    // }
+    private useClassMiddleware(router) {
+        const classMiddleware = Reflect.getMetadata(
+            this.constructor.name,
+            this.constructor
+        )
+        const classArgs = Array.isArray(classMiddleware) ? classMiddleware : []
+        console.log('class args: ', classArgs)
+
+        for (let i = 0; i < classArgs.length; i++) {
+            router.use(classArgs[i])
+        }
+        return classArgs
+    }
 
     private useMethodMiddleware(methodName: string) {
         const key = this.constructor.name + '_' + methodName
+        console.log('key: ', key)
+
         const methodMiddleware = Reflect.getMetadata(key, this.constructor)
         const methodArgs = Array.isArray(methodMiddleware)
             ? methodMiddleware
@@ -41,6 +45,8 @@ export default class BaseController extends BaseContext {
                         params: context?.params,
                     } as any)
                     data = JSON.parse(JSON.stringify(data))
+                    console.log('\n\n[USER]: ', context.req)
+
                     return {
                         props: { data },
                     }
@@ -56,7 +62,7 @@ export default class BaseController extends BaseContext {
 
     public handler(routeName: string) {
         const router = createRouter<NextApiRequest, NextApiResponse>()
-        // const classArgs = this.useClassMiddleware(router);
+        const classArgs = this.useClassMiddleware(router)
         const members: any = Reflect.getMetadata(routeName, this)
         Object.keys(members).map((method) => {
             for (let i = 0; i < members[method].length; i++) {
@@ -75,6 +81,8 @@ export default class BaseController extends BaseContext {
                                 identity: req?.user,
                             } as any)
                             data = JSON.parse(JSON.stringify(data))
+                            console.log('User handler: ', req.user)
+
                             return res.status(200).json(data)
                         } catch (err: any) {
                             const message = err?.message ? err.message : err
@@ -82,6 +90,7 @@ export default class BaseController extends BaseContext {
                         }
                     }
                     const args = [...methodArgs, action]
+                    // console.log('method args: ', methodArgs)
                     router[methodName](routeName, ...args)
                 }
             }
