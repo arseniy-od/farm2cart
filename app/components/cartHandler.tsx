@@ -1,23 +1,26 @@
 import good from '@/server/services/good'
-import { useState, MouseEvent } from 'react'
+import { useState, MouseEvent, useEffect } from 'react'
 
 export default function CartHandler({ good }) {
     const [inCart, setInCart] = useState(false)
-    const isInCart = async () => {
-        const cart = await fetch('/api/cart')
-        const cartContent = await cart.json()
-        if (!cartContent.blank) {
-            let isFound = false
-            for (let product of cartContent) {
-                if (product.goodId === good.id) {
-                    isFound = true
+    const isInCart = () => {
+        const cart = fetch('/api/cart')
+            .then((res) => res.json())
+            .then((cartContent) => {
+                // console.log('Cart content')
+                if (!cartContent.blank) {
+                    let isFound = false
+                    for (let product of cartContent) {
+                        if (product.goodId === good.id) {
+                            isFound = true
+                        }
+                    }
+                    setInCart(isFound)
                 }
-            }
-            setInCart(isFound)
-        }
+            })
     }
 
-    isInCart()
+    // useEffect(isInCart, [])
 
     async function handleAddCart(event: MouseEvent<HTMLButtonElement>) {
         console.log('Before post request')

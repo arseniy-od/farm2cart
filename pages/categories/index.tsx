@@ -3,12 +3,17 @@ import Link from 'next/link'
 
 import Layout from '@/app/layout'
 import container from '@/server/container'
-import { NextApiRequest, NextApiResponse, GetServerSideProps } from 'next'
+import {
+    NextApiRequest,
+    NextApiResponse,
+    GetServerSideProps,
+    GetStaticProps,
+} from 'next'
 
 export default function Category(props: {
     categories: { id: number; text: string }[]
 }) {
-    const { categories } = props
+    const categories = props.data
 
     return (
         <Layout>
@@ -27,10 +32,8 @@ export default function Category(props: {
     )
 }
 
-export const getServerSideProps: GetServerSideProps = async function (ctx) {
-    const categories = await container
+export const getStaticProps: GetStaticProps = async function (ctx) {
+    return await container
         .resolve('CategoryController')
         .getCategoriesWithGoods()
-
-    return { props: categories }
 }

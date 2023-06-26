@@ -1,6 +1,7 @@
 import passport from 'passport'
 import LocalStrategy from 'passport-local'
-import container from '@/server/container'
+// import container from '@/server/container'
+import UserService from '@/server/services/user'
 import { NextApiRequest, NextApiResponse } from 'next'
 import { NextHandler } from 'next-connect'
 import { NextApiRequestWithUser } from '@/app/interfaces'
@@ -12,9 +13,7 @@ passport.serializeUser((user, done) => {
 
 passport.deserializeUser((req: NextApiRequest, id: number, done) => {
     console.log('passport deserialize, userid', id)
-    const user = container
-        .resolve('UserService')
-        .getUserById(id)
+    const user = UserService.getUserById(id)
         .then((user) => {
             done(null, user)
         })
@@ -25,9 +24,7 @@ passport.use(
     new LocalStrategy(
         { usernameField: 'email', passReqToCallback: true },
         (req: NextApiRequest, email: string, password: string, done) => {
-            container
-                .resolve('UserService')
-                .getUserByEmail(email)
+            UserService.getUserByEmail(email)
                 .then((user) => {
                     if (!user) {
                         done(true, false, { message: 'User not found' })
@@ -80,4 +77,6 @@ export const passportAuth = (
     })(req, res, next)
 }
 
+// export const passportInit = passport.initialize()
+// export const passportSession = passport.session()
 export default passport

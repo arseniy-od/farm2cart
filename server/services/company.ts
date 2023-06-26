@@ -1,3 +1,4 @@
+import { company } from '@/app/interfaces'
 import BaseContext from '../baseContext'
 import GET from '../decorators/get'
 
@@ -15,5 +16,9 @@ export default class CompanyService extends BaseContext {
                 },
             ],
         })
+    }
+
+    async createCompany(companyData: company) {
+        return await this.Company.create(companyData)
     }
 }

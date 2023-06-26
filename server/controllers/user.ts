@@ -8,20 +8,34 @@ import BaseContext from '../baseContext'
 import { ParsedUrlQuery } from 'querystring'
 import { NextApiRequestWithUser, user } from '@/app/interfaces'
 
-export default class UserController extends BaseContext {
+import USE from '../decorators/use'
+import GET from '../decorators/get'
+import POST from '../decorators/post'
+import DELETE from '../decorators/delete'
+import PATCH from '../decorators/patch'
+import SSR from '../decorators/ssr'
+
+import session, { passportInit, passportSession } from '@/middleware/session'
+import BaseController from './baseController'
+
+@USE([session, passportInit, passportSession])
+export default class UserController extends BaseController {
     private UserService = this.di.UserService
     private GoodService = this.di.GoodService
     private OrderService = this.di.OrderService
 
+    @SSR('/users')
+    @GET('/api/users')
     async getUsers() {
         const result = await this.UserService.getUsers()
         const users = JSON.parse(JSON.stringify(result))
         if (!users || !users.length) {
             return { props: { notFound: true } }
         }
-        return { users }
+        return users
     }
 
+    @POST('/api/users')
     async createUser(req: NextApiRequest) {
         const result = await this.UserService.createUser(req.body)
         const user = JSON.parse(JSON.stringify(result))
@@ -31,6 +45,7 @@ export default class UserController extends BaseContext {
         return user
     }
 
+    @DELETE('/api/users')
     async deleteUser(req: NextApiRequest) {
         const id = req.query.id
         if (!id || id instanceof Array) {
@@ -40,26 +55,29 @@ export default class UserController extends BaseContext {
         return deleted
     }
 
+    @SSR('/users/:id')
     async getUserWithGoods(
         ctx: GetServerSidePropsContext<ParsedUrlQuery, PreviewData>
     ) {
         const { id } = ctx.query
         if (!id || id instanceof Array) {
-            return { props: { user: { notFound: true } } }
+            return {
+                props: { user: { error: true, message: 'User not found' } },
+            }
         }
 
-        const userData = await this.UserService.getUserById(id)
-        const goodsData = await this.GoodService.getGoodsBySellerId(id)
-        const parsedUser = JSON.parse(JSON.stringify(userData))
-        const parsedGoods = JSON.parse(JSON.stringify(goodsData))
+        let user = await this.UserService.getUserById(id)
+        let goods = await this.GoodService.getGoodsBySellerId(id)
+        user = JSON.parse(JSON.stringify(user))
+        goods = JSON.parse(JSON.stringify(goods))
         return {
-            props: {
-                user: parsedUser,
-                goods: parsedGoods,
-            },
+            user,
+            goods,
         }
     }
 
+    //! Client router with middleware is incompatible with controller with middleware
+    @SSR('/users/me')
     async getUserByReq(req: NextApiRequestWithUser) {
         if (!req.user) {
             return {
@@ -76,6 +94,7 @@ export default class UserController extends BaseContext {
         }
     }
 
+    @SSR('users/me/goods')
     async getGoodsForUser(req: NextApiRequestWithUser) {
         if (!req.user) {
             return {
@@ -95,6 +114,7 @@ export default class UserController extends BaseContext {
         }
     }
 
+    @SSR('/users/me/orders')
     async getOrdersForUser(req: NextApiRequestWithUser) {
         if (!req.user) {
             return {

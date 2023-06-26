@@ -5,16 +5,17 @@ import Link from 'next/link'
 import Layout from '@/app/layout'
 import GoodCard from '@/app/components/goodCard'
 import container from '@/server/container'
-import { CategoryProps, category, good } from '@/app/interfaces'
+import {
+    CategoryProps,
+    ContextDynamicRoute,
+    category,
+    good,
+} from '@/app/interfaces'
 import { IGoodModel } from '@/app/interfaces'
 
-export default function Category({
-    category,
-    goods,
-}: {
-    category: category
-    goods: good[]
-}) {
+export default function Category(props) {
+    const goods = props.data.goods
+    const category = props.data.category
     console.log('Goods: ', goods)
     return (
         <Layout>
@@ -24,7 +25,7 @@ export default function Category({
                 </div>
                 {goods.map((good, i) => (
                     <div key={i}>
-                        <GoodCard good={good} categories={good.categories} />
+                        <GoodCard good={good} />
                     </div>
                 ))}
                 <div>
@@ -40,11 +41,12 @@ export default function Category({
     )
 }
 
-export const getServerSideProps: GetServerSideProps = async (ctx) => {
-    const category = await container
+export async function getStaticPaths() {
+    return await container.resolve('CategoryController').getStaticPaths()
+}
+
+export const getStaticProps: GetStaticProps = async (ctx) => {
+    return await container
         .resolve('CategoryController')
         .getCategoryWithGoods(ctx)
-    return {
-        props: category,
-    }
 }

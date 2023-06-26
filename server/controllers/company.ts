@@ -4,10 +4,15 @@ import GET from '../decorators/get'
 import POST from '../decorators/post'
 import SSR from '../decorators/ssr'
 import USE from '../decorators/use'
-import session, { middlewares } from '@/middleware/session'
-import passport from '@/middleware/passport'
+import session, {
+    middlewares,
+    passportInit,
+    passportSession,
+} from '@/middleware/session'
+import { NextApiRequestWithUser } from '@/app/interfaces'
+// import passport from '@/middleware/passport'
 
-@USE([session, middlewares[0], middlewares[1]])
+@USE([session, passportInit, passportSession])
 export default class CompanyController extends BaseController {
     private CompanyService = this.di.CompanyService
 
@@ -24,9 +29,7 @@ export default class CompanyController extends BaseController {
     }
 
     @POST('/api/companies')
-    async createCompany({ body }) {
-        console.log('==============[POST]=============')
-        console.log(body)
-        return { status: 'ok' }
+    async createCompany({ body }: NextApiRequestWithUser) {
+        return await this.CompanyService.createCompany(body)
     }
 }

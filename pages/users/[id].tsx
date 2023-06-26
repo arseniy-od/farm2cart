@@ -6,7 +6,9 @@ import GoodCard from '@/app/components/goodCard'
 import container from '@/server/container'
 import { UserGoodsProps } from '@/app/interfaces'
 
-export default function User({ user, goods }: UserGoodsProps) {
+export default function User(props: UserGoodsProps) {
+    const user = props.data.user
+    const goods = props.data.goods
     if (user.notFound) {
         return (
             <Layout>
@@ -27,10 +29,7 @@ export default function User({ user, goods }: UserGoodsProps) {
                         {goods.map((good, i) => (
                             <div key={i}>
                                 <div>
-                                    <GoodCard
-                                        good={good}
-                                        categories={good.categories}
-                                    />
+                                    <GoodCard good={good} />
                                 </div>
                             </div>
                         ))}
@@ -42,8 +41,7 @@ export default function User({ user, goods }: UserGoodsProps) {
 }
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
-    const props = await container
-        .resolve('UserController')
-        .getUserWithGoods(ctx)
+    ctx.routeName = '/users/:id'
+    const props = await container.resolve('UserController').run(ctx)
     return props
 }

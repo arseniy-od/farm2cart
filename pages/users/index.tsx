@@ -6,7 +6,8 @@ import container from '@/server/container'
 import { GetServerSideProps, NextApiRequest, NextApiResponse } from 'next'
 import { UsersProps } from '@/app/interfaces'
 
-export default function User({ users }: UsersProps) {
+export default function User(props: UsersProps) {
+    const users = props.data
     return (
         <Layout>
             {users.map((user, i) => (
@@ -26,6 +27,5 @@ export default function User({ users }: UsersProps) {
 }
 
 export const getServerSideProps: GetServerSideProps = async function (ctx) {
-    const users = await container.resolve('UserController').getUsers()
-    return { props: users }
+    return await container.resolve('UserController').run(ctx)
 }

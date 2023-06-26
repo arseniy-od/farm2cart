@@ -48,7 +48,7 @@ export default function Sidebar({
         }
     }
 
-    useEffect(fetchUser, [])
+    // useEffect(fetchUser, [])
     useEffect(fetchCategories, [])
 
     return (

@@ -228,6 +228,6 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
     const good = await container.resolve('GoodController').getGood(ctx)
     const categories = await container
         .resolve('CategoryController')
-        .getCategoriesWithGoods()
+        .getCategories()
     return { props: { ...good, ...categories } }
 }

@@ -1,4 +1,8 @@
-import { GetServerSideProps } from 'next'
+import {
+    GetServerSideProps,
+    GetServerSidePropsContext,
+    PreviewData,
+} from 'next'
 import { useRouter } from 'next/navigation'
 import { useState, MouseEvent } from 'react'
 
@@ -9,14 +13,18 @@ import Layout from '@/app/layout'
 import GoodCard from '@/app/components/goodCard'
 import { formatDateTime } from '@/app/utils'
 import container from '@/server/container'
-import { GoodProps, good } from '@/app/interfaces'
+import { ContextDynamicRoute, GoodProps, good } from '@/app/interfaces'
 import ReviewCard from '@/app/components/reviewCard'
 import { BlankStar, HalfStar, Star } from '@/app/components/icons/star'
 import CreateReview from '@/app/components/createReview'
 import CartHandler from '@/app/components/cartHandler'
 import goods from '@/pages/api/goods'
+import { ParsedUrlQuery } from 'querystring'
 
-export default function Good({ good }: GoodProps) {
+export default function Good({ data }: GoodProps) {
+    const good = data
+    console.log('data', data)
+
     const categories = good.categories
     const { push } = useRouter()
     const [reviews, setReviews] = useState(good.reviews)
@@ -58,11 +66,11 @@ export default function Good({ good }: GoodProps) {
         }
     }
 
-    if (good.notFound) {
+    if (good.error) {
         return (
             <Layout>
                 <div className="ml-6 mt-6 text-2xl font-semibold">
-                    Good not found
+                    {good.message}
                 </div>
             </Layout>
         )
@@ -160,7 +168,7 @@ export default function Good({ good }: GoodProps) {
     )
 }
 
-export const getServerSideProps: GetServerSideProps = async (ctx) => {
-    const good = await container.resolve('GoodController').getGood(ctx)
-    return { props: good }
+export async function getServerSideProps(ctx: ContextDynamicRoute) {
+    ctx.routeName = '/goods/:id'
+    return await container.resolve('GoodController').run(ctx)
 }

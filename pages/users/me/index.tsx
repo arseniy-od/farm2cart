@@ -12,7 +12,29 @@ import { GoodsProps, UserGoodsOrdersProps, user } from '@/app/interfaces'
 import OrderCard from '@/app/components/orderCard'
 import { formatDate, toTitle } from '@/app/utils'
 
-export default function User({ user }: UserGoodsOrdersProps) {
+export default function User() {
+    const [user, setUser] = useState<user>({})
+    const [loading, setLoading] = useState(true)
+
+    function fetchUser() {
+        fetch('/api/users/me')
+            .then((res) => res.json())
+            .then((data) => {
+                setUser(data)
+                setLoading(false)
+            })
+    }
+
+    useEffect(fetchUser, [])
+
+    if (loading) {
+        return (
+            <Layout>
+                <h2 className="ml-5 mt-5 text-2xl">Loading...</h2>
+            </Layout>
+        )
+    }
+
     if (user.error) {
         return (
             <Layout>
@@ -56,9 +78,9 @@ export default function User({ user }: UserGoodsOrdersProps) {
 }
 
 const router = createRouter()
-    .use(session)
-    .use(middlewares[0])
-    .use(middlewares[1])
+    // .use(session)
+    // .use(middlewares.asyncPassportInit)
+    // .use(middlewares.asyncPassportSession)
     .get(async (req, res) => {
         return await container.resolve('UserController').getUserByReq(req)
     })

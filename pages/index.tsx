@@ -5,7 +5,7 @@ import Link from 'next/link'
 
 import container from '@/server/container'
 import GoodCard from '@/app/components/goodCard'
-import { category, good } from '@/app/interfaces'
+import { GoodProps, GoodsProps, category, good } from '@/app/interfaces'
 
 export default function Goods({
     goods,
@@ -71,9 +71,13 @@ export default function Goods({
 }
 
 export const getServerSideProps: GetServerSideProps = async function (ctx) {
-    const goods = await container.resolve('GoodController').getGoods()
+    const goods = await container.resolve('GoodController').run(ctx)
     const categories = await container
         .resolve('CategoryController')
-        .getCategoriesWithGoods()
-    return { props: { ...goods, ...categories } }
+        .getCategories()
+    console.log('categories', categories)
+
+    return {
+        props: { goods: goods.props.data, categories },
+    }
 }

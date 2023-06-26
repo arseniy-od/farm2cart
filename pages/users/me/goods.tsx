@@ -49,8 +49,8 @@ export default function User({ user, goods }: UserGoodsOrdersProps) {
 
 const router = createRouter()
     .use(session)
-    .use(middlewares[0])
-    .use(middlewares[1])
+    .use(middlewares.asyncPassportInit)
+    .use(middlewares.asyncPassportSession)
     .get(async (req, res) => {
         return await container.resolve('UserController').getGoodsForUser(req)
     })

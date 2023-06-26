@@ -1,4 +1,5 @@
-import { NextApiRequest } from 'next'
+import { GetServerSidePropsContext, NextApiRequest, PreviewData } from 'next'
+import { ParsedUrlQuery } from 'querystring'
 import { Model } from 'sequelize'
 import { InferAttributes, InferCreationAttributes } from 'sequelize'
 
@@ -38,7 +39,7 @@ type userMin = {
     email: string
 }
 
-type company = {
+export type company = {
     id: number
     name: string
     description: string
@@ -48,7 +49,8 @@ type company = {
 }
 
 export type user = {
-    notFound?: boolean
+    error?: boolean
+    message?: string
     id: number
     firstName: string
     lastName: string
@@ -58,6 +60,7 @@ export type user = {
     phoneNumber: string
     role: string
     companyId: number
+    registrationDate: Date
 }
 
 type userWithCompany = user & {
@@ -69,6 +72,10 @@ export type NextApiRequestWithUser = NextApiRequest & {
     session: { [key: string]: any }
     logIn: (user: user, cb: (error: any) => any) => void
     logOut: () => void
+}
+
+export type NextApiRequestFile = NextApiRequestWithUser & {
+    file?: File
 }
 
 export type review = {
@@ -138,8 +145,7 @@ export interface CategoryProps {
 }
 
 export interface CompanyProps {
-    notFound?: boolean
-    companies: company[]
+    data: company[]
 }
 
 export interface GoodProps {
@@ -180,4 +186,11 @@ export interface UserGoodsOrdersProps {
 
 export interface UsersProps {
     users: userWithCompany[]
+}
+
+export type ContextDynamicRoute = GetServerSidePropsContext<
+    ParsedUrlQuery,
+    PreviewData
+> & {
+    routeName?: string
 }

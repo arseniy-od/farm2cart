@@ -106,8 +106,8 @@ export default function Cart({ cart }: cart) {
 
 const router = createRouter()
     .use(session)
-    .use(middlewares[0])
-    .use(middlewares[1])
+    .use(middlewares.asyncPassportInit)
+    .use(middlewares.asyncPassportSession)
     .get(async (req, res) => {
         // console.log("session: ", req.session);
         const cart = req.session.cart

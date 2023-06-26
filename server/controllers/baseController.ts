@@ -1,9 +1,15 @@
 import BaseContext from '../baseContext'
 import { createRouter } from 'next-connect'
-import { NextApiResponse, NextApiRequest } from 'next'
+import {
+    NextApiResponse,
+    NextApiRequest,
+    GetServerSidePropsContext,
+    PreviewData,
+} from 'next'
 // import { INextApiRequestExtended } from '../interfaces/common'
 import 'reflect-metadata'
-import { NextApiRequestWithUser } from '@/app/interfaces'
+import { ContextDynamicRoute, NextApiRequestWithUser } from '@/app/interfaces'
+import { ParsedUrlQuery } from 'querystring'
 
 export default class BaseController extends BaseContext {
     private useClassMiddleware(router) {
@@ -31,21 +37,27 @@ export default class BaseController extends BaseContext {
         return methodArgs
     }
 
-    public run = (context) =>
+    public run = (context: ContextDynamicRoute) =>
         createRouter()
-            .get(async (req, res: NextApiResponse) => {
+            .get(async (req, res) => {
                 try {
                     const routeName = context.routeName || context.req.url
                     const method = 'SSR'
+                    console.log('[BaseController] route', routeName)
+
                     const members: any = Reflect.getMetadata(routeName, this)
+                    console.log('Members: ', members)
+
                     const [firstMethod] = members[method]
                     // for (let i = 0; i < members[method].length; i++) {
                     const callback = this[firstMethod].bind(this)
                     let data = await callback({
                         params: context?.params,
+                        query: context?.query,
                     } as any)
                     data = JSON.parse(JSON.stringify(data))
-                    console.log('\n\n[USER]: ', context.req)
+                    console.log('Data: ', data)
+                    // console.log('\n\n[USER]: ', context.req)
 
                     return {
                         props: { data },
@@ -54,7 +66,10 @@ export default class BaseController extends BaseContext {
                 } catch (error: any) {
                     console.error('ERROR in getServerSideProps:', error)
                     return {
-                        props: { message: error },
+                        props: {
+                            error: true,
+                            message: error.message ? error.message : error,
+                        },
                     }
                 }
             })
