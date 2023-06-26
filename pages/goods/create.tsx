@@ -228,6 +228,6 @@ export default function Home({ categories }: { categories: category[] }) {
 export const getStaticProps: GetStaticProps = async ({ params }) => {
     const categories = await container
         .resolve('CategoryController')
-        .getCategoriesWithGoods()
+        .getCategories()
     return { props: categories }
 }
