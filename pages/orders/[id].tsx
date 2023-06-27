@@ -2,10 +2,11 @@ import { GetServerSideProps } from 'next'
 
 import Layout from '@/app/layout'
 import container from '@/server/container'
-import { OrderProps } from '@/app/interfaces'
+import { ContextDynamicRoute, OrderProps } from '@/app/interfaces'
 import OrderCard from '@/app/components/orderCard'
 
-export default function Order({ order }: OrderProps) {
+export default function Order(props: OrderProps) {
+    const order = props.data
     if (order.notFound) {
         return (
             <Layout>
@@ -20,6 +21,7 @@ export default function Order({ order }: OrderProps) {
     )
 }
 
-export const getServerSideProps: GetServerSideProps = async (ctx) => {
-    return await container.resolve('OrderController').getOrder(ctx)
+export async function getServerSideProps(ctx: ContextDynamicRoute) {
+    ctx.routeName = '/orders/:id'
+    return await container.resolve('OrderController').run(ctx)
 }

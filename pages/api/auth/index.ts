@@ -1,23 +1,28 @@
-import { NextApiHandler, NextApiRequest, NextApiResponse } from 'next'
-import { NextHandler, createRouter } from 'next-connect'
+import container from '@/server/container'
 
-// import { authRouter } from '@/middleware/router'
-import passport, { passportAuth } from '@/middleware/passport'
-import session from '@/middleware/session'
-import nextSession from 'next-session'
-import { isConstructorDeclaration } from 'typescript'
+export default container.resolve('AuthController').handler('/api/auth')
 
-const router = createRouter<NextApiRequest, NextApiResponse>()
+// import { NextApiHandler, NextApiRequest, NextApiResponse } from 'next'
+// import { NextHandler, createRouter } from 'next-connect'
 
-router
-    .use(session)
-    .use(passport.initialize())
-    .use(passport.session())
-    .post(passportAuth)
+// // import { authRouter } from '@/middleware/router'
+// import passport, { passportAuth } from '@/middleware/passport'
+// import session from '@/middleware/session'
+// import nextSession from 'next-session'
+// import { isConstructorDeclaration } from 'typescript'
 
-export default router.handler({
-    onError: (err, req, res) => {
-        console.error(err.stack)
-        res.status(err.statusCode || 500).end(err.message)
-    },
-})
+// const router = createRouter<NextApiRequest, NextApiResponse>()
+
+// router
+//     .use(session)
+//     .use(passport.initialize())
+//     .use(passport.session())
+//     .use(passportAuth)
+//     .post((req) => req.user)
+
+// export default router.handler({
+//     onError: (err, req, res) => {
+//         console.error(err.stack)
+//         res.status(err.statusCode || 500).end(err.message)
+//     },
+// })

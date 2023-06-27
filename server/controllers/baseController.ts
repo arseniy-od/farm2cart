@@ -12,15 +12,18 @@ import { ContextDynamicRoute, NextApiRequestWithUser } from '@/app/interfaces'
 import { ParsedUrlQuery } from 'querystring'
 
 export default class BaseController extends BaseContext {
+    private UserService = this.di.UserService
+
     private useClassMiddleware(router) {
         const classMiddleware = Reflect.getMetadata(
             this.constructor.name,
             this.constructor
         )
         const classArgs = Array.isArray(classMiddleware) ? classMiddleware : []
-        console.log('class args: ', classArgs)
+        // console.log('class args: ', classArgs)
 
         for (let i = 0; i < classArgs.length; i++) {
+            // console.log('use: ', classArgs[i])
             router.use(classArgs[i])
         }
         return classArgs
@@ -28,7 +31,7 @@ export default class BaseController extends BaseContext {
 
     private useMethodMiddleware(methodName: string) {
         const key = this.constructor.name + '_' + methodName
-        console.log('key: ', key)
+        // console.log('key: ', key)
 
         const methodMiddleware = Reflect.getMetadata(key, this.constructor)
         const methodArgs = Array.isArray(methodMiddleware)
@@ -56,8 +59,6 @@ export default class BaseController extends BaseContext {
                         query: context?.query,
                     } as any)
                     data = JSON.parse(JSON.stringify(data))
-                    console.log('Data: ', data)
-                    // console.log('\n\n[USER]: ', context.req)
 
                     return {
                         props: { data },
@@ -93,10 +94,12 @@ export default class BaseController extends BaseContext {
                                 body: req?.body,
                                 params: req?.params,
                                 session: req?.session,
-                                identity: req?.user,
+                                identity: req?.session.user,
+                                query: req?.query,
                             } as any)
                             data = JSON.parse(JSON.stringify(data))
-                            console.log('User handler: ', req.user)
+                            // console.log('[handler] req.session: ', req.session)
+                            // console.log('[handler] req.user: ', req.user)
 
                             return res.status(200).json(data)
                         } catch (err: any) {

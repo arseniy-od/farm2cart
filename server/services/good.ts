@@ -54,7 +54,7 @@ export default class GoodService extends BaseContext {
         return goods
     }
 
-    async getGoodById(id: string) {
+    async getGoodByIdExtended(id: string) {
         const good = await this.Good.findOne({
             where: { id },
             include: [
@@ -101,7 +101,14 @@ export default class GoodService extends BaseContext {
                 ...JSON.parse(JSON.stringify(aggregatedReview)),
             }
         }
+        api / cart
         return { error: true, message: 'Good not found' }
+    }
+
+    async getGoodById(id: string | number) {
+        return await this.Good.findOne({
+            where: { id },
+        })
     }
 
     async createGood(goodData: good) {

@@ -5,7 +5,8 @@ import { GetServerSideProps, NextApiRequest, NextApiResponse } from 'next'
 import container from '@/server/container'
 import { ReviewsProps } from '@/app/interfaces'
 
-export default function Review({ reviews }: ReviewsProps) {
+export default function Review({ data }: ReviewsProps) {
+    const reviews = data
     return (
         <Layout>
             {reviews.map((review, i) => (
@@ -22,6 +23,6 @@ export default function Review({ reviews }: ReviewsProps) {
 const router = createRouter().get(async (req, res) => {})
 
 export const getServerSideProps: GetServerSideProps = async function (ctx) {
-    const reviews = await container.resolve('ReviewController').getReviews()
-    return { props: reviews }
+    const reviews = await container.resolve('ReviewController').run(ctx)
+    return reviews
 }

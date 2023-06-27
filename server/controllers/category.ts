@@ -96,7 +96,7 @@ export default class CategoryController extends BaseController {
 
         // to avoid including a lot of models with functions and filtered attributes inside categories
         for (let good of category.goods) {
-            goods.push(await this.GoodService.getGoodById(good.id))
+            goods.push(await this.GoodService.getGoodByIdExtended(good.id))
         }
         return { props: { data: { category, goods } } }
     }

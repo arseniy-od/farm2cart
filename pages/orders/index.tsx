@@ -5,8 +5,8 @@ import Layout from '@/app/layout'
 import container from '@/server/container'
 import { OrdersProps } from '@/app/interfaces'
 
-export default function Order({ orders }: OrdersProps) {
-    // const { orders } = props;
+export default function Order(props) {
+    const orders = props.data
     console.log('Orders: ', orders)
 
     return (
@@ -26,6 +26,5 @@ export default function Order({ orders }: OrdersProps) {
 }
 
 export const getServerSideProps: GetServerSideProps = async function (ctx) {
-    const orders = await container.resolve('OrderController').getOrders()
-    return { props: orders }
+    return await container.resolve('OrderController').run(ctx)
 }

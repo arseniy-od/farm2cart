@@ -25,7 +25,9 @@ export default function Sidebar({
         fetch('/api/users/me')
             .then((res) => res.json())
             .then((data) => {
-                setUser(data)
+                if (data.user) {
+                    setUser(data.user)
+                }
             })
     }
 
@@ -42,13 +44,13 @@ export default function Sidebar({
         const res = await fetch('/api/auth/logout')
         if (res.ok) {
             console.log('Logout successful')
-            push('/')
+            home || push('/')
         } else {
             console.log('Logout error')
         }
     }
 
-    // useEffect(fetchUser, [])
+    useEffect(fetchUser, [])
     useEffect(fetchCategories, [])
 
     return (
@@ -142,7 +144,7 @@ export default function Sidebar({
                             ))}
                     </div>
                     <div className="mt-6">
-                        {!home && (
+                        {home || (
                             <Link
                                 href="/"
                                 className="ml-4 px-4 py-2 w-1/2 shadow-lg block hover:bg-gray-200"

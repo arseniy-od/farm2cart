@@ -20,7 +20,7 @@ export default function User() {
         fetch('/api/users/me')
             .then((res) => res.json())
             .then((data) => {
-                setUser(data)
+                setUser(data.user)
                 setLoading(false)
             })
     }
@@ -77,21 +77,21 @@ export default function User() {
     )
 }
 
-const router = createRouter()
-    // .use(session)
-    // .use(middlewares.asyncPassportInit)
-    // .use(middlewares.asyncPassportSession)
-    .get(async (req, res) => {
-        return await container.resolve('UserController').getUserByReq(req)
-    })
+// const router = createRouter()
+//     // .use(session)
+//     // .use(middlewares.asyncPassportInit)
+//     // .use(middlewares.asyncPassportSession)
+//     .get(async (req, res) => {
+//         return await container.resolve('UserController').getUserByReq(req)
+//     })
 
-export async function getServerSideProps({
-    req,
-    res,
-}: {
-    req: NextApiRequest
-    res: NextApiResponse
-}) {
-    const response = await router.run(req, res)
-    return response
-}
+// export async function getServerSideProps({
+//     req,
+//     res,
+// }: {
+//     req: NextApiRequest
+//     res: NextApiResponse
+// }) {
+//     const response = await router.run(req, res)
+//     return response
+// }

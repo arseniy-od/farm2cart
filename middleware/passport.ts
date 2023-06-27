@@ -1,7 +1,7 @@
 import passport from 'passport'
 import LocalStrategy from 'passport-local'
-// import container from '@/server/container'
-import UserService from '@/server/services/user'
+import container from '@/server/container'
+// import UserService from '@/server/services/user'
 import { NextApiRequest, NextApiResponse } from 'next'
 import { NextHandler } from 'next-connect'
 import { NextApiRequestWithUser } from '@/app/interfaces'
@@ -13,18 +13,25 @@ passport.serializeUser((user, done) => {
 
 passport.deserializeUser((req: NextApiRequest, id: number, done) => {
     console.log('passport deserialize, userid', id)
-    const user = UserService.getUserById(id)
+    const user = container
+        .resolve('UserService')
+        .getUserById(id)
         .then((user) => {
             done(null, user)
         })
-        .catch((e) => done(e, null))
+        .catch((e) => {
+            console.log('error deserialize', e)
+            done(e, null)
+        })
 })
 
 passport.use(
     new LocalStrategy(
         { usernameField: 'email', passReqToCallback: true },
         (req: NextApiRequest, email: string, password: string, done) => {
-            UserService.getUserByEmail(email)
+            container
+                .resolve('UserService')
+                .getUserByEmail(email)
                 .then((user) => {
                     if (!user) {
                         done(true, false, { message: 'User not found' })
@@ -35,7 +42,7 @@ passport.use(
                         .validatePassword(user, password)
                         .then((isValid) => {
                             if (isValid) {
-                                // console.log("[passport] User password is valid")
+                                console.log('[passport] User password is valid')
                                 done(null, user)
                             } else {
                                 done(true, false, {
@@ -68,12 +75,15 @@ export const passportAuth = (
         req.logIn(user, (err) => {
             if (err) {
                 console.log('\nDev: LogIn Error: \n', err)
+                req.session.user = JSON.parse(JSON.stringify(user))
                 return next()
             }
             return res.json({ user })
         })
 
-        console.log('\n\n[api/auth/index] Request User is:\n', req.user)
+        req.session.user = req.user
+        req.session.commit()
+        console.log('\n\n[passportAuth] Request User is:\n', req.session.user)
     })(req, res, next)
 }
 

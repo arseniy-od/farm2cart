@@ -5,6 +5,8 @@ import GoodController from './good'
 import OrderController from './order'
 import ReviewController from './review'
 import CategoryController from './category'
+import AuthController from './auth'
+import CartController from './cart'
 
 export interface IControllerContainer {
     CompanyController: CompanyController
@@ -13,6 +15,8 @@ export interface IControllerContainer {
     OrderController: OrderController
     ReviewController: ReviewController
     CategoryController: CategoryController
+    AuthController: AuthController
+    CartController: CartController
 }
 
 const controllers = {
@@ -22,6 +26,8 @@ const controllers = {
     OrderController: asClass(OrderController).singleton(),
     ReviewController: asClass(ReviewController).singleton(),
     CategoryController: asClass(CategoryController).singleton(),
+    AuthController: asClass(AuthController).singleton(),
+    CartController: asClass(CartController).singleton(),
 }
 
 export default controllers

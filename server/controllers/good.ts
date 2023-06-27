@@ -102,7 +102,7 @@ export default class GoodController extends BaseController {
         if (!id || id instanceof Array) {
             return { notFound: true }
         }
-        const good: good = await this.GoodService.getGoodById(id)
+        const good: good = await this.GoodService.getGoodByIdExtended(id)
         if (good.reviews) {
             good.reviews.sort(
                 (a, b) =>

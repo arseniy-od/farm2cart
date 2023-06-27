@@ -50,6 +50,21 @@ export default async function session(
 export const passportInit = passport.initialize()
 export const passportSession = passport.session()
 
+// const passportInit = new Promise((resolve, reject) => {
+//     resolve(passport.initialize())
+// })
+// const passportSession = new Promise((resolve, reject) => {
+//     resolve(passport.session())
+// })
+
+// export async function passInit() {
+//     return await passportInit
+// }
+
+// export async function passSession() {
+//     return await passportSession
+// }
+
 export const middlewares = {
     asyncPassportInit: async (req, res, next) => {
         const f: { resolve: (value?: unknown) => void } = {

@@ -17,6 +17,7 @@ import SSR from '../decorators/ssr'
 
 import session, { passportInit, passportSession } from '@/middleware/session'
 import BaseController from './baseController'
+import passport from '@/middleware/passport'
 
 @USE([session, passportInit, passportSession])
 export default class UserController extends BaseController {
@@ -74,6 +75,13 @@ export default class UserController extends BaseController {
             user,
             goods,
         }
+    }
+
+    @GET('/api/users/me')
+    getUser(req) {
+        console.log('------------------REQ---------------------', req)
+
+        return { user: req.identity }
     }
 
     //! Client router with middleware is incompatible with controller with middleware

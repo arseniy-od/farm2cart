@@ -35,18 +35,18 @@ export default class OrderController extends BaseController {
     }
 
     @POST('/api/orders')
-    async createOrder(req: NextApiRequestWithUser) {
-        if (!req.user) {
+    async createOrder({ body, identity, session }: NextApiRequestWithUser) {
+        if (!identity) {
             return { error: true, message: 'You are not logged in' }
         }
         const OrderData = {
-            ...req.body,
-            customerId: req.user.id,
+            ...body,
+            customerId: identity.id,
             paymentStatus: 'Ok',
         }
 
         const order = await this.OrderService.createOrder(OrderData)
-        req.session.cart = null
+        session.cart = null
         return order
     }
 
@@ -60,8 +60,6 @@ export default class OrderController extends BaseController {
         }
 
         let order = await this.OrderService.getOrderById(id)
-        order = JSON.parse(JSON.stringify(order))
-        // console.log('order is: ', order)
         return order
     }
 }

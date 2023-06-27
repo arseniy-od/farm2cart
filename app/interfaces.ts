@@ -68,7 +68,7 @@ type userWithCompany = user & {
 }
 
 export type NextApiRequestWithUser = NextApiRequest & {
-    user?: user
+    identity?: user
     session: { [key: string]: any }
     logIn: (user: user, cb: (error: any) => any) => void
     logOut: () => void

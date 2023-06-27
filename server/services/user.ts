@@ -1,10 +1,7 @@
-// import { User } from '@/server/database/models'
 import { user } from '@/app/interfaces'
 import BaseContext from '../baseContext'
 import { IUserModel } from '../database/models/user'
 const bcrypt = require('bcrypt')
-
-// export default class UserService extends BaseContext
 
 export default class UserService extends BaseContext {
     private User = this.di.User

@@ -5,19 +5,17 @@ Add categories to product page
 
 Check for validators on inputs
 
-Make all categories static
-
 Add logic for companies:
  - create
  - show
 
 Add good edit page
 
-Refactor users/me props type
 
-Refactor sign up page
+Refactor sign up page:
+    - add normal checkboxes
 
-Move fetching from sidebar to layout
+? Move fetching from sidebar to layout (Maybe leave it for redux)
 
 Styling:
  - style goods/create page

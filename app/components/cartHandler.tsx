@@ -11,7 +11,7 @@ export default function CartHandler({ good }) {
                 if (!cartContent.blank) {
                     let isFound = false
                     for (let product of cartContent) {
-                        if (product.goodId === good.id) {
+                        if (product.id === good.id) {
                             isFound = true
                         }
                     }
@@ -20,7 +20,7 @@ export default function CartHandler({ good }) {
             })
     }
 
-    // useEffect(isInCart, [])
+    useEffect(isInCart, [good.id])
 
     async function handleAddCart(event: MouseEvent<HTMLButtonElement>) {
         console.log('Before post request')

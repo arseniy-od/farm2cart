@@ -4,11 +4,7 @@ import GET from '../decorators/get'
 import POST from '../decorators/post'
 import SSR from '../decorators/ssr'
 import USE from '../decorators/use'
-import session, {
-    middlewares,
-    passportInit,
-    passportSession,
-} from '@/middleware/session'
+import session, { passportInit, passportSession } from '@/middleware/session'
 import { NextApiRequestWithUser } from '@/app/interfaces'
 // import passport from '@/middleware/passport'
 

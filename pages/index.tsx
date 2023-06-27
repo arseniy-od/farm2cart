@@ -34,7 +34,7 @@ export default function Goods({
     }
 
     return (
-        <Layout>
+        <Layout home={true}>
             <div className="mx-4 flex flex-wrap justify-center">
                 <CategoryIcon
                     text={categories[0].text}
@@ -75,7 +75,7 @@ export const getServerSideProps: GetServerSideProps = async function (ctx) {
     const categories = await container
         .resolve('CategoryController')
         .getCategories()
-    console.log('categories', categories)
+    // console.log('categories', categories)
 
     return {
         props: { goods: goods.props.data, categories },

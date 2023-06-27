@@ -53,11 +53,17 @@ export default function Layout({ children, home = false }) {
                         </button>
 
                         {/* Home icon */}
-                        <Link href="/">
+                        {home ? (
                             <h2 className="text-2xl font-semibold tracking-widest">
                                 FARM2CART
                             </h2>
-                        </Link>
+                        ) : (
+                            <Link href="/">
+                                <h2 className="text-2xl font-semibold tracking-widest">
+                                    FARM2CART
+                                </h2>
+                            </Link>
+                        )}
 
                         {/* Cart icon */}
                         <Link href="/cart" className="inline-block">
