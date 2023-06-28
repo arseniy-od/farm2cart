@@ -1,5 +1,5 @@
 import BaseContext from '../baseContext'
-import { orderWithGoodsCreate } from '@/app/interfaces'
+import { orderWithGoodsCreate } from '@/app/types/interfaces'
 export default class OrderService extends BaseContext {
     private Good = this.di.Good
     private User = this.di.User

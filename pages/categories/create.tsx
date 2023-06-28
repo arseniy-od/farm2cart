@@ -1,21 +1,22 @@
-import { useState, MouseEvent } from "react";
-import axios from "axios";
+import { useState, MouseEvent } from 'react'
+import axios from 'axios'
 
-import Layout from "@/app/layout";
-import {category} from "@/app/interfaces" 
-
+import Layout from '@/app/layout'
+import { category } from '@/app/types/interfaces'
 
 export default function CategoryCreate() {
-    const [text, setText] = useState('');
+    const [text, setText] = useState('')
 
-    async function handleSubmit(event: MouseEvent<HTMLButtonElement>): Promise<object> {
-        event.preventDefault();
+    async function handleSubmit(
+        event: MouseEvent<HTMLButtonElement>
+    ): Promise<object> {
+        event.preventDefault()
         console.log(text)
         const config = {
             headers: { 'content-type': 'application/json' },
-        };
+        }
 
-        const response = await axios.post('/api/categories', { text }, config);
+        const response = await axios.post('/api/categories', { text }, config)
         return await response.data.json()
     }
 
@@ -23,10 +24,18 @@ export default function CategoryCreate() {
         <Layout>
             <div>
                 <label htmlFor="category">Category: </label>
-                <input type="text" id="category" value={text} onChange={(event) => setText(event.target.value)}
-                    className="mt-2 px-4 py-3 w-full max-w-xs border-2" placeholder="category name" />
+                <input
+                    type="text"
+                    id="category"
+                    value={text}
+                    onChange={(event) => setText(event.target.value)}
+                    className="mt-2 px-4 py-3 w-full max-w-xs border-2"
+                    placeholder="category name"
+                />
             </div>
-            <button type="submit" onClick={handleSubmit}>Submit</button>
+            <button type="submit" onClick={handleSubmit}>
+                Submit
+            </button>
         </Layout>
-    );
+    )
 }

@@ -7,7 +7,7 @@ import {
     useState,
     MouseEvent,
 } from 'react'
-import { category, user } from '../interfaces'
+import { category, user } from '../types/interfaces'
 
 export default function Sidebar({
     setIsMenuOpen,

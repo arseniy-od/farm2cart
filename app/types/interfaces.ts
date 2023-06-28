@@ -63,6 +63,19 @@ export type user = {
     registrationDate: Date
 }
 
+export interface IUser {
+    id: number
+    firstName: string
+    lastName: string
+    username: string
+    password: string
+    email: string
+    phoneNumber?: string
+    role: string
+    companyId: number
+    registrationDate: Date
+}
+
 type userWithCompany = user & {
     company?: company
 }
@@ -177,6 +190,7 @@ export interface UserGoodsProps {
 }
 
 type userType = user & { error?: string; message?: string }
+
 export interface UserGoodsOrdersProps {
     notFound?: boolean
     user: userType

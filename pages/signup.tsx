@@ -1,12 +1,11 @@
 import Link from 'next/link'
-import { useRouter } from 'next/navigation';
+import { useRouter } from 'next/navigation'
 import { useState, MouseEvent } from 'react'
 
 import Layout from '../app/layout'
 
-
 export default function Home() {
-    const { push } = useRouter();
+    const { push } = useRouter()
     const [user, setUser] = useState({
         firstName: '',
         lastName: '',
@@ -14,31 +13,28 @@ export default function Home() {
         username: '',
         password: '',
         phoneNumber: '',
-        role: 'customer'
-    });
-
-
+        role: 'customer',
+    })
 
     const handleSubmit = async (event: MouseEvent<HTMLButtonElement>) => {
-        event.preventDefault();
+        event.preventDefault()
 
         const res = await fetch('/api/users', {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
             },
-            body: JSON.stringify(user)
-        });
+            body: JSON.stringify(user),
+        })
 
         if (res.ok) {
-            const user = await res.json();
-            console.log("Sign up successful")
+            const user = await res.json()
+            console.log('Sign up successful')
             push('/login')
         } else {
-            console.log("Sign up error")
+            console.log('Sign up error')
         }
-    };
-
+    }
 
     return (
         <div id="app" className="">
@@ -47,38 +43,117 @@ export default function Home() {
                     <form className="text-center">
                         <h3 className="text-xl">Registration</h3>
                         <div>
-                            <input type="text" value={user.firstName} onChange={(event) => setUser({ ...user, firstName: event.target.value })}
+                            <input
+                                type="text"
+                                value={user.firstName}
+                                onChange={(event) =>
+                                    setUser({
+                                        ...user,
+                                        firstName: event.target.value,
+                                    })
+                                }
                                 className="mt-2 px-4 py-3 w-full max-w-xs border-2"
-                                placeholder="first name" />
+                                placeholder="first name"
+                            />
                         </div>
                         <div>
-                            <input type="text" value={user.lastName} onChange={(event) => setUser({ ...user, lastName: event.target.value })}
-                                className="mt-2 px-4 py-3 w-full max-w-xs border-2" placeholder="last name" />
+                            <input
+                                type="text"
+                                value={user.lastName}
+                                onCh
+                                ange={(event) =>
+                                    setUser({
+                                        ...user,
+                                        lastName: event.target.value,
+                                    })
+                                }
+                                className="mt-2 px-4 py-3 w-full max-w-xs border-2"
+                                placeholder="last name"
+                            />
                         </div>
                         <div>
-                            <input type="text" value={user.email} onChange={(event) => setUser({ ...user, email: event.target.value })}
-                                className="mt-2 px-4 py-3 w-full max-w-xs border-2" name="email" placeholder="email" autoComplete='email'/>
+                            <input
+                                type="text"
+                                value={user.email}
+                                onChange={(event) =>
+                                    setUser({
+                                        ...user,
+                                        email: event.target.value,
+                                    })
+                                }
+                                className="mt-2 px-4 py-3 w-full max-w-xs border-2"
+                                name="email"
+                                placeholder="email"
+                                autoComplete="email"
+                            />
                         </div>
                         <div>
-                            <input type="text" value={user.username} onChange={(event) => setUser({ ...user, username: event.target.value })}
-                                className="mt-2 px-4 py-3 w-full max-w-xs border-2" placeholder="username" autoComplete='off'/>
+                            <input
+                                type="text"
+                                value={user.username}
+                                onChange={(event) =>
+                                    setUser({
+                                        ...user,
+                                        username: event.target.value,
+                                    })
+                                }
+                                className="mt-2 px-4 py-3 w-full max-w-xs border-2"
+                                placeholder="username"
+                                autoComplete="off"
+                            />
                         </div>
                         <div>
-                            <input type="password" value={user.password} onChange={(event) => setUser({ ...user, password: event.target.value })}
-                                className="mt-2 px-4 py-3 w-full max-w-xs border-2" placeholder="password" />
+                            <input
+                                type="password"
+                                value={user.password}
+                                onChange={(event) =>
+                                    setUser({
+                                        ...user,
+                                        password: event.target.value,
+                                    })
+                                }
+                                className="mt-2 px-4 py-3 w-full max-w-xs border-2"
+                                placeholder="password"
+                            />
                         </div>
                         <div>
-                            <input type="text" value={user.phoneNumber} onChange={(event) => setUser({ ...user, phoneNumber: event.target.value })}
-                                className="mt-2 px-4 py-3 w-full max-w-xs border-2" placeholder="phone number" />
+                            <input
+                                type="text"
+                                value={user.phoneNumber}
+                                onChange={(event) =>
+                                    setUser({
+                                        ...user,
+                                        phoneNumber: event.target.value,
+                                    })
+                                }
+                                className="mt-2 px-4 py-3 w-full max-w-xs border-2"
+                                placeholder="phone number"
+                            />
                         </div>
                         <div>
-                            <input type="text" value={user.role} onChange={(event) => setUser({ ...user, role: event.target.value })}
-                                className="mt-2 px-4 py-3 w-full max-w-xs border-2" placeholder="role" />
+                            <input
+                                type="text"
+                                value={user.role}
+                                onChange={(event) =>
+                                    setUser({
+                                        ...user,
+                                        role: event.target.value,
+                                    })
+                                }
+                                className="mt-2 px-4 py-3 w-full max-w-xs border-2"
+                                placeholder="role"
+                            />
                         </div>
-                        <button onClick={handleSubmit} type="submit" className="mt-4 inline-block items-center bg-gray-400 hover:bg-gray-600 focus:outline-none focus:shadow-outline rounded-lg shadow px-8 py-2">Submit</button>
+                        <button
+                            onClick={handleSubmit}
+                            type="submit"
+                            className="mt-4 inline-block items-center bg-gray-400 hover:bg-gray-600 focus:outline-none focus:shadow-outline rounded-lg shadow px-8 py-2"
+                        >
+                            Submit
+                        </button>
                     </form>
                 </div>
             </Layout>
         </div>
-    );
+    )
 }

@@ -5,7 +5,7 @@ import {
     PreviewData,
 } from 'next'
 import BaseContext from '../baseContext'
-import { NextApiRequestWithUser } from '@/app/interfaces'
+import { NextApiRequestWithUser } from '@/app/types/interfaces'
 import { ParsedUrlQuery } from 'querystring'
 import container from '../container'
 
@@ -18,6 +18,8 @@ import SSR from '../decorators/ssr'
 
 import session, { passportInit, passportSession } from '@/middleware/session'
 import BaseController from './baseController'
+import { OrderSchema } from '../validation/schemas'
+import validate from '../validation/validator'
 
 @USE([session, passportInit, passportSession])
 export default class OrderController extends BaseController {
@@ -35,6 +37,7 @@ export default class OrderController extends BaseController {
     }
 
     @POST('/api/orders')
+    @USE(validate(OrderSchema))
     async createOrder({ body, identity, session }: NextApiRequestWithUser) {
         if (!identity) {
             return { error: true, message: 'You are not logged in' }

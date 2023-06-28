@@ -1,4 +1,4 @@
-import { user } from '@/app/interfaces'
+import { user } from '@/app/types/interfaces'
 import BaseContext from '../baseContext'
 import { IUserModel } from '../database/models/user'
 const bcrypt = require('bcrypt')

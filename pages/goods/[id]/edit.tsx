@@ -13,7 +13,7 @@ import { useRouter } from 'next/navigation'
 
 import Layout from '@/app/layout'
 import container from '@/server/container'
-import { category } from '@/app/interfaces'
+import { category } from '@/app/types/interfaces'
 
 interface Good {
     title: string

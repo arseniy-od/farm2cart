@@ -8,7 +8,10 @@ import {
 } from 'next'
 // import { INextApiRequestExtended } from '../interfaces/common'
 import 'reflect-metadata'
-import { ContextDynamicRoute, NextApiRequestWithUser } from '@/app/interfaces'
+import {
+    ContextDynamicRoute,
+    NextApiRequestWithUser,
+} from '@/app/types/interfaces'
 import { ParsedUrlQuery } from 'querystring'
 
 export default class BaseController extends BaseContext {
@@ -96,6 +99,7 @@ export default class BaseController extends BaseContext {
                                 session: req?.session,
                                 identity: req?.session.user,
                                 query: req?.query,
+                                file: req?.file,
                             } as any)
                             data = JSON.parse(JSON.stringify(data))
                             // console.log('[handler] req.session: ', req.session)

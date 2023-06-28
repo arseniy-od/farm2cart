@@ -2,7 +2,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { useState, MouseEvent } from 'react'
 
-import { category, good } from '../interfaces'
+import { category, good } from '../types/interfaces'
 import { HalfStar, BlankStar, Star } from './icons/star'
 import CartHandler from './cartHandler'
 

@@ -4,7 +4,7 @@ import Link from 'next/link'
 import Layout from '@/app/layout'
 import container from '@/server/container'
 import { GetServerSideProps, NextApiRequest, NextApiResponse } from 'next'
-import { UsersProps } from '@/app/interfaces'
+import { UsersProps } from '@/app/types/interfaces'
 
 export default function User(props: UsersProps) {
     const users = props.data

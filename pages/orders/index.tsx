@@ -3,7 +3,7 @@ import Link from 'next/link'
 
 import Layout from '@/app/layout'
 import container from '@/server/container'
-import { OrdersProps } from '@/app/interfaces'
+import { OrdersProps } from '@/app/types/interfaces'
 
 export default function Order(props) {
     const orders = props.data

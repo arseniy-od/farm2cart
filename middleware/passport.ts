@@ -4,7 +4,7 @@ import container from '@/server/container'
 // import UserService from '@/server/services/user'
 import { NextApiRequest, NextApiResponse } from 'next'
 import { NextHandler } from 'next-connect'
-import { NextApiRequestWithUser } from '@/app/interfaces'
+import { NextApiRequestWithUser } from '@/app/types/interfaces'
 
 passport.serializeUser((user, done) => {
     console.log('passport serialize, userid=', user.id)

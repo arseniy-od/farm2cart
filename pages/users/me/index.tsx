@@ -8,7 +8,7 @@ import { isConstructorDeclaration } from 'typescript'
 import GoodCard from '@/app/components/goodCard'
 import container from '@/server/container'
 import { NextApiRequest, NextApiResponse } from 'next'
-import { GoodsProps, UserGoodsOrdersProps, user } from '@/app/interfaces'
+import { GoodsProps, UserGoodsOrdersProps, user } from '@/app/types/interfaces'
 import OrderCard from '@/app/components/orderCard'
 import { formatDate, toTitle } from '@/app/utils'
 

@@ -6,7 +6,7 @@ import Link from 'next/link'
 
 import container from '@/server/container'
 import { NextApiRequest, NextApiResponse } from 'next'
-import { GoodsProps, UserGoodsOrdersProps, user } from '@/app/interfaces'
+import { GoodsProps, UserGoodsOrdersProps, user } from '@/app/types/interfaces'
 import OrderCard from '@/app/components/orderCard'
 
 export default function User({ user, goods, orders }: UserGoodsOrdersProps) {

@@ -9,7 +9,7 @@ import Layout from '@/app/layout'
 import CartGood from '@/app/components/cartGood'
 import container from '@/server/container'
 import { NextApiRequest, NextApiResponse } from 'next'
-import { good } from '@/app/interfaces'
+import { good } from '@/app/types/interfaces'
 
 type cart = {
     cart: { blank?: boolean; goods: (good & { quantity: number })[] }

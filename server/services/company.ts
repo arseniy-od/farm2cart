@@ -1,4 +1,4 @@
-import { company } from '@/app/interfaces'
+import { company } from '@/app/types/interfaces'
 import BaseContext from '../baseContext'
 import GET from '../decorators/get'
 

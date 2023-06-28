@@ -8,7 +8,9 @@ import USE from '../decorators/use'
 import DELETE from '../decorators/delete'
 
 import session, { passportInit, passportSession } from '@/middleware/session'
-import { NextApiRequestWithUser } from '@/app/interfaces'
+import { NextApiRequestWithUser } from '@/app/types/interfaces'
+import validate from '../validation/validator'
+import { cartSchema } from '../validation/schemas'
 // import passport from '@/middleware/passport'
 
 @USE([session, passportInit, passportSession])
@@ -26,6 +28,7 @@ export default class CartController extends BaseController {
     }
 
     @POST('/api/cart')
+    @USE(validate(cartSchema))
     async addToCart({ body, session }: NextApiRequestWithUser) {
         const goodData = body
         console.log('body', body)

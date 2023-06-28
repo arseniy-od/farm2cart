@@ -2,7 +2,7 @@ import { createRouter } from 'next-connect'
 
 import Layout from '@/app/layout'
 import container from '@/server/container'
-import { CompanyProps } from '@/app/interfaces'
+import { CompanyProps } from '@/app/types/interfaces'
 import {
     GetServerSideProps,
     GetServerSidePropsContext,

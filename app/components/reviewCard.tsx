@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { review } from '../interfaces'
+import { review } from '../types/interfaces'
 import { formatDateTime } from '../utils'
 import { BlankStar, Star } from './icons/star'
 

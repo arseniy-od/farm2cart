@@ -4,7 +4,7 @@ import Link from 'next/link'
 import Layout from '@/app/layout'
 import GoodCard from '@/app/components/goodCard'
 import container from '@/server/container'
-import { UserGoodsProps } from '@/app/interfaces'
+import { UserGoodsProps } from '@/app/types/interfaces'
 
 export default function User(props: UserGoodsProps) {
     const user = props.data.user

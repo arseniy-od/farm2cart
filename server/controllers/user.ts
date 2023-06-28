@@ -6,7 +6,7 @@ import {
 } from 'next'
 import BaseContext from '../baseContext'
 import { ParsedUrlQuery } from 'querystring'
-import { NextApiRequestWithUser, user } from '@/app/interfaces'
+import { NextApiRequestWithUser, user } from '@/app/types/interfaces'
 
 import USE from '../decorators/use'
 import GET from '../decorators/get'
@@ -18,6 +18,8 @@ import SSR from '../decorators/ssr'
 import session, { passportInit, passportSession } from '@/middleware/session'
 import BaseController from './baseController'
 import passport from '@/middleware/passport'
+import { userSchema } from '../validation/schemas'
+import validate from '../validation/validator'
 
 @USE([session, passportInit, passportSession])
 export default class UserController extends BaseController {
@@ -37,6 +39,7 @@ export default class UserController extends BaseController {
     }
 
     @POST('/api/users')
+    @USE(validate(userSchema))
     async createUser(req: NextApiRequest) {
         const result = await this.UserService.createUser(req.body)
         const user = JSON.parse(JSON.stringify(result))
@@ -79,7 +82,7 @@ export default class UserController extends BaseController {
 
     @GET('/api/users/me')
     getUser(req) {
-        console.log('------------------REQ---------------------', req)
+        // console.log('------------------REQ---------------------', req)
 
         return { user: req.identity }
     }

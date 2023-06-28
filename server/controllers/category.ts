@@ -7,7 +7,7 @@ import {
 } from 'next'
 import { ParsedUrlQuery } from 'querystring'
 
-import { NextApiRequestWithUser } from '@/app/interfaces'
+import { NextApiRequestWithUser } from '@/app/types/interfaces'
 import good from './good'
 
 import session, { passportInit, passportSession } from '@/middleware/session'
@@ -20,6 +20,9 @@ import PATCH from '../decorators/patch'
 import SSR from '../decorators/ssr'
 
 import BaseController from './baseController'
+
+import validate from '../validation/validator'
+import { categorySchema } from '../validation/schemas'
 
 @USE([session, passportInit, passportSession])
 export default class CategoryController extends BaseController {
@@ -34,8 +37,10 @@ export default class CategoryController extends BaseController {
     }
 
     @POST('/api/categories')
+    @USE(validate(categorySchema))
     async createCategory({ body }: NextApiRequestWithUser) {
-        const category = await this.CategoryService.createCategory(body)
+        // return body
+        return await this.CategoryService.createCategory(body)
     }
 
     @DELETE('/api/categories')
@@ -51,6 +56,7 @@ export default class CategoryController extends BaseController {
     }
 
     @PATCH('/api/categories')
+    @USE(validate(categorySchema))
     async updateCategory({ query, body }: NextApiRequestWithUser) {
         const id = query.id
         if (!id) {

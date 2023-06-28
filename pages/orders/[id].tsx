@@ -2,7 +2,7 @@ import { GetServerSideProps } from 'next'
 
 import Layout from '@/app/layout'
 import container from '@/server/container'
-import { ContextDynamicRoute, OrderProps } from '@/app/interfaces'
+import { ContextDynamicRoute, OrderProps } from '@/app/types/interfaces'
 import OrderCard from '@/app/components/orderCard'
 
 export default function Order(props: OrderProps) {

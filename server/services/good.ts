@@ -1,7 +1,7 @@
 import { Sequelize, Op } from 'sequelize'
 
 import BaseContext from '../baseContext'
-import { category, good } from '@/app/interfaces'
+import { category, good } from '@/app/types/interfaces'
 
 export default class GoodService extends BaseContext {
     private Good = this.di.Good

@@ -10,8 +10,8 @@ import {
     ContextDynamicRoute,
     category,
     good,
-} from '@/app/interfaces'
-import { IGoodModel } from '@/app/interfaces'
+} from '@/app/types/interfaces'
+import { IGoodModel } from '@/app/types/interfaces'
 
 export default function Category(props) {
     const goods = props.data.goods

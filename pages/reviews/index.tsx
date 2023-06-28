@@ -3,7 +3,7 @@ import { createRouter } from 'next-connect'
 import { GetServerSideProps, NextApiRequest, NextApiResponse } from 'next'
 
 import container from '@/server/container'
-import { ReviewsProps } from '@/app/interfaces'
+import { ReviewsProps } from '@/app/types/interfaces'
 
 export default function Review({ data }: ReviewsProps) {
     const reviews = data

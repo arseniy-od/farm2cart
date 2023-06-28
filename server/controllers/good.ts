@@ -10,7 +10,7 @@ import {
     NextApiRequestFile,
     NextApiRequestWithUser,
     good,
-} from '@/app/interfaces'
+} from '@/app/types/interfaces'
 
 import USE from '../decorators/use'
 import GET from '../decorators/get'
@@ -23,6 +23,8 @@ import SSR from '../decorators/ssr'
 import BaseController from './baseController'
 import session, { passportInit, passportSession } from '@/middleware/session'
 import uploadMiddleware from '@/middleware/upload'
+import validate from '../validation/validator'
+import { goodSchema } from '../validation/schemas'
 
 @USE([session, passportInit, passportSession, uploadMiddleware])
 export default class GoodController extends BaseController {
@@ -35,18 +37,18 @@ export default class GoodController extends BaseController {
     }
 
     @POST('/api/goods')
-    async createGood(req: NextApiRequestFile) {
-        if (!req.user) {
+    @USE(validate(goodSchema))
+    async createGood({ body, identity, file }: NextApiRequestFile) {
+        if (!identity) {
             return { error: true, message: 'You are not logged in' }
         }
-        const goodData = { ...req.body, seller_id: req.user.id }
+        const goodData = { ...body, seller_id: identity.id }
         // console.log('[api/goods] goodData before: ', goodData)
         if (!(goodData.categories instanceof Array)) {
             goodData.categories = [goodData.categories]
         }
         // console.log('[api/goods] goodData after:', goodData)
 
-        const file = req.file
         if (file) {
             goodData.imageUrl = file.path.replace('public', '')
         }
@@ -58,6 +60,7 @@ export default class GoodController extends BaseController {
     }
 
     @PUT('api/goods')
+    @USE(validate(goodSchema))
     async updateGood(req: NextApiRequestFile) {
         // console.log('==========[GoodController]==============')
 

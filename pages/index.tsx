@@ -5,7 +5,7 @@ import Link from 'next/link'
 
 import container from '@/server/container'
 import GoodCard from '@/app/components/goodCard'
-import { GoodProps, GoodsProps, category, good } from '@/app/interfaces'
+import { GoodProps, GoodsProps, category, good } from '@/app/types/interfaces'
 
 export default function Goods({
     goods,

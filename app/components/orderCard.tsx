@@ -1,5 +1,9 @@
 import Link from 'next/link'
-import { order, orderWithGoods, orderWithGoodsCreate } from '../interfaces'
+import {
+    order,
+    orderWithGoods,
+    orderWithGoodsCreate,
+} from '../types/interfaces'
 
 export default function OrderCard({ order }: { order: orderWithGoods }) {
     return (
