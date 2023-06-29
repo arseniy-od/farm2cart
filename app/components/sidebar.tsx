@@ -8,6 +8,8 @@ import {
     MouseEvent,
 } from 'react'
 import { category, user } from '../types/interfaces'
+import { useAppDispatch, useAppSelector } from '@/redux/hooks'
+import { logout } from '@/redux/features/user/userSlice'
 
 export default function Sidebar({
     setIsMenuOpen,
@@ -16,42 +18,34 @@ export default function Sidebar({
     setIsMenuOpen: Dispatch<SetStateAction<boolean>>
     home: boolean
 }) {
-    const [user, setUser] = useState<user | object>({})
-    const [categories, setCategories] = useState<category[]>([])
+    const dispatch = useAppDispatch()
+    // const [categories, setCategories] = useState<category[]>([])
+    const user = useAppSelector((state) => state.user)
+    const categories = useAppSelector((state) => state.categories)
 
     const { push } = useRouter()
 
-    function fetchUser() {
-        fetch('/api/users/me')
-            .then((res) => res.json())
-            .then((data) => {
-                if (data.user) {
-                    setUser(data.user)
-                }
-            })
-    }
-
-    function fetchCategories() {
-        fetch('/api/categories')
-            .then((res) => res.json())
-            .then((data) => {
-                setCategories(data)
-            })
-    }
+    // function fetchCategories() {
+    //     fetch('/api/categories')
+    //         .then((res) => res.json())
+    //         .then((data) => {
+    //             setCategories(data)
+    //         })
+    // }
 
     const handleLogout = async (event: MouseEvent<HTMLButtonElement>) => {
-        setUser({})
         const res = await fetch('/api/auth/logout')
         if (res.ok) {
             console.log('Logout successful')
+            dispatch({ type: 'user/logout' })
             home || push('/')
         } else {
             console.log('Logout error')
         }
     }
 
-    useEffect(fetchUser, [])
-    useEffect(fetchCategories, [])
+    // useEffect(fetchUser, [])
+    // useEffect(fetchCategories, [])
 
     return (
         <div className="">

@@ -47,6 +47,7 @@
     "react-router-dom": "^6.12.1",
     "redis": "^4.6.7",
     "redux": "^4.2.1",
+    "redux-persist": "^6.0.0",
     "redux-saga": "^1.2.3",
     "reflect-metadata": "^0.1.13",
     "sequelize": "^6.32.0",

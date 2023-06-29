@@ -11,31 +11,20 @@ import { NextApiRequest, NextApiResponse } from 'next'
 import { GoodsProps, UserGoodsOrdersProps, user } from '@/app/types/interfaces'
 import OrderCard from '@/app/components/orderCard'
 import { formatDate, toTitle } from '@/app/utils'
+import { useAppSelector } from '@/redux/hooks'
 
 export default function User() {
-    const [user, setUser] = useState<user>({})
-    const [loading, setLoading] = useState(true)
+    const user = useAppSelector((state) => state.user)
 
-    function fetchUser() {
-        fetch('/api/users/me')
-            .then((res) => res.json())
-            .then((data) => {
-                setUser(data.user)
-                setLoading(false)
-            })
-    }
-
-    useEffect(fetchUser, [])
-
-    if (loading) {
+    if (Object.keys(user).length === 0) {
         return (
             <Layout>
-                <h2 className="ml-5 mt-5 text-2xl">Loading...</h2>
+                <h2 className="ml-5 mt-5 text-2xl">You are not logged in</h2>
             </Layout>
         )
     }
 
-    if (user.error) {
+    if (user.error || user.message) {
         return (
             <Layout>
                 <h2 className="ml-5 mt-5 text-2xl">{user.message}</h2>
@@ -76,22 +65,3 @@ export default function User() {
         </Layout>
     )
 }
-
-// const router = createRouter()
-//     // .use(session)
-//     // .use(middlewares.asyncPassportInit)
-//     // .use(middlewares.asyncPassportSession)
-//     .get(async (req, res) => {
-//         return await container.resolve('UserController').getUserByReq(req)
-//     })
-
-// export async function getServerSideProps({
-//     req,
-//     res,
-// }: {
-//     req: NextApiRequest
-//     res: NextApiResponse
-// }) {
-//     const response = await router.run(req, res)
-//     return response
-// }

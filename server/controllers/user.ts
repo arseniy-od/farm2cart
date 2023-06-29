@@ -82,7 +82,7 @@ export default class UserController extends BaseController {
 
     @GET('/api/users/me')
     getUser(req) {
-        // console.log('------------------REQ---------------------', req)
+        console.log('getUser called')
 
         return { user: req.identity }
     }

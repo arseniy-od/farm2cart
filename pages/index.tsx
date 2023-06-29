@@ -6,6 +6,8 @@ import Link from 'next/link'
 import container from '@/server/container'
 import GoodCard from '@/app/components/goodCard'
 import { GoodProps, GoodsProps, category, good } from '@/app/types/interfaces'
+import { useEffect, useState } from 'react'
+import { useAppDispatch, useAppSelector } from '@/redux/hooks'
 
 export default function Goods({
     goods,
@@ -14,6 +16,13 @@ export default function Goods({
     goods: good[]
     categories: category[]
 }) {
+    // const [fetchedGoods, setFetchedGoods] = useState(null)
+    const dispatch = useAppDispatch()
+    const fetchedGoods = useAppSelector((state) => state.goods)
+    useEffect(() => {
+        dispatch({ type: 'goods/fetch_request' })
+    }, [dispatch])
+
     function CategoryIcon({ text, imageUrl, link }) {
         return (
             <Link href={link}>
@@ -59,7 +68,7 @@ export default function Goods({
             </div>
             <div className="mx-auto flex flex-wrap justify-center">
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-                    {goods.map((good, i) => (
+                    {fetchedGoods.map((good, i) => (
                         <div key={i}>
                             <GoodCard good={good} />
                         </div>

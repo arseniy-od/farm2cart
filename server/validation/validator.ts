@@ -15,7 +15,8 @@ export default function validate(schema: { [key: string]: any }) {
             const error = validate.errors[0]
             console.error('ERROR in Validator', error)
             return res.status(400).json({
-                message: error,
+                error: true,
+                message: error.message,
             })
         }
     }

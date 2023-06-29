@@ -3,21 +3,17 @@ Soft delete for goods:
 
 Add categories to product page
 
-Check for validators on inputs
+Add client-side validators on inputs:
+    - read about Formik
 
 Add logic for companies:
  - create
  - show
 
-Add good edit page
-
-
-Refactor sign up page:
-    - add normal checkboxes
-
-? Move fetching from sidebar to layout (Maybe leave it for redux)
 
 Styling:
+ - refactor sign up page:
+    * add normal checkboxes
  - style goods/create page
  - add flex & grid to all pages with goods
  - add footer to layout

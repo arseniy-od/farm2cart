@@ -26,7 +26,7 @@ export default class BaseController extends BaseContext {
         // console.log('class args: ', classArgs)
 
         for (let i = 0; i < classArgs.length; i++) {
-            // console.log('use: ', classArgs[i])
+            console.log('use: ', classArgs[i])
             router.use(classArgs[i])
         }
         return classArgs

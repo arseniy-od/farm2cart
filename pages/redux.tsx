@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 
 import Layout from '@/app/layout'
@@ -12,6 +12,8 @@ export default function Home() {
     function handleUser() {
         dispatch({ type: 'user/fetch_request' })
     }
+
+    // useEffect(handleUser, [])
 
     return (
         <Layout>

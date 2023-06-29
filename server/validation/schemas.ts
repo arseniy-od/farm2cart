@@ -3,32 +3,46 @@ import { IUser } from "@/app/types/interfaces"
 
 
 export const categorySchema = {
+    type: 'object',
     properties: {
         text: {
             type: 'string',
             minLength: 3,
             pattern: '^[A-Za-z-]+$',
+            errorMessage: {
+                pattern: "Should only contain letters and '-'",
+            },
         }, 
     },
-    required: ['text']
+    required: ['text'],
 }
 
 export const userSchema = {
+    type: 'object',
     properties: {
         firstName: {
             type: 'string',
             minLength: 3,
             pattern: '^[A-Za-z]+$',
+            errorMessage: {
+                pattern: "Should only contain letters",
+            },
         },
         lastName: {
             type: 'string',
             minLength: 3,
             pattern: '^[A-Za-z]+$',
+            errorMessage: {
+                pattern: "Should only contain letters",
+            },
         },
         username: {
             type: 'string',
             minLength: 3,
-            pattern: '^[A-Za-z]+$',
+            pattern: '^[A-Za-z0-9]+$',
+            errorMessage: {
+                pattern: "Should only contain letters and numbers",
+            },
         },
         email: {
             type: 'string',
@@ -46,10 +60,16 @@ export const userSchema = {
         phoneNumber: {
             type: 'string',
             pattern: '^[0-9]+$',
+            errorMessage: {
+                pattern: "Should only contain numbers",
+            },
         },
         companyId: {
             type: 'string',
-            pattern: '^[0-9]+$'
+            pattern: '^[0-9]+$',
+            errorMessage: {
+                pattern: "Id should be a string with number value",
+            },
         }
     },
     required: ['firstName', 'lastName', 'username', 'email', 'password', 'role']
@@ -58,6 +78,7 @@ export const userSchema = {
 
 
 export const loginSchema = {
+    type: 'object',
     properties: {
         email: {
             type: 'string',
@@ -73,10 +94,14 @@ export const loginSchema = {
 }
 
 const categoryIdSchema = {
+    type: 'object',
     properties: {
         id: {
             type: 'string',
-            pattern: '^[0-9]+$'
+            pattern: '^[0-9]+$',
+            errorMessage: {
+                pattern: "Id should be a string with number value",
+            },
         }
     }
 }
@@ -93,11 +118,17 @@ const goodProperties = {
         },
         price: {
             type: 'string',
-            pattern: '^[0-9]+$'
+            pattern: '^[0-9]+$',
+            errorMessage: {
+                pattern: "Price should be a string with number value",
+            },
         },
         available: {
             type: 'string',
-            pattern: '^[0-9]+$'
+            pattern: '^[0-9]+$',
+            errorMessage: {
+                pattern: "Available should be a string with number value",
+            },
         },
         active: {
             type: 'string',
@@ -111,23 +142,29 @@ const goodProperties = {
                 },
                 {
                     type: 'string',
-                    pattern: '^[0-9]+$'
+                    pattern: '^[0-9]+$',
+                    errorMessage: {
+                        pattern: "Category id should be a string with number value",
+                    },
                 }
             ]
         }
     }
 
 export const goodSchema = {
+    type: 'object',
     properties: goodProperties,
     required: ['title', 'price', 'available']
 }
 
 // not used yet
 export const goodSchemaPatch = {
+    type: 'object',
     properties: goodProperties,
 }
 
 const goodOrderSchema = {
+    type: 'object',
     properties: {
         title: {
             type: 'string'
@@ -155,6 +192,7 @@ const goodOrderSchema = {
 
 
 export const cartSchema = {
+    type: 'object',
     properties: {
         goodId: {
             type: 'number'
@@ -164,6 +202,7 @@ export const cartSchema = {
 
 
 export const OrderSchema = {
+    type: 'object',
     properties: {
         goods: {
             type: 'array',
@@ -177,6 +216,7 @@ export const OrderSchema = {
 }
 
 export const CompanySchema = {
+    type: 'object',
     properties: {
         name: {
             type: 'string'
@@ -197,17 +237,24 @@ export const CompanySchema = {
 
 
 export const reviewSchema = {
+    type: 'object',
     properties: {
         goodId:  {
             type: 'string',
-            pattern: '^[0-9]+$'
+            pattern: '^[0-9]+$', 
+            errorMessage: {
+                pattern: "Id should be a string with number value",
+            },
         },
         text:  {
             type: 'string'
         },
         score:  {
             type: 'string',
-            pattern: '^[0-9]+$'
+            pattern: '^[0-9]+$',
+            errorMessage: {
+                pattern: "Score should be a string with number value",
+            },
         },
     },
     required: ['goodId', 'text', 'score']

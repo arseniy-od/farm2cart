@@ -4,11 +4,21 @@ import { useState, useEffect } from 'react'
 import './globals.css'
 
 import Sidebar from './components/sidebar'
+import { useAppDispatch } from '@/redux/hooks'
 
 export const siteTitle = 'farm2cart'
 
 export default function Layout({ children, home = false }) {
     const [isMenuOpen, setIsMenuOpen] = useState(false)
+    const dispatch = useAppDispatch()
+    const dispatchUser = () => {
+        dispatch({ type: 'user/fetch_request' })
+    }
+    const dispatchCategories = () => {
+        dispatch({ type: 'categories/fetch_request' })
+    }
+    useEffect(dispatchUser, [dispatch])
+    useEffect(dispatchCategories, [dispatch])
 
     if (typeof window != 'undefined') {
         if (isMenuOpen) {

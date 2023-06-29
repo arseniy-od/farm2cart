@@ -39,8 +39,8 @@ export default class CategoryController extends BaseController {
     @POST('/api/categories')
     @USE(validate(categorySchema))
     async createCategory({ body }: NextApiRequestWithUser) {
-        // return body
-        return await this.CategoryService.createCategory(body)
+        return body
+        // return await this.CategoryService.createCategory(body)
     }
 
     @DELETE('/api/categories')
