@@ -11,9 +11,13 @@ export const siteTitle = 'farm2cart'
 export default function Layout({ children, home = false }) {
     const [isMenuOpen, setIsMenuOpen] = useState(false)
     const dispatch = useAppDispatch()
+
     const dispatchUser = () => {
+        console.log('dispatchUser called')
+
         dispatch({ type: 'user/fetch_request' })
     }
+
     const dispatchCategories = () => {
         dispatch({ type: 'categories/fetch_request' })
     }

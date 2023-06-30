@@ -3,6 +3,7 @@ import { fetchUserApi, fetchCategoriesApi, fetchGoodsApi } from './api'
 
 function* fetchUser(action) {
     try {
+        console.log('fetchUser saga')
         const user = yield call(fetchUserApi)
         yield put({ type: 'user/fetch_success', payload: user })
     } catch (e) {

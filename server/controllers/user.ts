@@ -63,7 +63,7 @@ export default class UserController extends BaseController {
     async getUserWithGoods(
         ctx: GetServerSidePropsContext<ParsedUrlQuery, PreviewData>
     ) {
-        const { id } = ctx.query
+        const { id } = ctx.params
         if (!id || id instanceof Array) {
             return {
                 props: { user: { error: true, message: 'User not found' } },

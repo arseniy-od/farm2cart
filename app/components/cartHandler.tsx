@@ -4,13 +4,13 @@ import { useState, MouseEvent, useEffect } from 'react'
 export default function CartHandler({ good }) {
     const [inCart, setInCart] = useState(false)
     const isInCart = () => {
-        const cart = fetch('/api/cart')
+        fetch('/api/cart')
             .then((res) => res.json())
             .then((cartContent) => {
                 // console.log('Cart content')
                 if (!cartContent.blank) {
                     let isFound = false
-                    for (let product of cartContent) {
+                    for (let product of cartContent.goods) {
                         if (product.id === good.id) {
                             isFound = true
                         }

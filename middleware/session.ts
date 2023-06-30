@@ -65,30 +65,30 @@ export const passportSession = passport.session()
 //     return await passportSession
 // }
 
-export const middlewares = {
-    asyncPassportInit: async (req, res, next) => {
-        const f: { resolve: (value?: unknown) => void } = {
-            resolve: () => null,
-        }
-        const pr: Promise<unknown> = new Promise((resolve, reject) => {
-            f.resolve = resolve
-        })
-        passportInit(req, res, () => {
-            f.resolve()
-        })
-        await pr
-        return await next()
-    },
-    asyncPassportSession: async (req, res, next) => {
-        const f = {}
-        const pr: Promise<unknown> = new Promise((resolve, reject) => {
-            f.resolve = resolve
-        })
+// export const middlewares = {
+//     asyncPassportInit: async (req, res, next) => {
+//         const f: { resolve: (value?: unknown) => void } = {
+//             resolve: () => null,
+//         }
+//         const pr: Promise<unknown> = new Promise((resolve, reject) => {
+//             f.resolve = resolve
+//         })
+//         passportInit(req, res, () => {
+//             f.resolve()
+//         })
+//         await pr
+//         return await next()
+//     },
+//     asyncPassportSession: async (req, res, next) => {
+//         const f = {}
+//         const pr: Promise<unknown> = new Promise((resolve, reject) => {
+//             f.resolve = resolve
+//         })
 
-        await passportSession(req, res, () => {
-            f.resolve()
-        })
-        await pr
-        return await next()
-    },
-}
+//         await passportSession(req, res, () => {
+//             f.resolve()
+//         })
+//         await pr
+//         return await next()
+//     },
+// }

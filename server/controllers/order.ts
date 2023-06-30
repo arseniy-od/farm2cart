@@ -54,10 +54,10 @@ export default class OrderController extends BaseController {
     }
 
     @SSR('/orders/:id')
-    async getOrder(
-        ctx: GetServerSidePropsContext<ParsedUrlQuery, PreviewData>
-    ) {
-        const { id } = ctx.query
+    async getOrder({
+        params,
+    }: GetServerSidePropsContext<ParsedUrlQuery, PreviewData>) {
+        const { id } = params
         if (!id || id instanceof Array) {
             return { error: true, message: 'No order id or id is an array' }
         }

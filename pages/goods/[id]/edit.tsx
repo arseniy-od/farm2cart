@@ -72,7 +72,7 @@ export default function Home({
         formData.append('title', goodData.title)
         formData.append('description', goodData.description)
         formData.append('imageUrl', goodData.imageUrl)
-        formData.append('price', goodData.price)
+        formData.append('price', goodData.price.toString())
         formData.append('available', goodData.available)
         // formData.append('NewCategory', good.NewCategory)
         formData.append('active', '1')
@@ -81,8 +81,42 @@ export default function Home({
             formData.append('categories', category.toString())
         })
         console.log('Good object: ', good)
+
+        var requestOptions = {
+            method: 'POST',
+            body: formData,
+            redirect: 'follow',
+        }
+
+        // fetch('localhost:3000/api/goods', requestOptions)
+        //     .then((response) => response.text())
+        //     .then((result) => console.log(result))
+        //     .catch((error) => console.log('error', error))
+        // ======================================
+        // const config = {
+        //     method: 'post',
+        //     url: 'localhost:3000/api/goods',
+        //     headers: {
+        //         ...formData.getHeaders(),
+        //     },
+        //     data: formData,
+        // }
+
+        // axios(config)
+        //     .then(function (response) {
+        //         console.log(JSON.stringify(response.data))
+        //         push('/goods/' + response.data.id)
+        //     })
+        //     .catch(function (error) {
+        //         console.log(error)
+        //     })
+        // ======================================
+
         const config = {
-            headers: { 'content-type': 'multipart/form-data' },
+            // headers: {
+            //     'content-type':
+            //         'multipart/form-data;boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW',
+            // },
         }
 
         const response = await axios.put('/api/goods', formData, config)
@@ -224,10 +258,17 @@ export default function Home({
     )
 }
 
-export const getServerSideProps: GetServerSideProps = async (ctx) => {
+export async function getStaticPaths() {
+    return await container.resolve('GoodController').getStaticPaths()
+}
+
+export const getStaticProps = async (ctx) => {
+    ctx.routeName = '/goods/:id'
     const good = await container.resolve('GoodController').getGood(ctx)
     const categories = await container
         .resolve('CategoryController')
         .getCategories()
-    return { props: { ...good, ...categories } }
+    return {
+        props: { good, categories },
+    }
 }

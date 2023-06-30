@@ -104,6 +104,7 @@ export type review = {
 
 export type good = {
     notFound?: boolean
+    quantity?: number
     id: number
     title: string
     imageUrl: string
@@ -162,7 +163,7 @@ export interface CompanyProps {
 }
 
 export interface GoodProps {
-    good: good
+    data: good
 }
 
 export interface GoodsProps {

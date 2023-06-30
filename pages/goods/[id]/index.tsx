@@ -4,7 +4,7 @@ import {
     PreviewData,
 } from 'next'
 import { useRouter } from 'next/navigation'
-import { useState, MouseEvent } from 'react'
+import { useState, MouseEvent, Component, ReactElement } from 'react'
 
 import Image from 'next/image'
 import Link from 'next/link'
@@ -20,17 +20,26 @@ import CreateReview from '@/app/components/createReview'
 import CartHandler from '@/app/components/cartHandler'
 import goods from '@/pages/api/goods'
 import { ParsedUrlQuery } from 'querystring'
+import { useStore } from 'react-redux'
+import { useAppDispatch, useAppSelector } from '@/redux/hooks'
 
 export default function Good({ data }: GoodProps) {
-    const good = data
-    console.log('data', data)
+    const [fetchedGood, setGood] = useState(data)
+    const categories = fetchedGood.categories
+    const [reviews, setReviews] = useState(fetchedGood.reviews)
 
-    const categories = good.categories
     const { push } = useRouter()
-    const [reviews, setReviews] = useState(good.reviews)
+    const store = useStore()
+    const dispatch = useAppDispatch()
+
+    const goodSelector = useAppSelector((store) =>
+        store.goods.find((good) => good.id === fetchedGood.id)
+    )
+
+    store.subscribe(() => setGood(goodSelector ? goodSelector : fetchedGood))
 
     const handleDelete = async (event: MouseEvent<HTMLButtonElement>) => {
-        const res = await fetch(`/api/goods/?id=${good.id}`, {
+        const res = await fetch(`/api/goods/?id=${fetchedGood.id}`, {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json',
@@ -39,10 +48,14 @@ export default function Good({ data }: GoodProps) {
         })
         if (res.ok) {
             const deleted = await res.json()
-            console.log('Good deleted')
-            push('/goods')
+            console.log('Good deleted with res:', deleted)
+            dispatch({
+                type: 'goods/delete_good',
+                payload: { id: fetchedGood.id },
+            })
+            // push('/goods')
         } else {
-            console.log('Good not deleted')
+            console.error('Good not deleted')
         }
     }
 
@@ -50,9 +63,9 @@ export default function Good({ data }: GoodProps) {
         return Math.round(num * 2) / 2
     }
 
-    let stars = []
-    if (good.averageScore) {
-        let score = roundHalf(good.averageScore)
+    let stars: ReactElement[] = []
+    if (fetchedGood.averageScore) {
+        let score = roundHalf(fetchedGood.averageScore)
         for (let i = 0; i < 5; i++) {
             if (score === 0.5) {
                 stars.push(<HalfStar />)
@@ -66,11 +79,11 @@ export default function Good({ data }: GoodProps) {
         }
     }
 
-    if (good.error) {
+    if (fetchedGood.error) {
         return (
             <Layout>
                 <div className="ml-6 mt-6 text-2xl font-semibold">
-                    {good.message}
+                    {fetchedGood.message}
                 </div>
             </Layout>
         )
@@ -83,16 +96,17 @@ export default function Good({ data }: GoodProps) {
                     <div className="mx-auto mt-6 flex flex-col justify-center items-center w-2/3">
                         <div>
                             <h3 className="text-xl font-semibold">
-                                {good.title}
+                                {fetchedGood.title}
                             </h3>
                             <Link
-                                href={'/users/' + good.seller.id}
+                                href={'/users/' + fetchedGood.seller.id}
                                 className="text-gray-700"
                             >
-                                {good.seller.username}
+                                {fetchedGood.seller.username}
                             </Link>
 
-                            {good.averageScore && good.reviewsCount ? (
+                            {fetchedGood.averageScore &&
+                            fetchedGood.reviewsCount ? (
                                 <div className=" flex items-center justify-left">
                                     <div className="flex">
                                         {stars.map((star, i) => (
@@ -101,42 +115,43 @@ export default function Good({ data }: GoodProps) {
                                     </div>
 
                                     <div className="ml-2 text-gray-600">
-                                        {good.reviewsCount}
+                                        {fetchedGood.reviewsCount}
                                     </div>
                                 </div>
                             ) : null}
                             <div className="relative">
                                 <Image
-                                    src={good.imageUrl}
-                                    alt={good.title + ' photo'}
+                                    src={fetchedGood.imageUrl}
+                                    alt={fetchedGood.title + ' photo'}
                                     width="1024"
                                     height="1024"
                                     className="object-cover object-center w-full h-full shadow-lg"
                                 />
                                 <div className="mr-3 mb-3 absolute flex right-0 bottom-0 bg-gray-100 min-w-[2rem;] min-h-[2rem;] rounded-full items-center justify-center">
-                                    <CartHandler good={good} />
+                                    <CartHandler good={fetchedGood} />
                                 </div>
 
-                                {!good.active || !good.available ? (
+                                {!fetchedGood.active ||
+                                !fetchedGood.available ? (
                                     <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-5/6 h-10 bg-white text-gray-900 text-center flex justify-center items-center font-semibold text-xl">
                                         Product is not active
                                     </div>
                                 ) : null}
                             </div>
                             <div className="mt-2">
-                                <p>{good.description}</p>
+                                <p>{fetchedGood.description}</p>
 
                                 <div className="text-gray-700">
-                                    ₴ {good.price}
+                                    ₴ {fetchedGood.price}
                                 </div>
                                 <div className="text-gray-700">
-                                    Available: {good.available}
+                                    Available: {fetchedGood.available}
                                 </div>
                             </div>
                         </div>
                         <div className="mt-2 mx-auto flex justify-between">
                             <Link
-                                href={`/goods/${good.id}/edit/`}
+                                href={`/goods/${fetchedGood.id}/edit/`}
                                 className="block px-6 py-2 border-2 font-semibold border-green-600 hover:bg-gray-200 shadow-lg"
                             >
                                 Edit
@@ -159,7 +174,7 @@ export default function Good({ data }: GoodProps) {
                         : null}
                 </div>
                 <CreateReview
-                    good={good}
+                    good={fetchedGood}
                     reviews={reviews}
                     setReviews={setReviews}
                 />
@@ -168,7 +183,11 @@ export default function Good({ data }: GoodProps) {
     )
 }
 
-export async function getServerSideProps(ctx: ContextDynamicRoute) {
+export async function getStaticPaths() {
+    return await container.resolve('GoodController').getStaticPaths()
+}
+
+export async function getStaticProps(ctx: ContextDynamicRoute) {
     ctx.routeName = '/goods/:id'
     return await container.resolve('GoodController').run(ctx)
 }

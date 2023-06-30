@@ -10,16 +10,21 @@ import CartGood from '@/app/components/cartGood'
 import container from '@/server/container'
 import { NextApiRequest, NextApiResponse } from 'next'
 import { good } from '@/app/types/interfaces'
+import { useAppDispatch } from '@/redux/hooks'
 
 type cart = {
-    cart: { blank?: boolean; goods: (good & { quantity: number })[] }
+    cart: {
+        blank?: boolean
+        goods: (good & { quantity: number })[]
+    }
 }
 
 export default function Cart() {
-    const [cart, setCart] = useState([])
-    // const [deletedIds, setDeletedIds] = useState(Array<number>)
+    const [cartGoods, setCartGoods] = useState<(good & { quantity: number })[]>(
+        []
+    )
     const { push } = useRouter()
-
+    const dispatch = useAppDispatch()
     const config = {
         headers: { 'content-type': 'application/json' },
     }
@@ -27,7 +32,7 @@ export default function Cart() {
     function fetchCart() {
         fetch('/api/cart')
             .then((res) => res.json())
-            .then((cart) => setCart(cart))
+            .then((cart) => setCartGoods(cart.goods))
     }
 
     useEffect(fetchCart, [])
@@ -44,7 +49,9 @@ export default function Cart() {
             })
             if (res.ok) {
                 const deleted = await res.json()
-                setCart(cart.filter((cartGood: good) => cartGood.id !== id))
+                setCartGoods(
+                    cartGoods.filter((cartGood: good) => cartGood.id !== id)
+                )
                 // setDeletedIds([...deletedIds, id])
                 console.log('Good deleted')
             } else {
@@ -67,12 +74,23 @@ export default function Cart() {
         event.preventDefault()
         console.log('Submit')
 
-        const cartData = { goods: cart, total: getTotal(cart) }
+        const cartData = { goods: cartGoods, total: getTotal(cartGoods) }
         const response = await axios.post('/api/orders', cartData, config)
-        const orderId = response.data.id
-        push('/orders/' + response.data.id)
+        console.log('response: ', response)
+        if (response.status === 200) {
+            cartGoods.forEach((good) =>
+                dispatch({
+                    type: 'goods/decrement_quantity',
+                    payload: { id: good.id, quantity: good.quantity },
+                })
+            )
+            //todo dispatch new order
+            const orderId = response.data.id
+            push('/orders/' + orderId)
+        }
     }
-    if (cart.blank || cart.length === 0) {
+
+    if (cartGoods.length === 0) {
         return (
             <Layout>
                 <h1 className="mt-6 text-center text-2xl">Cart is empty</h1>
@@ -85,13 +103,13 @@ export default function Cart() {
                 <h1 className="ml-4 mt-4 text-2xl">Cart</h1>
                 <div>
                     <form>
-                        {cart.map((good, i) => (
+                        {cartGoods.map((good, i) => (
                             <div key={i}>
                                 <CartGood
                                     good={good}
                                     index={i}
-                                    cartGoods={cart}
-                                    setCartGoods={setCart}
+                                    cartGoods={cartGoods}
+                                    setCartGoods={setCartGoods}
                                     handleDelete={handleDelete}
                                 />
                             </div>

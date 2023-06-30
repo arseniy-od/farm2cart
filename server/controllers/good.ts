@@ -33,7 +33,8 @@ export default class GoodController extends BaseController {
     @SSR('/')
     @GET('/api/goods')
     async getGoods() {
-        return await this.GoodService.getGoods()
+        const goods = await this.GoodService.getGoods()
+        return goods
     }
 
     @POST('/api/goods')
@@ -59,7 +60,7 @@ export default class GoodController extends BaseController {
         return good
     }
 
-    @PUT('api/goods')
+    @PUT('/api/goods')
     @USE(validate(goodSchema))
     async updateGood(req: NextApiRequestFile) {
         // console.log('==========[GoodController]==============')
@@ -98,10 +99,9 @@ export default class GoodController extends BaseController {
     @SSR('/goods/:id')
     async getGood({
         params,
-        query,
     }: GetServerSidePropsContext<ParsedUrlQuery, PreviewData>) {
-        const { id } = query
-        console.log('ctx.query: ', query)
+        const { id } = params
+        console.log('ctx.query: ', params)
         if (!id || id instanceof Array) {
             return { notFound: true }
         }
@@ -114,5 +114,13 @@ export default class GoodController extends BaseController {
             )
         }
         return good
+    }
+
+    async getStaticPaths() {
+        const paths = await this.GoodService.getAllGoodIds()
+        return {
+            paths,
+            fallback: false,
+        }
     }
 }

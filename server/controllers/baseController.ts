@@ -43,41 +43,41 @@ export default class BaseController extends BaseContext {
         return methodArgs
     }
 
-    public run = (context: ContextDynamicRoute) =>
-        createRouter()
-            .get(async (req, res) => {
-                try {
-                    const routeName = context.routeName || context.req.url
-                    const method = 'SSR'
-                    console.log('[BaseController] route', routeName)
+    public run = async (context: ContextDynamicRoute) => {
+        // createRouter()
+        //     .get(async (req, res) => {
+        try {
+            const routeName = context.routeName || context.req.url
+            const method = 'SSR'
+            console.log('[BaseController] route', routeName)
 
-                    const members: any = Reflect.getMetadata(routeName, this)
-                    console.log('Members: ', members)
+            const members: any = Reflect.getMetadata(routeName, this)
+            console.log('Members: ', members)
 
-                    const [firstMethod] = members[method]
-                    // for (let i = 0; i < members[method].length; i++) {
-                    const callback = this[firstMethod].bind(this)
-                    let data = await callback({
-                        params: context?.params,
-                        query: context?.query,
-                    } as any)
-                    data = JSON.parse(JSON.stringify(data))
+            const [firstMethod] = members[method]
+            // for (let i = 0; i < members[method].length; i++) {
+            const callback = this[firstMethod].bind(this)
+            let data = await callback({
+                params: context?.params,
+            } as any)
+            data = JSON.parse(JSON.stringify(data))
 
-                    return {
-                        props: { data },
-                    }
-                    // }
-                } catch (error: any) {
-                    console.error('ERROR in getServerSideProps:', error)
-                    return {
-                        props: {
-                            error: true,
-                            message: error.message ? error.message : error,
-                        },
-                    }
-                }
-            })
-            .run(context.req, context.res)
+            return {
+                props: { data },
+            }
+            // }
+        } catch (error: any) {
+            console.error('ERROR in getStaticProps:', error)
+            return {
+                props: {
+                    error: true,
+                    message: error.message ? error.message : error,
+                },
+            }
+        }
+    }
+    // })
+    // .run(context.req, context.res)
 
     public handler(routeName: string) {
         const router = createRouter<NextApiRequest, NextApiResponse>()

@@ -117,11 +117,18 @@ const goodProperties = {
             type: 'string'
         },
         price: {
-            type: 'string',
-            pattern: '^[0-9]+$',
-            errorMessage: {
-                pattern: "Price should be a string with number value",
-            },
+            anyOf: [
+                {
+                    type: 'string',
+                    pattern: '^[0-9\.]+$',
+                    errorMessage: {
+                        pattern: "Price should be a string with number value",
+                    },
+                },
+                {
+                    type: 'number'
+                }
+            ]
         },
         available: {
             type: 'string',

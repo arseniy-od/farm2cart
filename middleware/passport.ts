@@ -75,7 +75,7 @@ export const passportAuth = (
         req.logIn(user, (err) => {
             if (err) {
                 console.log('\nDev: LogIn Error: \n', err)
-                req.session.user = JSON.parse(JSON.stringify(user))
+                // req.session.user = JSON.parse(JSON.stringify(user))category image
                 return next()
             }
             return res.json({ user })

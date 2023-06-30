@@ -23,7 +23,7 @@ export default class CartController extends BaseController {
         if (cart) {
             return cart
         } else {
-            return { blank: true }
+            return { blank: true, goods: [] }
         }
     }
 
@@ -32,10 +32,10 @@ export default class CartController extends BaseController {
     async addToCart({ body, session }: NextApiRequestWithUser) {
         const goodData = body
         console.log('body', body)
-        session.cart = session.cart || []
+        session.cart = session.cart || { goods: [] }
         let good = await this.GoodService.getGoodById(goodData.goodId)
         good = JSON.parse(JSON.stringify(good))
-        await session.cart.push({ quantity: 1, ...good })
+        await session.cart.goods.push({ quantity: 1, ...good })
         // console.log('cartGoods: ', cartGoods)
 
         // await session.cart.push()

@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import Image from 'next/image'
-import { useState, MouseEvent } from 'react'
+import { useState, MouseEvent, ReactElement } from 'react'
 
 import { category, good } from '../types/interfaces'
 import { HalfStar, BlankStar, Star } from './icons/star'
@@ -11,7 +11,7 @@ export default function GoodCard({ good }: { good: good }) {
         return Math.round(num * 2) / 2
     }
 
-    let stars = []
+    let stars: ReactElement[] = []
     if (good.averageScore) {
         let score = roundHalf(good.averageScore)
         for (let i = 0; i < 5; i++) {

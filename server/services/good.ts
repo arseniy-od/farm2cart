@@ -101,7 +101,6 @@ export default class GoodService extends BaseContext {
                 ...JSON.parse(JSON.stringify(aggregatedReview)),
             }
         }
-        api / cart
         return { error: true, message: 'Good not found' }
     }
 
@@ -109,6 +108,11 @@ export default class GoodService extends BaseContext {
         return await this.Good.findOne({
             where: { id },
         })
+    }
+
+    async getAllGoodIds() {
+        const goods = await this.Good.findAll()
+        return goods.map((good) => ({ params: { id: good.id.toString() } }))
     }
 
     async createGood(goodData: good) {
