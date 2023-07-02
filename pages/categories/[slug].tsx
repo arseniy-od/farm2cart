@@ -3,7 +3,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 
 import Layout from '@/app/layout'
-import GoodCard from '@/app/components/goodCard'
+import GoodCard from '@/app/components/goods/goodCard'
 import container from '@/server/container'
 import {
     CategoryProps,
@@ -13,10 +13,9 @@ import {
 } from '@/app/types/interfaces'
 import { IGoodModel } from '@/app/types/interfaces'
 
-export default function Category(props) {
-    const goods = props.data.goods
-    const category = props.data.category
-    console.log('Goods: ', goods)
+export default function Category({ data }) {
+    const goods = data.goods
+    const category = data.category
     return (
         <Layout>
             <div>

@@ -11,7 +11,7 @@ import axios from 'axios'
 import { useState, MouseEvent, ChangeEvent } from 'react'
 import { useRouter } from 'next/navigation'
 
-import Layout from '@/app/layout'
+import GoodForm from '@/app/components/goods/goodForm'
 import container from '@/server/container'
 import { category } from '@/app/types/interfaces'
 
@@ -29,232 +29,23 @@ export default function Home({
     good,
     categories,
 }: {
-    good: good
+    good: Good
     categories: category[]
 }) {
     const { push } = useRouter()
-    const [goodData, setGoodData] = useState<Good>({ ...good })
-
-    const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
-        if (event.target.files) {
-            const file = event.target.files[0]
-            setGoodData({ ...goodData, file })
-        } else {
-            console.error('[File change] File not found')
-        }
-    }
-
-    const handleCategoryChange = (event: ChangeEvent<HTMLInputElement>) => {
-        const category = parseInt(event.target.name)
-        const isChecked = event.target.checked
-        if (isChecked) {
-            setGoodData({
-                ...goodData,
-                categories: [...goodData.categories, category],
-            })
-        } else {
-            setGoodData({
-                ...goodData,
-                categories: goodData.categories.filter((c) => c !== category),
-            })
-        }
-    }
-
-    const handleSubmit = async (event: MouseEvent<HTMLButtonElement>) => {
-        event.preventDefault()
-        const formData = new FormData()
-        // console.log("GOOD FILE: ", good.file)
-
-        formData.append('id', good.id)
-        if (goodData.file) {
-            formData.append('file', goodData.file)
-        }
-        formData.append('title', goodData.title)
-        formData.append('description', goodData.description)
-        formData.append('imageUrl', goodData.imageUrl)
-        formData.append('price', goodData.price.toString())
-        formData.append('available', goodData.available)
-        // formData.append('NewCategory', good.NewCategory)
-        formData.append('active', '1')
-
-        goodData.categories.forEach((category) => {
-            formData.append('categories', category.toString())
-        })
-        console.log('Good object: ', good)
-
-        var requestOptions = {
-            method: 'POST',
-            body: formData,
-            redirect: 'follow',
-        }
-
-        // fetch('localhost:3000/api/goods', requestOptions)
-        //     .then((response) => response.text())
-        //     .then((result) => console.log(result))
-        //     .catch((error) => console.log('error', error))
-        // ======================================
-        // const config = {
-        //     method: 'post',
-        //     url: 'localhost:3000/api/goods',
-        //     headers: {
-        //         ...formData.getHeaders(),
-        //     },
-        //     data: formData,
-        // }
-
-        // axios(config)
-        //     .then(function (response) {
-        //         console.log(JSON.stringify(response.data))
-        //         push('/goods/' + response.data.id)
-        //     })
-        //     .catch(function (error) {
-        //         console.log(error)
-        //     })
-        // ======================================
-
-        const config = {
-            // headers: {
-            //     'content-type':
-            //         'multipart/form-data;boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW',
-            // },
-        }
-
-        const response = await axios.put('/api/goods', formData, config)
-        console.log('Response id: ', response.data.id)
-        push('/goods/' + response.data.id)
-    }
+    const categoryIds = good.categories.map((c) => c.id)
+    console.log('Cat ids: ', categoryIds)
+    const [goodData, setGoodData] = useState<Good>({
+        ...good,
+        categories: categoryIds,
+    })
 
     return (
-        <div id="app" className="">
-            <Layout>
-                <div className="mt-6 grid place-items-center">
-                    <form className="content-center">
-                        <h3 className="text-xl">Edit product</h3>
-                        <div className="mt-4">
-                            <div>
-                                <div>
-                                    <label htmlFor="title">Title: </label>
-                                </div>
-                                <input
-                                    type="text"
-                                    id="title"
-                                    value={goodData.title}
-                                    onChange={(event) =>
-                                        setGoodData({
-                                            ...goodData,
-                                            title: event.target.value,
-                                        })
-                                    }
-                                    className="mt-2 px-4 py-3 w-full max-w-xs border-2"
-                                    placeholder="title"
-                                    required
-                                />
-                            </div>
-                            <div>
-                                <div>
-                                    <label htmlFor="description">
-                                        Description:{' '}
-                                    </label>
-                                </div>
-
-                                <textarea
-                                    id="description"
-                                    value={goodData.description}
-                                    onChange={(event) =>
-                                        setGoodData({
-                                            ...goodData,
-                                            description: event.target.value,
-                                        })
-                                    }
-                                    className="mt-2 px-4 py-3 w-full max-w-xs border-2"
-                                    placeholder="description"
-                                />
-                            </div>
-                            <div>
-                                <input
-                                    type="file"
-                                    name="file"
-                                    onChange={handleFileChange}
-                                />
-                            </div>
-                            <div>
-                                <div>
-                                    <label htmlFor="price">Price: </label>
-                                </div>
-                                <input
-                                    type="number"
-                                    min="0"
-                                    step="0.05"
-                                    id="price"
-                                    value={goodData.price}
-                                    onChange={(event) =>
-                                        setGoodData({
-                                            ...goodData,
-                                            price: event.target.value,
-                                        })
-                                    }
-                                    className="mt-2 px-4 py-3 w-full max-w-xs border-2"
-                                    placeholder="price"
-                                    required
-                                />
-                            </div>
-                            <div>
-                                <div>
-                                    <label htmlFor="available">
-                                        available:{' '}
-                                    </label>
-                                </div>
-                                <input
-                                    type="number"
-                                    min="1"
-                                    id="available"
-                                    value={goodData.available}
-                                    onChange={(event) =>
-                                        setGoodData({
-                                            ...goodData,
-                                            available: event.target.value,
-                                        })
-                                    }
-                                    className="mt-2 px-4 py-3 w-full max-w-xs border-2"
-                                    placeholder="available"
-                                />
-                            </div>
-                            <h3>Choose categories: </h3>
-                            <div className="grid grid-cols-2">
-                                {categories.map((category, i) => (
-                                    <div key={i}>
-                                        <p>
-                                            <label
-                                                htmlFor={category.id.toString()}
-                                            >
-                                                {' '}
-                                                {category.text}
-                                            </label>
-                                            <input
-                                                type="checkbox"
-                                                name={category.id.toString()}
-                                                checked={goodData.categories.includes(
-                                                    category.id
-                                                )}
-                                                onChange={handleCategoryChange}
-                                            />
-                                        </p>
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-
-                        <button
-                            onClick={handleSubmit}
-                            type="submit"
-                            className="mt-4 inline-block items-center bg-gray-400 hover:bg-gray-600 focus:outline-none focus:shadow-outline rounded-lg shadow px-8 py-2"
-                        >
-                            Submit
-                        </button>
-                    </form>
-                </div>
-            </Layout>
-        </div>
+        <GoodForm
+            good={goodData}
+            setGood={setGoodData}
+            categories={categories}
+        />
     )
 }
 

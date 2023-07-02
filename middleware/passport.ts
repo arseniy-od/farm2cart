@@ -33,8 +33,10 @@ passport.use(
                 .resolve('UserService')
                 .getUserByEmail(email)
                 .then((user) => {
-                    if (!user) {
-                        done(true, false, { message: 'User not found' })
+                    if (user.error || !user) {
+                        done(true, false, {
+                            message: user?.message || 'User not found',
+                        })
                         return
                     }
                     container

@@ -20,12 +20,11 @@ export default function Home() {
             },
             body: JSON.stringify(user),
         })
+        console.log('User: ', user)
 
         if (res.ok) {
             const user = await res.json()
             console.log('Login successful')
-            const baseUrl = process.env['HOST']
-            console.log('host: ', baseUrl)
             push('/')
         } else {
             console.log('Login error')

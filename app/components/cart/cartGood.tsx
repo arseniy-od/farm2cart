@@ -7,7 +7,7 @@ import {
     SetStateAction,
 } from 'react'
 import Image from 'next/image'
-import { good } from '../types/interfaces'
+import { good } from '../../types/interfaces'
 
 type cartGoodProps = {
     good: good & { quantity: number }

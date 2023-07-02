@@ -185,9 +185,12 @@ export interface ReviewsProps {
 }
 
 export interface UserGoodsProps {
-    notFound?: boolean
-    user: user
-    goods: good[]
+    error?: boolean
+    message?: boolean
+    data: {
+        user: user
+        goods: good[]
+    }
 }
 
 type userType = user & { error?: string; message?: string }

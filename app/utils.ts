@@ -1,3 +1,5 @@
+import { good } from './types/interfaces'
+
 export function formatDateTime(dateString: string | Date): string {
     const date = new Date(dateString)
     const year = date.getFullYear()
@@ -27,4 +29,35 @@ export function formatDate(dateString: string | Date): string {
 
 export function toTitle(str: string): string {
     return str.charAt(0).toUpperCase() + str.slice(1)
+}
+
+export async function apiDelete(url) {
+    // console.log('DELETE')
+    try {
+        const res = await fetch(url, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            // query: JSON.stringify(index)
+        })
+        if (res.ok) {
+            console.log('Entity deleted')
+            return await res.json()
+        } else {
+            console.error('Entity not deleted')
+            return { error: true, message: res.statusText }
+        }
+    } catch (e) {
+        console.error('ERR: ', e)
+        return { error: true, message: e.message }
+    }
+}
+
+export function getTotal(goods: (good & { quantity: number })[]) {
+    let total: number = 0
+    for (let good of goods) {
+        total += good.price * good.quantity
+    }
+    return total
 }

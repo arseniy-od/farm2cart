@@ -1,11 +1,12 @@
 import Link from 'next/link'
-import { review } from '../types/interfaces'
-import { formatDateTime } from '../utils'
-import { BlankStar, Star } from './icons/star'
+import { review } from '../../types/interfaces'
+import { formatDateTime } from '../../utils'
+import { BlankStar, Star } from '../icons/star'
+import { ReactElement } from 'react'
 
 export default function ReviewCard({ review }: { review: review }) {
     const countStars = review.score
-    const stars = []
+    const stars: ReactElement[] = []
     for (let i = 0; i < 5; i++) {
         stars.push(i < countStars ? <Star key={i} /> : <BlankStar key={i} />)
     }

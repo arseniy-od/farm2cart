@@ -11,7 +11,6 @@ export default function CategoryCreate() {
         event: MouseEvent<HTMLButtonElement>
     ): Promise<object> {
         event.preventDefault()
-        console.log(text)
         const config = {
             headers: { 'content-type': 'application/json' },
         }

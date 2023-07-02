@@ -69,7 +69,7 @@ export default class GoodService extends BaseContext {
                 },
                 {
                     model: this.Category,
-                    attributes: ['text'],
+                    attributes: ['id', 'text'],
                 },
                 {
                     model: this.Review,

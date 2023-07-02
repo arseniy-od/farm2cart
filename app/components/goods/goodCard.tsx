@@ -2,9 +2,9 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { useState, MouseEvent, ReactElement } from 'react'
 
-import { category, good } from '../types/interfaces'
-import { HalfStar, BlankStar, Star } from './icons/star'
-import CartHandler from './cartHandler'
+import { category, good } from '../../types/interfaces'
+import { HalfStar, BlankStar, Star } from '../icons/star'
+import CartHandler from '../cart/cartHandler'
 
 export default function GoodCard({ good }: { good: good }) {
     function roundHalf(num: number) {

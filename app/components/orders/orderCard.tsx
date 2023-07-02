@@ -3,7 +3,7 @@ import {
     order,
     orderWithGoods,
     orderWithGoodsCreate,
-} from '../types/interfaces'
+} from '../../types/interfaces'
 
 export default function OrderCard({ order }: { order: orderWithGoods }) {
     return (

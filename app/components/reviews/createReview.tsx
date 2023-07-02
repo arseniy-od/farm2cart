@@ -1,5 +1,5 @@
-import { useState, MouseEvent } from 'react'
-import { BlankStar, Star } from './icons/star'
+import { useState, MouseEvent, ReactElement } from 'react'
+import { BlankStar, Star } from '../icons/star'
 
 export default function CreateReview({ good, reviews, setReviews }) {
     const [review, setReview] = useState({
@@ -47,7 +47,7 @@ export default function CreateReview({ good, reviews, setReviews }) {
     }
 
     const countStars = review.score
-    const stars = []
+    const stars: ReactElement[] = []
     for (let i = 0; i < 5; i++) {
         stars.push(i < countStars ? <Star key={i} /> : <BlankStar key={i} />)
     }

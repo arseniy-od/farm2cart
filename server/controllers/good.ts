@@ -38,7 +38,7 @@ export default class GoodController extends BaseController {
     }
 
     @POST('/api/goods')
-    @USE(validate(goodSchema))
+    // @USE(validate(goodSchema)) // problems with form-data
     async createGood({ body, identity, file }: NextApiRequestFile) {
         if (!identity) {
             return { error: true, message: 'You are not logged in' }
@@ -61,28 +61,24 @@ export default class GoodController extends BaseController {
     }
 
     @PUT('/api/goods')
-    @USE(validate(goodSchema))
-    async updateGood(req: NextApiRequestFile) {
+    // @USE(validate(goodSchema)) // problems with form-data
+    async updateGood({ body, identity, file }: NextApiRequestFile) {
         // console.log('==========[GoodController]==============')
 
-        if (!req.user) {
+        if (!identity) {
             return { error: true, message: 'You are not logged in' }
         }
-        const goodData = { ...req.body, seller_id: req.user.id }
+        const goodData = { ...body, seller_id: identity.id }
         // console.log('[api/goods] goodData before: ', goodData)
         if (!(goodData.categories instanceof Array)) {
             goodData.categories = [goodData.categories]
         }
         // console.log('[api/goods] goodData after:', goodData)
 
-        const file = req.file
         if (file) {
             goodData.imageUrl = file.path.replace('public', '')
         }
-        // console.log('[api/goods] goodData: ', goodData)
-
         const good = await this.GoodService.updateGood(goodData)
-        // console.log('[api/goods] Good: ', good)
         return good
     }
 

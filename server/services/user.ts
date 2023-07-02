@@ -61,6 +61,9 @@ export default class UserService extends BaseContext {
     }
 
     async validatePassword(user: IUserModel, inputPassword: string) {
+        console.log('User:', user)
+        console.log('inputPassword:', inputPassword)
+
         const res = await bcrypt.compare(inputPassword, user.password)
         console.log('Password comparison result: ', res) // return true
         return res

@@ -2,14 +2,14 @@ import { GetStaticProps, GetStaticPaths, GetServerSideProps } from 'next'
 import Link from 'next/link'
 
 import Layout from '@/app/layout'
-import GoodCard from '@/app/components/goodCard'
+import GoodCard from '@/app/components/goods/goodCard'
 import container from '@/server/container'
 import { UserGoodsProps } from '@/app/types/interfaces'
 
 export default function User(props: UserGoodsProps) {
     const user = props.data.user
     const goods = props.data.goods
-    if (user.notFound) {
+    if (props.error) {
         return (
             <Layout>
                 <h1 className="text-2xl">User not found</h1>
