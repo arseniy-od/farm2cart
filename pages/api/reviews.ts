@@ -1,8 +1,6 @@
 import container from '@/server/container'
 
-export default container
-    .resolve('CategoryController')
-    .handler('/api/categories')
+export default container.resolve('ReviewController').handler('/api/reviews')
 
 // import { NextApiRequest, NextApiResponse } from 'next'
 // import { createRouter } from 'next-connect'

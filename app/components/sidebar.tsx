@@ -9,7 +9,6 @@ import {
 } from 'react'
 import { category, user } from '../types/interfaces'
 import { useAppDispatch, useAppSelector } from '@/redux/hooks'
-import { logout } from '@/redux/features/user/userSlice'
 
 export default function Sidebar({
     setIsMenuOpen,

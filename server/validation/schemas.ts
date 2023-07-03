@@ -247,21 +247,16 @@ export const reviewSchema = {
     type: 'object',
     properties: {
         goodId:  {
-            type: 'string',
-            pattern: '^[0-9]+$', 
-            errorMessage: {
-                pattern: "Id should be a string with number value",
-            },
+            type: 'number',
+            errorMessage: 'Good id must be a number'
         },
         text:  {
             type: 'string'
         },
         score:  {
-            type: 'string',
-            pattern: '^[0-9]+$',
-            errorMessage: {
-                pattern: "Score should be a string with number value",
-            },
+            type: 'number',
+            errorMessage: 'Score must be a number'
+            
         },
     },
     required: ['goodId', 'text', 'score']

@@ -1,3 +1,4 @@
+import axios from 'axios'
 import { good } from './types/interfaces'
 
 export function formatDateTime(dateString: string | Date): string {
@@ -46,6 +47,28 @@ export async function apiDelete(url) {
             return await res.json()
         } else {
             console.error('Entity not deleted')
+            return { error: true, message: res.statusText }
+        }
+    } catch (e) {
+        console.error('ERR: ', e)
+        return { error: true, message: e.message }
+    }
+}
+
+export async function apiActivate(url, id) {
+    try {
+        const config = {
+            headers: { 'content-type': 'application/json' },
+            query: { id },
+            params: { id },
+        }
+        const res = await axios.patch('/api/goods', {}, config)
+
+        if (res.status === 200) {
+            console.log('Entity activated')
+            return await res.data
+        } else {
+            console.error('Entity not activated')
             return { error: true, message: res.statusText }
         }
     } catch (e) {

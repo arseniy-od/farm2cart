@@ -1,7 +1,24 @@
-import { useState, MouseEvent, ReactElement } from 'react'
+import {
+    useState,
+    MouseEvent,
+    ReactElement,
+    Dispatch,
+    SetStateAction,
+} from 'react'
 import { BlankStar, Star } from '../icons/star'
+import { useAppDispatch } from '@/redux/hooks'
+import { RootState } from '@/redux/store'
+import { ConnectedProps, connect } from 'react-redux'
+import { GoodProps, review } from '@/app/types/interfaces'
+import { good } from '@/app/types/interfaces'
 
-export default function CreateReview({ good, reviews, setReviews }) {
+type ownProps = {
+    good: good
+    reviews: review[]
+    setReviews: Dispatch<SetStateAction<review[]>>
+}
+
+function CreateReview({ good, reviews, setReviews, addReview }: Props) {
     const [review, setReview] = useState({
         goodId: good.id,
         text: '',
@@ -10,6 +27,7 @@ export default function CreateReview({ good, reviews, setReviews }) {
 
     const handleSubmit = async (event: MouseEvent<HTMLButtonElement>) => {
         event.preventDefault()
+        console.log('[submit]')
 
         const res = await fetch('/api/reviews', {
             method: 'POST',
@@ -20,9 +38,9 @@ export default function CreateReview({ good, reviews, setReviews }) {
         })
 
         if (res.ok) {
-            let newReview = await res.json()
-            newReview = { ...newReview, new: true }
-            setReviews([...reviews, newReview])
+            const newReview = await res.json()
+            addReview(newReview)
+            // setReviews([...reviews, newReview])
             setReview({
                 goodId: good.id,
                 text: '',
@@ -45,11 +63,24 @@ export default function CreateReview({ good, reviews, setReviews }) {
             setReview({ ...review, score: review.score - 1 })
         }
     }
-
+    function starLink(star: ReactElement, rating: number): ReactElement {
+        return (
+            <button
+                type="button"
+                onClick={() => setReview({ ...review, score: rating + 1 })}
+            >
+                {star}
+            </button>
+        )
+    }
     const countStars = review.score
     const stars: ReactElement[] = []
     for (let i = 0; i < 5; i++) {
-        stars.push(i < countStars ? <Star key={i} /> : <BlankStar key={i} />)
+        stars.push(
+            i < countStars
+                ? starLink(<Star key={i} />, i)
+                : starLink(<BlankStar key={i} />, i)
+        )
     }
 
     return (
@@ -114,3 +145,20 @@ export default function CreateReview({ good, reviews, setReviews }) {
         </div>
     )
 }
+
+const mapState = (state: RootState, ownProps: ownProps) => ({
+    reduxReviews: state.goods.data.find((good) => good.id === ownProps.good.id)
+        ?.reviews,
+})
+
+const mapDispatch = {
+    addReview: (good: good) => ({
+        type: 'goods/add_review',
+        payload: good,
+    }),
+}
+
+const connector = connect(mapState, mapDispatch)
+type PropsFromRedux = ConnectedProps<typeof connector>
+type Props = PropsFromRedux & ownProps
+export default connector(CreateReview)

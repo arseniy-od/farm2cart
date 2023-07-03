@@ -26,7 +26,7 @@ export default class BaseController extends BaseContext {
         // console.log('class args: ', classArgs)
 
         for (let i = 0; i < classArgs.length; i++) {
-            console.log('use: ', classArgs[i])
+            // console.log('use: ', classArgs[i])
             router.use(classArgs[i])
         }
         return classArgs
@@ -61,6 +61,9 @@ export default class BaseController extends BaseContext {
                 params: context?.params,
             } as any)
             data = JSON.parse(JSON.stringify(data))
+            if (data.notFound || !data) {
+                return { notFound: true }
+            }
 
             return {
                 props: { data },
@@ -102,9 +105,10 @@ export default class BaseController extends BaseContext {
                                 file: req?.file,
                             } as any)
                             data = JSON.parse(JSON.stringify(data))
-                            // console.log('[handler] req.session: ', req.session)
-                            // console.log('[handler] req.user: ', req.user)
-
+                            if (data.error || data.notFound) {
+                                console.error(data.message || data)
+                                return res.status(500).json(data)
+                            }
                             return res.status(200).json(data)
                         } catch (err: any) {
                             const message = err?.message ? err.message : err

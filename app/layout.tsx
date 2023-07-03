@@ -43,7 +43,7 @@ export default function Layout({ children, home = false }) {
                     <title>{siteTitle}</title>
                 </Head>
 
-                <header className="sticky z-10 top-0 px-4 py-3 text-gray-900 bg-gray-100 border-2">
+                <header className="sticky z-20 top-0 px-4 py-3 text-gray-900 bg-gray-100 border-2">
                     <div className="flex justify-between items-center">
                         {/* Menu button */}
                         <button onClick={() => setIsMenuOpen(!isMenuOpen)}>

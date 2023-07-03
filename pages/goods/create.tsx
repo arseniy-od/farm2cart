@@ -17,6 +17,7 @@ import { category } from '@/app/types/interfaces'
 import GoodForm from '@/app/components/goods/goodForm'
 
 interface Good {
+    id?: string
     title: string
     description: string
     imageUrl: string
@@ -38,7 +39,14 @@ export default function Home({ categories }: { categories: category[] }) {
         available: '1',
     })
 
-    return <GoodForm good={good} setGood={setGood} categories={categories} />
+    return (
+        <GoodForm
+            good={good}
+            setGood={setGood}
+            categories={categories}
+            method="post"
+        />
+    )
 }
 
 export const getStaticProps: GetStaticProps = async ({ params }) => {

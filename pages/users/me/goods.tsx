@@ -1,15 +1,14 @@
 import { createRouter } from 'next-connect'
 import Layout from '@/app/layout'
 import { useState, useEffect } from 'react'
-import session, { middlewares } from '@/middleware/session'
 import Link from 'next/link'
 
 import { isConstructorDeclaration } from 'typescript'
-import GoodCard from '@/app/components/goodCard'
+import GoodCard from '@/app/components/goods/goodCard'
 import container from '@/server/container'
 import { NextApiRequest, NextApiResponse } from 'next'
 import { GoodsProps, UserGoodsOrdersProps, user } from '@/app/types/interfaces'
-import OrderCard from '@/app/components/orderCard'
+// import OrderCard from '@/app/components/orderCard'
 
 export default function User({ user, goods }: UserGoodsOrdersProps) {
     if (user.error) {
@@ -33,10 +32,7 @@ export default function User({ user, goods }: UserGoodsOrdersProps) {
                         {goods.map((good, i) => (
                             <div key={i}>
                                 <div>
-                                    <GoodCard
-                                        good={good}
-                                        categories={good.categories}
-                                    />
+                                    <GoodCard good={good} />
                                 </div>
                             </div>
                         ))}
@@ -47,21 +43,21 @@ export default function User({ user, goods }: UserGoodsOrdersProps) {
     )
 }
 
-const router = createRouter()
-    .use(session)
-    .use(middlewares.asyncPassportInit)
-    .use(middlewares.asyncPassportSession)
-    .get(async (req, res) => {
-        return await container.resolve('UserController').getGoodsForUser(req)
-    })
+// const router = createRouter()
+//     .use(session)
+//     .use(middlewares.asyncPassportInit)
+//     .use(middlewares.asyncPassportSession)
+//     .get(async (req, res) => {
+//         return await container.resolve('UserController').getGoodsForUser(req)
+//     })
 
-export async function getServerSideProps({
-    req,
-    res,
-}: {
-    req: NextApiRequest
-    res: NextApiResponse
-}) {
-    const response = await router.run(req, res)
-    return response
-}
+// export async function getServerSideProps({
+//     req,
+//     res,
+// }: {
+//     req: NextApiRequest
+//     res: NextApiResponse
+// }) {
+//     const response = await router.run(req, res)
+//     return response
+// }

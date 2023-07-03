@@ -1,40 +1,35 @@
-import { GetServerSideProps, NextApiRequest, NextApiResponse } from 'next'
-import Layout from '@/app/layout'
-import Image from 'next/image'
-import Link from 'next/link'
 import { connect, ConnectedProps } from 'react-redux'
 
 import container from '@/server/container'
-import { GoodProps, GoodsProps, category, good } from '@/app/types/interfaces'
-import { useEffect, useState } from 'react'
-import { useAppDispatch, useAppSelector } from '@/redux/hooks'
-import { useStore } from 'react-redux'
-import App from '@/app/components/app'
+import { category, good } from '@/app/types/interfaces'
+import { useEffect } from 'react'
+import { useAppSelector } from '@/redux/hooks'
+import GoodsPage from '@/app/components/app'
+import { RootState } from '@/redux/store'
 
-function Goods(props: { goods: good[]; categories: category[] }) {
-    const goods = props.goods
+function Goods(props: Props) {
+    const { goods, addInitial } = props
     // const dispatch = useAppDispatch()
     // const goodsSelector = useAppSelector((state) => state.goods)
     const catSelector = useAppSelector((state) => state.categories)
 
     useEffect(() => {
-        console.log('init: ', props.isInitialGoods)
-        props.addInitial(goods)
-    }, [goods])
+        addInitial(goods)
+    }, [addInitial, goods])
 
     // useEffect(() => {
     //     dispatch({ type: 'goods/add_initial', payload: goods })
     // }, [dispatch, goods])
 
     return (
-        <App
-            goods={props.isInitialGoods ? goods : props.reduxGoods}
+        <GoodsPage
+            goods={props.reduxGoods}
             categories={catSelector.length ? catSelector : props.categories}
         />
     )
 }
 
-const mapState = (state) => ({
+const mapState = (state: RootState) => ({
     isInitialGoods: state.goods.initial,
     reduxGoods: state.goods.data,
     reduxCategories: state.categories,
@@ -42,15 +37,17 @@ const mapState = (state) => ({
 
 const mapDispatch = {
     addInitial: (goods: good[]) => ({
-        type: 'goods/add_initial',
+        type: 'goods/initial',
         payload: goods,
     }),
 }
 
 const connector = connect(mapState, mapDispatch)
+type PropsFromRedux = ConnectedProps<typeof connector>
+type Props = PropsFromRedux & { goods: good[]; categories: category[] }
 export default connector(Goods)
 
-export async function getStaticProps(ctx) {
+export async function getServerSideProps(ctx) {
     ctx.routeName = '/'
     //todo: refactor to one call
     const goods = await container.resolve('GoodController').run(ctx)

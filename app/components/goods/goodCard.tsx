@@ -37,7 +37,11 @@ export default function GoodCard({ good }: { good: good }) {
                             className="w-full h-full"
                         >
                             <Image
-                                src={good.imageUrl}
+                                src={
+                                    good.imageUrl
+                                        ? good.imageUrl
+                                        : '/uploads/no_image.png'
+                                }
                                 alt={good.title + ' photo'}
                                 width="1024"
                                 height="1024"

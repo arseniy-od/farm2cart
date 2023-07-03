@@ -1,43 +1,51 @@
 import { useRouter } from 'next/navigation'
-import { useState, MouseEvent, Component, ReactElement } from 'react'
+import { useState, MouseEvent, Component, ReactElement, useEffect } from 'react'
 
-import { useStore } from 'react-redux'
-import { useAppDispatch, useAppSelector } from '@/redux/hooks'
+import { ConnectedProps, connect, useStore } from 'react-redux'
 
-import { apiDelete } from '@/app/utils'
+import { apiDelete, apiActivate } from '@/app/utils'
 import container from '@/server/container'
-import { ContextDynamicRoute, GoodProps, good } from '@/app/types/interfaces'
+import {
+    ContextDynamicRoute,
+    GoodProps,
+    category,
+    good,
+} from '@/app/types/interfaces'
 
 import GoodPage from '@/app/components/goods/goodPage'
+import { RootState } from '@/redux/store'
 
-export default function Good({ data }: GoodProps) {
-    const [fetchedGood, setGood] = useState(data)
-    const categories = fetchedGood.categories
-    const [reviews, setReviews] = useState(fetchedGood.reviews)
+function Good(props: Props) {
+    const good = props.data
+    const [reviews, setReviews] = useState(good.reviews)
 
-    const { push } = useRouter()
-    const store = useStore()
-    const dispatch = useAppDispatch()
-
-    const goodSelector = useAppSelector((store) =>
-        store.goods.data.find((good) => good.id === fetchedGood.id)
-    )
-
-    // store.subscribe(() => setGood(goodSelector ? goodSelector : fetchedGood))
+    const { addInitial } = props
+    useEffect(() => {
+        addInitial(good)
+    }, [addInitial, good])
 
     const handleDelete = async (event: MouseEvent<HTMLButtonElement>) => {
-        const res = await apiDelete(`/api/goods/?id=${fetchedGood.id}`)
-        if (!res.error) {
-            dispatch({
-                type: 'goods/delete_good',
-                payload: { id: fetchedGood.id },
-            })
+        if (!props.reduxGood?.active) {
+            const res = await apiActivate(`/api/goods/?id=${good.id}`, good.id)
+            console.log(res)
+            if (!res.error) {
+                props.activateGood(good.id)
+            } else {
+                console.error(res.error)
+            }
+        } else {
+            const res = await apiDelete(`/api/goods/?id=${good.id}`)
+            if (!res.error) {
+                props.deleteGood(good.id)
+            } else {
+                console.error(res.error)
+            }
         }
     }
 
     return (
         <GoodPage
-            good={fetchedGood}
+            good={props.reduxGood ? props.reduxGood : good}
             reviews={reviews}
             setReviews={setReviews}
             handleDelete={handleDelete}
@@ -45,11 +53,36 @@ export default function Good({ data }: GoodProps) {
     )
 }
 
-export async function getStaticPaths() {
-    return await container.resolve('GoodController').getStaticPaths()
+const mapState = (state: RootState, ownProps) => ({
+    reduxGood: state.goods.data.find((good) => good.id === ownProps.data.id),
+})
+
+const mapDispatch = {
+    addInitial: (good: good) => ({
+        type: 'goods/initial_good',
+        payload: good,
+    }),
+    deleteGood: (id) => ({
+        type: 'goods/delete_good',
+        payload: { id },
+    }),
+    activateGood: (id) => ({
+        type: 'goods/activate_good',
+        payload: { id },
+    }),
 }
 
-export async function getStaticProps(ctx: ContextDynamicRoute) {
+const connector = connect(mapState, mapDispatch)
+type PropsFromRedux = ConnectedProps<typeof connector>
+type Props = PropsFromRedux & GoodProps
+export default connector(Good)
+
+// cant use static because of dynamic generated routes
+export async function getServerSideProps(ctx: ContextDynamicRoute) {
     ctx.routeName = '/goods/:id'
+    ctx.res.setHeader(
+        'Cache-Control',
+        'public, s-maxage=60, stale-while-revalidate=59'
+    )
     return await container.resolve('GoodController').run(ctx)
 }

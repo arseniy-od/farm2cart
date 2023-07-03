@@ -101,13 +101,17 @@ export default class GoodService extends BaseContext {
                 ...JSON.parse(JSON.stringify(aggregatedReview)),
             }
         }
-        return { error: true, message: 'Good not found' }
+        return { error: true, notFound: true, message: 'Good not found' }
     }
 
     async getGoodById(id: string | number) {
-        return await this.Good.findOne({
+        const good = await this.Good.findOne({
             where: { id },
         })
+        if (!good) {
+            return { error: true, notFound: true, message: 'Good not found' }
+        }
+        return good
     }
 
     async getAllGoodIds() {
@@ -129,6 +133,7 @@ export default class GoodService extends BaseContext {
     }
 
     async updateGood(goodData: good) {
+        console.log('updateGood goodData:', goodData)
         const good = await this.Good.findByPk(goodData.id)
         console.log('[GoodService] good before:', good)
         if (!good) {
@@ -196,6 +201,7 @@ export default class GoodService extends BaseContext {
             await good.save()
         } else {
             console.error('Good not found')
+            return { error: true, notFound: true, message: 'Good not found' }
         }
         return good
     }

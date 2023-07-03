@@ -1,41 +1,36 @@
-import { createRouter } from 'next-connect'
-import {
-    GetServerSideProps,
-    GetStaticPaths,
-    GetStaticProps,
-    NextApiRequest,
-    NextApiResponse,
-} from 'next'
-import Link from 'next/link'
-import axios from 'axios'
-import { useState, MouseEvent, ChangeEvent } from 'react'
-import { useRouter } from 'next/navigation'
+import { useState } from 'react'
 
 import GoodForm from '@/app/components/goods/goodForm'
 import container from '@/server/container'
 import { category } from '@/app/types/interfaces'
 
-interface Good {
+interface IGoodBase {
+    id: string
     title: string
     description: string
     imageUrl: string
     price: string
-    categories: number[]
     file: File | null
     available: string
+}
+
+interface IGood extends IGoodBase {
+    categories: category[]
+}
+interface IGoodCategoryIds extends IGoodBase {
+    categories: number[]
 }
 
 export default function Home({
     good,
     categories,
 }: {
-    good: Good
+    good: IGood
     categories: category[]
 }) {
-    const { push } = useRouter()
     const categoryIds = good.categories.map((c) => c.id)
     console.log('Cat ids: ', categoryIds)
-    const [goodData, setGoodData] = useState<Good>({
+    const [goodData, setGoodData] = useState<IGoodCategoryIds>({
         ...good,
         categories: categoryIds,
     })
@@ -45,16 +40,14 @@ export default function Home({
             good={goodData}
             setGood={setGoodData}
             categories={categories}
+            method="put"
         />
     )
 }
 
-export async function getStaticPaths() {
-    return await container.resolve('GoodController').getStaticPaths()
-}
-
-export const getStaticProps = async (ctx) => {
+export const getServerSideProps = async (ctx) => {
     ctx.routeName = '/goods/:id'
+    //todo: refactor to one call
     const good = await container.resolve('GoodController').getGood(ctx)
     const categories = await container
         .resolve('CategoryController')

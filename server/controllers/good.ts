@@ -26,7 +26,7 @@ import uploadMiddleware from '@/middleware/upload'
 import validate from '../validation/validator'
 import { goodSchema } from '../validation/schemas'
 
-@USE([session, passportInit, passportSession, uploadMiddleware])
+@USE([session, passportInit, passportSession])
 export default class GoodController extends BaseController {
     private GoodService = this.di.GoodService
 
@@ -39,6 +39,7 @@ export default class GoodController extends BaseController {
 
     @POST('/api/goods')
     // @USE(validate(goodSchema)) // problems with form-data
+    @USE(uploadMiddleware)
     async createGood({ body, identity, file }: NextApiRequestFile) {
         if (!identity) {
             return { error: true, message: 'You are not logged in' }
@@ -61,6 +62,7 @@ export default class GoodController extends BaseController {
     }
 
     @PUT('/api/goods')
+    @USE(uploadMiddleware)
     // @USE(validate(goodSchema)) // problems with form-data
     async updateGood({ body, identity, file }: NextApiRequestFile) {
         // console.log('==========[GoodController]==============')
@@ -76,6 +78,31 @@ export default class GoodController extends BaseController {
         // console.log('[api/goods] goodData after:', goodData)
 
         if (file) {
+            console.log('File:', file)
+            goodData.imageUrl = file.path.replace('public', '')
+        }
+        const good = await this.GoodService.updateGood(goodData)
+        return good
+    }
+
+    @PATCH('/api/goods')
+    @USE(uploadMiddleware)
+    // @USE(validate(goodSchema)) // problems with form-data
+    async updateGoodPatch({ body, identity, file, query }: NextApiRequestFile) {
+        console.log('==========[GoodController]==============')
+        console.log('Query: ', query)
+        if (!identity) {
+            return { error: true, message: 'You are not logged in' }
+        }
+        const goodData = { ...body, id: query.id, active: true }
+        // console.log('[api/goods] goodData before: ', goodData)
+        if (!(goodData.categories instanceof Array)) {
+            goodData.categories = [goodData.categories]
+        }
+        // console.log('[api/goods] goodData after:', goodData)
+
+        if (file) {
+            console.log('File:', file)
             goodData.imageUrl = file.path.replace('public', '')
         }
         const good = await this.GoodService.updateGood(goodData)

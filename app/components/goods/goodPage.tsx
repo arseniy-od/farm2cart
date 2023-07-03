@@ -70,7 +70,11 @@ export default function GoodPage({ good, reviews, handleDelete, setReviews }) {
                             ) : null}
                             <div className="relative">
                                 <Image
-                                    src={good.imageUrl}
+                                    src={
+                                        good.imageUrl
+                                            ? good.imageUrl
+                                            : '/uploads/no_image.png'
+                                    }
                                     alt={good.title + ' photo'}
                                     width="1024"
                                     height="1024"
@@ -81,8 +85,11 @@ export default function GoodPage({ good, reviews, handleDelete, setReviews }) {
                                 </div>
 
                                 {!good.active || !good.available ? (
-                                    <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-5/6 h-10 bg-white text-gray-900 text-center flex justify-center items-center font-semibold text-xl">
-                                        Product is not active
+                                    <div>
+                                        <div className="z-10 absolute w-full h-full bg-gray-900 opacity-70 inset-0"></div>
+                                        <div className="z-10 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-5/6 h-10 bg-white text-gray-900 text-center flex justify-center items-center font-semibold text-xl">
+                                            Product is not active
+                                        </div>
                                     </div>
                                 ) : null}
                             </div>
@@ -108,7 +115,7 @@ export default function GoodPage({ good, reviews, handleDelete, setReviews }) {
                                 onClick={handleDelete}
                                 className="ml-6 block px-6 py-2 border-2 font-semibold border-red-600 hover:bg-gray-200 shadow-lg"
                             >
-                                Delete
+                                {good.active ? 'Delete' : 'Activate'}
                             </button>
                         </div>
                     </div>

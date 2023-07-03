@@ -45,6 +45,7 @@ export default class ReviewService extends BaseContext {
     }
 
     async createReview(reviewData: review) {
-        return await this.Review.create(reviewData)
+        const review = await this.Review.create(reviewData)
+        return await this.getReviewById(review.id)
     }
 }
