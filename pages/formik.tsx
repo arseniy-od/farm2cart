@@ -1,5 +1,5 @@
 import Layout from '@/app/layout'
-import { useFormik } from 'formik'
+import { Formik, Field, Form, ErrorMessage, useField } from 'formik'
 import * as Yup from 'yup'
 
 type errorForm = {
@@ -8,109 +8,78 @@ type errorForm = {
     email?: string
 }
 
-export default function SignupForm() {
-    const validate = (values): errorForm => {
-        const errors: errorForm = {}
-        if (!values.firstName) {
-            errors.firstName = 'Required'
-        } else if (values.firstName.length > 15) {
-            errors.firstName = 'Must be 15 characters or less'
-        }
+const MyTextInput = ({ label, ...props }) => {
+    // useField() returns [formik.getFieldProps(), formik.getFieldMeta()]
 
-        if (!values.lastName) {
-            errors.lastName = 'Required'
-        } else if (values.lastName.length > 20) {
-            errors.lastName = 'Must be 20 characters or less'
-        }
+    // which we can spread on <input>. We can use field meta to show an error
 
-        if (!values.email) {
-            errors.email = 'Required'
-        } else if (
-            !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(values.email)
-        ) {
-            errors.email = 'Invalid email address'
-        }
+    // message if the field is invalid and it has been touched (i.e. visited)
 
-        return errors
-    }
-
-    const formik = useFormik({
-        initialValues: {
-            firstName: '',
-            lastName: '',
-            email: '',
-        },
-        validationSchema: Yup.object({
-            firstName: Yup.string()
-                .max(15, 'Must be 15 characters or less')
-                .required('Required'),
-            lastName: Yup.string()
-                .max(20, 'Must be 20 characters or less')
-                .required('Required'),
-            email: Yup.string()
-                .email('Invalid email address')
-                .required('Required'),
-        }),
-        onSubmit: (values) => {
-            alert(JSON.stringify(values, null, 2))
-        },
-    })
+    const [field, meta] = useField(props)
 
     return (
+        <div className="mt-2 ml-2">
+            <label htmlFor={props.id || props.name}>{label}</label>
+
+            <input className="ml-2" {...field} {...props} />
+
+            {meta.touched && meta.error ? (
+                <div className="text-red-700">{meta.error}</div>
+            ) : null}
+        </div>
+    )
+}
+
+export default function SignupForm() {
+    return (
         <Layout>
-            <form onSubmit={formik.handleSubmit}>
-                <div>
-                    <label htmlFor="firstName">First Name</label>
+            <Formik
+                initialValues={{
+                    firstName: '',
+                    lastName: '',
+                    email: '',
+                }}
+                validationSchema={Yup.object({
+                    firstName: Yup.string()
+                        .max(15, 'Must be 15 characters or less')
+                        .required('Required'),
+                    lastName: Yup.string()
+                        .max(20, 'Must be 20 characters or less')
+                        .required('Required'),
+                    email: Yup.string()
+                        .email('Invalid email address')
+                        .required('Required'),
+                })}
+                onSubmit={(values) => {
+                    alert(JSON.stringify(values, null, 2))
+                }}
+            >
+                {(formik) => (
+                    <form onSubmit={formik.handleSubmit}>
+                        <MyTextInput
+                            label="First name"
+                            name="firstName"
+                            type="text"
+                            placeholder="John"
+                        />
+                        {/* <ErrorMessage name="firstName" /> */}
 
-                    <input
-                        id="firstName"
-                        name="firstName"
-                        type="text"
-                        onChange={formik.handleChange}
-                        onBlur={formik.handleBlur}
-                        value={formik.values.firstName}
-                    />
-                    {formik.touched.firstName && formik.errors.firstName ? (
-                        <div className="text-red-800">
-                            {formik.errors.firstName}
-                        </div>
-                    ) : null}
-                </div>
-                <div>
-                    <label htmlFor="lastName">Last Name</label>
-
-                    <input
-                        id="lastName"
-                        name="lastName"
-                        type="text"
-                        onChange={formik.handleChange}
-                        onBlur={formik.handleBlur}
-                        value={formik.values.lastName}
-                    />
-                    {formik.touched.lastName && formik.errors.lastName ? (
-                        <div className="text-red-800">
-                            {formik.errors.lastName}
-                        </div>
-                    ) : null}
-                </div>
-                <div>
-                    <label htmlFor="email">Email Address</label>
-                    <input
-                        id="email"
-                        name="email"
-                        type="email"
-                        onChange={formik.handleChange}
-                        onBlur={formik.handleBlur}
-                        value={formik.values.email}
-                    />
-                    {formik.touched.email && formik.errors.email ? (
-                        <div className="text-red-800">
-                            {formik.errors.email}
-                        </div>
-                    ) : null}
-                </div>
-                <button type="submit">Submit</button>
-            </form>
+                        <MyTextInput
+                            label="Last name"
+                            name="lastName"
+                            type="text"
+                            placeholder="Doe"
+                        />
+                        <MyTextInput
+                            label="Email"
+                            name="email"
+                            type="text"
+                            placeholder="johndoe@example.com"
+                        />
+                        <button type="submit">Submit</button>
+                    </form>
+                )}
+            </Formik>
         </Layout>
     )
 }

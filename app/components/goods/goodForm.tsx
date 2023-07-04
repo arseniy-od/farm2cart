@@ -1,11 +1,19 @@
 import { useRouter } from 'next/navigation'
-import { ChangeEvent, Dispatch, MouseEvent, SetStateAction } from 'react'
+import {
+    ChangeEvent,
+    Dispatch,
+    MouseEvent,
+    SetStateAction,
+    useRef,
+} from 'react'
 import axios from 'axios'
+import { Formik, Field, Form, ErrorMessage, useField } from 'formik'
 
 import Layout from '@/app/layout'
 import { category } from '@/app/types/interfaces'
 import { useAppDispatch } from '@/redux/hooks'
 import goods from '@/pages/api/goods'
+import { TextArea, FormInput, FileUpload } from '../form'
 
 interface IGood {
     id?: string
@@ -27,6 +35,7 @@ type Props = {
 
 export default function GoodForm({ good, setGood, categories, method }: Props) {
     const { push } = useRouter()
+    const fileRef = useRef(null)
     const dispatch = useAppDispatch()
     const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
         if (event.target.files) {
@@ -50,13 +59,14 @@ export default function GoodForm({ good, setGood, categories, method }: Props) {
         }
     }
 
-    const handleSubmit = async (event: MouseEvent<HTMLButtonElement>) => {
-        event.preventDefault()
+    function toFormData(good, method) {
         const formData = new FormData()
-        if (!good.file) {
+        const file = fileRef.current?.files[0]
+        if (!file) {
             console.log('[submit] File not found')
         } else {
-            formData.append('file', good.file)
+            console.log('File found: ', file)
+            formData.append('file', file)
         }
 
         if (method === 'put' && good.id) {
@@ -72,53 +82,66 @@ export default function GoodForm({ good, setGood, categories, method }: Props) {
         good.categories.forEach((category) => {
             formData.append('categories', category.toString())
         })
+        return formData
+    }
+
+    async function apiPost(formData) {
         const config = {
             headers: { 'content-type': 'multipart/form-data' },
         }
-        if (method === 'post') {
-            const response = await axios.post('/api/goods', formData, config)
-            if (response.status === 200) {
-                const goodCategories = categories.filter((c) =>
-                    good.categories.includes(c.id)
-                )
-                dispatch({
-                    type: 'goods/create_good',
-                    payload: {
-                        ...good,
-                        id: response.data.id,
-                        price: parseFloat(good.price),
-                        available: parseInt(good.available),
-                        categories: goodCategories,
-                    },
-                })
-                // console.log('Response: ', response)
-                push('/goods/' + good.id)
-            } else {
-                console.error(response.statusText)
-            }
-
-            // console.log('Response id: ', response.data.id)
+        const response = await axios.post('/api/goods', formData, config)
+        if (response.status === 200) {
+            const goodCategories = categories.filter((c) =>
+                good.categories.includes(c.id)
+            )
+            dispatch({
+                type: 'goods/create_good',
+                payload: {
+                    ...good,
+                    id: response.data.id,
+                    price: parseFloat(good.price),
+                    available: parseInt(good.available),
+                    categories: goodCategories,
+                },
+            })
             push('/goods/' + response.data.id)
+        } else {
+            console.error(response.statusText)
+        }
+    }
+
+    async function apiPut(formData) {
+        const config = {
+            headers: { 'content-type': 'multipart/form-data' },
+        }
+        const response = await axios.put('/api/goods', formData, config)
+        if (response.status === 200) {
+            const goodCategories = categories.filter((c) =>
+                good.categories.includes(c.id)
+            )
+            dispatch({
+                type: 'goods/edit_good',
+                payload: {
+                    ...good,
+                    price: parseFloat(good.price),
+                    available: parseInt(good.available),
+                    categories: goodCategories,
+                },
+            })
+        } else {
+            console.error(response.statusText)
+        }
+    }
+
+    const handleSubmit = async (values) => {
+        const good = values
+        console.log('Form values', values)
+        const formData = toFormData(good, method)
+
+        if (method === 'post') {
+            await apiPost(formData)
         } else if (method === 'put') {
-            const response = await axios.put('/api/goods', formData, config)
-            if (response.status === 200) {
-                const goodCategories = categories.filter((c) =>
-                    good.categories.includes(c.id)
-                )
-                dispatch({
-                    type: 'goods/edit_good',
-                    payload: {
-                        ...good,
-                        price: parseFloat(good.price),
-                        available: parseInt(good.available),
-                        categories: goodCategories,
-                    },
-                })
-                // console.log('Response: ', response)
-                push('/goods/' + good.id)
-            } else {
-                console.error(response.statusText)
-            }
+            await apiPut(formData)
         } else {
             console.error(
                 `Method ${method} is not implemented. Use 'post' or 'put'`
@@ -129,127 +152,76 @@ export default function GoodForm({ good, setGood, categories, method }: Props) {
     return (
         <Layout>
             <div className="mt-6 grid place-items-center">
-                <form className="content-center">
-                    <h3 className="text-xl">Add new product</h3>
-                    <div className="mt-4">
-                        <div>
-                            <div>
-                                <label htmlFor="title">Title: </label>
-                            </div>
-                            <input
+                <Formik initialValues={good} onSubmit={handleSubmit}>
+                    <Form
+                        method={method}
+                        encType="multipart/form-data"
+                        className="content-center"
+                    >
+                        <h3 className="text-xl">Add new product</h3>
+                        <div className="mt-4">
+                            <FormInput
+                                label="Title:"
+                                name="title"
                                 type="text"
-                                id="title"
-                                value={good.title}
-                                onChange={(event) =>
-                                    setGood({
-                                        ...good,
-                                        title: event.target.value,
-                                    })
-                                }
-                                className="mt-2 px-4 py-3 w-full max-w-xs border-2"
-                                placeholder="title"
-                                required
+                                placeholder="Product title"
                             />
-                        </div>
-                        <div>
-                            <div>
-                                <label htmlFor="description">
-                                    Description:{' '}
-                                </label>
-                            </div>
+                            <TextArea
+                                label="Description:"
+                                name="description"
+                                placeholder="Product description"
+                            />
 
-                            <textarea
-                                id="description"
-                                value={good.description}
-                                onChange={(event) =>
-                                    setGood({
-                                        ...good,
-                                        description: event.target.value,
-                                    })
-                                }
-                                className="mt-2 px-4 py-3 w-full max-w-xs border-2"
-                                placeholder="description"
-                            />
-                        </div>
-                        <div>
-                            <input
-                                type="file"
-                                name="file"
-                                onChange={handleFileChange}
-                                required
-                            />
-                        </div>
-                        <div>
-                            <div>
-                                <label htmlFor="price">Price: </label>
-                            </div>
-                            <input
+                            <FileUpload name="file" fileRef={fileRef} />
+
+                            <FormInput
+                                label="Price:"
                                 type="number"
+                                name="price"
                                 min="0"
                                 step="0.05"
-                                id="price"
-                                value={good.price}
-                                onChange={(event) =>
-                                    setGood({
-                                        ...good,
-                                        price: event.target.value,
-                                    })
-                                }
-                                className="mt-2 px-4 py-3 w-full max-w-xs border-2"
-                                placeholder="price"
-                                required
+                                placeholder="0"
                             />
-                        </div>
-                        <div>
-                            <div>
-                                <label htmlFor="available">available: </label>
-                            </div>
-                            <input
+                            <FormInput
+                                label="Available:"
                                 type="number"
+                                name="available"
                                 min="1"
-                                id="available"
-                                value={good.available}
-                                onChange={(event) =>
-                                    setGood({
-                                        ...good,
-                                        available: event.target.value,
-                                    })
-                                }
-                                className="mt-2 px-4 py-3 w-full max-w-xs border-2"
-                                placeholder="available"
                             />
-                        </div>
-                        <h3>Choose categories: </h3>
-                        <div className="grid grid-cols-2">
-                            {categories.map((category, i) => (
-                                <div key={i}>
-                                    <p>
-                                        <label htmlFor={category.id.toString()}>
-                                            {' '}
-                                            {category.text}
-                                        </label>
-                                        <input
-                                            type="checkbox"
-                                            name={category.id.toString()}
-                                            checked={good.categories.includes(
-                                                category.id
-                                            )}
-                                            onChange={handleCategoryChange}
-                                        />
-                                    </p>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
 
-                    <button
-                        onClick={handleSubmit}
-                        type="submit"
-                        className="mt-4 inline-block items-center bg-gray-400 hover:bg-gray-600 focus:outline-none focus:shadow-outline rounded-lg shadow px-8 py-2"
-                    >
-                        Submit
-                    </button>
-                </form>
+                            <h3>Choose categories: </h3>
+                            <div className="grid grid-cols-2">
+                                {categories.map((category, i) => (
+                                    <div key={i}>
+                                        <p>
+                                            <label
+                                                htmlFor={category.id.toString()}
+                                            >
+                                                {' '}
+                                                {category.text}
+                                            </label>
+                                            <input
+                                                type="checkbox"
+                                                name={category.id.toString()}
+                                                checked={good.categories.includes(
+                                                    category.id
+                                                )}
+                                                onChange={handleCategoryChange}
+                                            />
+                                        </p>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+
+                        <button
+                            type="submit"
+                            className="mt-4 inline-block items-center bg-gray-400 hover:bg-gray-600 focus:outline-none focus:shadow-outline rounded-lg shadow px-8 py-2"
+                        >
+                            Submit
+                        </button>
+                    </Form>
+                </Formik>
             </div>
         </Layout>
     )
