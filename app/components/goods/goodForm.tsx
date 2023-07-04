@@ -128,6 +128,7 @@ export default function GoodForm({ good, setGood, categories, method }: Props) {
                     categories: goodCategories,
                 },
             })
+            push('/goods/' + good.id)
         } else {
             console.error(response.statusText)
         }
@@ -158,7 +159,11 @@ export default function GoodForm({ good, setGood, categories, method }: Props) {
                         encType="multipart/form-data"
                         className="content-center"
                     >
-                        <h3 className="text-xl">Add new product</h3>
+                        <h3 className="text-xl">
+                            {method === 'post'
+                                ? 'Add new product'
+                                : 'Edit your product'}
+                        </h3>
                         <div className="mt-4">
                             <FormInput
                                 label="Title:"
