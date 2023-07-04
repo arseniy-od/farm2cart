@@ -1,13 +1,8 @@
-Soft delete for goods:
- - if bought all goods make good inactive // вроде сделал
-
 Add categories to product page
 
 Rewrite interfaces
 
-Change structure of interfaces folder
-
-Refactor cart page 
+Change structure of interfaces folder 
 
 Add client-side validators on inputs:
     - read about Formik

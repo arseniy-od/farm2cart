@@ -46,8 +46,13 @@ export default class CartController extends BaseController {
 
     @DELETE('/api/cart')
     async deleteFromCart({ session, query }: NextApiRequestWithUser) {
-        const good = await session.cart.splice(parseInt(query.index), 1)
-        if (!session.cart.length) {
+        if (typeof query.index === 'string') {
+            const good = await session.cart.goods.splice(
+                parseInt(query.index),
+                1
+            )
+        }
+        if (!session.cart.goods.length) {
             session.cart = null
         }
         await session.commit()

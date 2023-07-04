@@ -29,12 +29,14 @@ import { goodSchema } from '../validation/schemas'
 @USE([session, passportInit, passportSession])
 export default class GoodController extends BaseController {
     private GoodService = this.di.GoodService
+    private CategoryService = this.di.CategoryService
 
     @SSR('/')
     @GET('/api/goods')
     async getGoods() {
         const goods = await this.GoodService.getGoods()
-        return goods
+        const categories = await this.CategoryService.getCategories()
+        return { goods, categories }
     }
 
     @POST('/api/goods')
@@ -89,8 +91,6 @@ export default class GoodController extends BaseController {
     @USE(uploadMiddleware)
     // @USE(validate(goodSchema)) // problems with form-data
     async updateGoodPatch({ body, identity, file, query }: NextApiRequestFile) {
-        console.log('==========[GoodController]==============')
-        console.log('Query: ', query)
         if (!identity) {
             return { error: true, message: 'You are not logged in' }
         }
@@ -124,7 +124,6 @@ export default class GoodController extends BaseController {
         params,
     }: GetServerSidePropsContext<ParsedUrlQuery, PreviewData>) {
         const { id } = params
-        console.log('ctx.query: ', params)
         if (!id || id instanceof Array) {
             return { notFound: true }
         }

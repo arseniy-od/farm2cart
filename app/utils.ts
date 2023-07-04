@@ -46,7 +46,7 @@ export async function apiDelete(url) {
             console.log('Entity deleted')
             return await res.json()
         } else {
-            console.error('Entity not deleted')
+            console.error('Entity not deleted', res.statusText)
             return { error: true, message: res.statusText }
         }
     } catch (e) {
@@ -68,7 +68,7 @@ export async function apiActivate(url, id) {
             console.log('Entity activated')
             return await res.data
         } else {
-            console.error('Entity not activated')
+            console.error('Entity not activated', res.statusText)
             return { error: true, message: res.statusText }
         }
     } catch (e) {

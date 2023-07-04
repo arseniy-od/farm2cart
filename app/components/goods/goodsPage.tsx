@@ -1,12 +1,12 @@
 import Layout from '@/app/layout'
-import CategoryIcon from './categories/categoryIcon'
-import GoodCard from './goods/goodCard'
+import CategoryIcon from '../categories/categoryIcon'
+import GoodCard from './goodCard'
 
-export default function App({ categories, goods }) {
+export default function GoodsPage({ categories, goods }) {
     return (
         <Layout home={true}>
             <div className="mx-4 flex flex-wrap justify-center">
-                {categories.length ? (
+                {categories?.length ? (
                     <>
                         <CategoryIcon
                             text={categories[0].text}

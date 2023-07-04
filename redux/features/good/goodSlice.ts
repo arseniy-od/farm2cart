@@ -1,13 +1,8 @@
 import { good } from '@/app/types/interfaces'
-import goods from '@/pages/api/goods'
-import { GOOGLE_FONT_PROVIDER } from 'next/dist/shared/lib/constants'
 
-type goodState = { initial: boolean; data: good[] }
+type goodState = good[]
 
-const initialState: goodState = {
-    initial: true,
-    data: [],
-}
+const initialState: goodState = []
 
 export default function goodsReducer(
     state: goodState = initialState,
@@ -15,68 +10,64 @@ export default function goodsReducer(
 ): goodState {
     switch (action.type) {
         case 'goods/fetch_success': {
-            return { initial: false, data: [...action.payload] }
+            return [...action.payload]
         }
         case 'goods/initial': {
-            return { initial: false, data: [...action.payload] }
+            return [...action.payload]
         }
         case 'goods/initial_good': {
             const good = action.payload
-            const goods = state.data.filter((good) => good.id !== good.id)
-            return { ...state, data: [...goods, good] }
+            const goods = state.filter((otherGood) => otherGood.id !== good.id)
+            return [...goods, good]
         }
         case 'goods/decrement_quantity': {
             const { id, quantity } = action.payload
-            const goods = state.data.filter((good) => good.id !== id)
-            const good = state.data.find((good) => good.id === id)
+            const goods = state.filter((good) => good.id !== id)
+            const good = state.find((good) => good.id === id)
             if (good) {
-                return {
-                    ...state,
-                    data: [...goods, { ...good, quantity }],
-                }
+                return [...goods, { ...good, quantity }]
             }
             return state
         }
         case 'goods/delete_good': {
             const { id } = action.payload
-            const goods = state.data.filter((good) => good.id !== id)
-            const good = state.data.find((good) => good.id === id)
+            const goods = state.filter((good) => good.id !== id)
+            const good = state.find((good) => good.id === id)
             if (good) {
-                return {
-                    ...state,
-                    data: [...goods, { ...good, active: false }],
-                }
+                return [...goods, { ...good, active: false }]
             }
             return state
         }
         case 'goods/activate_good': {
             const { id } = action.payload
-            const goods = state.data.filter((good) => good.id !== id)
-            const good = state.data.find((good) => good.id === id)
+            const goods = state.filter((good) => good.id !== id)
+            const good = state.find((good) => good.id === id)
             if (good) {
-                return {
-                    ...state,
-                    data: [...goods, { ...good, active: true }],
-                }
+                return [...goods, { ...good, active: true }]
             }
             return state
         }
         case 'goods/edit_good': {
             const { id } = action.payload
-            const goods = state.data.filter((good) => good.id !== id)
-
-            return {
-                ...state,
-                data: [...goods, action.payload],
-            }
+            const goods = state.filter((good) => good.id !== id)
+            return [...goods, action.payload]
         }
         case 'goods/create_good': {
-            const { id } = action.payload
-
-            return {
-                ...state,
-                data: [...state.data, action.payload],
+            return [...state, action.payload]
+        }
+        case 'goods/add_review': {
+            const review = action.payload
+            const goods = state.filter((good) => good.id !== review.good.id)
+            const good = state.find((good) => good.id === review.good.id)
+            if (good && good.reviews) {
+                console.log('[reducer] Review: ', review)
+                console.log('[reducer] Good: ', good)
+                return [
+                    ...goods,
+                    { ...good, reviews: [...good.reviews, review] },
+                ]
             }
+            return state
         }
 
         default:

@@ -5,6 +5,9 @@ export default function categoriesReducer(state = initialState, action) {
         case 'categories/fetch_success': {
             return [...action.payload]
         }
+        case 'categories/initial': {
+            return [...action.payload]
+        }
         default:
             return state
     }

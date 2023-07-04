@@ -5,7 +5,7 @@ import axios from 'axios'
 import { NextApiRequest, NextApiResponse } from 'next'
 import { good } from '@/app/types/interfaces'
 import { useAppDispatch } from '@/redux/hooks'
-import CartMain from '@/app/components/cart/cart'
+import CartMain from '@/app/components/cart/cartMain'
 import { apiDelete, getTotal } from '@/app/utils'
 
 type cart = {
@@ -38,35 +38,34 @@ export default function Cart() {
                 cartGoods.filter((cartGood: good) => cartGood.id !== id)
             )
         }
-
-        async function handleSubmit(event: MouseEvent<HTMLButtonElement>) {
-            event.preventDefault()
-            // console.log('Submit')
-            const cartData = { goods: cartGoods, total: getTotal(cartGoods) }
-            const response = await axios.post('/api/orders', cartData, config)
-            console.log('response: ', response)
-            if (response.status === 200) {
-                cartGoods.forEach((good) =>
-                    dispatch({
-                        type: 'goods/decrement_quantity',
-                        payload: { id: good.id, quantity: good.quantity },
-                    })
-                )
-                //todo dispatch new order
-                const orderId = response.data.id
-                push('/orders/' + orderId)
-            }
-        }
-
-        return (
-            <CartMain
-                goods={cartGoods}
-                setCartGoods={setCartGoods}
-                handleDelete={handleDelete}
-                handleSubmit={handleSubmit}
-            />
-        )
     }
+
+    async function handleSubmit(event: MouseEvent<HTMLButtonElement>) {
+        event.preventDefault()
+        // console.log('Submit')
+        const cartData = { goods: cartGoods, total: getTotal(cartGoods) }
+        const response = await axios.post('/api/orders', cartData, config)
+        console.log('response: ', response)
+        if (response.status === 200) {
+            cartGoods.forEach((good) =>
+                dispatch({
+                    type: 'goods/decrement_quantity',
+                    payload: { id: good.id, quantity: good.quantity },
+                })
+            )
+            //todo dispatch new order
+            const orderId = response.data.id
+            push('/orders/' + orderId)
+        }
+    }
+    return (
+        <CartMain
+            goods={cartGoods}
+            setCartGoods={setCartGoods}
+            handleDelete={handleDelete}
+            handleSubmit={handleSubmit}
+        />
+    )
 }
 
 // const router = createRouter()

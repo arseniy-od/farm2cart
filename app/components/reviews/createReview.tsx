@@ -9,8 +9,7 @@ import { BlankStar, Star } from '../icons/star'
 import { useAppDispatch } from '@/redux/hooks'
 import { RootState } from '@/redux/store'
 import { ConnectedProps, connect } from 'react-redux'
-import { GoodProps, review } from '@/app/types/interfaces'
-import { good } from '@/app/types/interfaces'
+import { GoodProps, review, good } from '@/app/types/interfaces'
 
 type ownProps = {
     good: good
@@ -147,14 +146,14 @@ function CreateReview({ good, reviews, setReviews, addReview }: Props) {
 }
 
 const mapState = (state: RootState, ownProps: ownProps) => ({
-    reduxReviews: state.goods.data.find((good) => good.id === ownProps.good.id)
+    reduxReviews: state.goods.find((good) => good.id === ownProps.good.id)
         ?.reviews,
 })
 
 const mapDispatch = {
-    addReview: (good: good) => ({
+    addReview: (review: review) => ({
         type: 'goods/add_review',
-        payload: good,
+        payload: review,
     }),
 }
 

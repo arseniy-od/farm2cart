@@ -110,10 +110,10 @@ export type good = {
     imageUrl: string
     description: string
     price: number
-    seller_id: number
+    seller_id?: number
     available: number
     active: boolean
-    reviews: review[]
+    reviews?: review[]
     categories: category[]
     seller: userMin
     averageScore?: number

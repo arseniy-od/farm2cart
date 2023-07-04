@@ -45,8 +45,8 @@ export default function CartGood({
     }
 
     return (
-        <div className="ml-4 mt-4 w-3/4 h-44 bg-gray-100 shadow-lg overflow-hidden">
-            <div className="flex justify-between min-h-full min-w-full">
+        <div className="ml-4 mt-4 w-3/4 bg-gray-100 shadow-lg overflow-hidden lg:w-1/2 xl:w-1/4">
+            <div className="flex justify-between h-44 min-w-full">
                 <div className="ml-4">
                     <div className="font-semibold text-xl">{good.title}</div>
                     <div>Price: {good.price}</div>
@@ -96,7 +96,7 @@ export default function CartGood({
                         alt="image of product"
                         width="255"
                         height="255"
-                        className="w-full h-full object-cover object-center"
+                        className="w-full h-full object-center object-cover"
                     />
                 </div>
             </div>

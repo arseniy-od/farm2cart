@@ -5,7 +5,7 @@ import container from '@/server/container'
 import { ContextDynamicRoute, OrderProps } from '@/app/types/interfaces'
 import OrderCard from '@/app/components/orders/orderCard'
 
-export default function Order(props: OrderProps) {
+export default function Order(props) {
     const order = props.data
     if (order.notFound) {
         return (

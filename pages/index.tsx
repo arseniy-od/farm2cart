@@ -1,62 +1,46 @@
 import { connect, ConnectedProps } from 'react-redux'
 
 import container from '@/server/container'
-import { category, good } from '@/app/types/interfaces'
+import { category, ContextDynamicRoute, good } from '@/app/types/interfaces'
 import { useEffect } from 'react'
 import { useAppSelector } from '@/redux/hooks'
-import GoodsPage from '@/app/components/app'
+import GoodsPage from '@/app/components/goods/goodsPage'
 import { RootState } from '@/redux/store'
+import { wrapper } from '@/redux/store'
+import { addInitialCategories, addInitialGoods } from '@/redux/actions'
 
-function Goods(props: Props) {
-    const { goods, addInitial } = props
-    // const dispatch = useAppDispatch()
-    // const goodsSelector = useAppSelector((state) => state.goods)
-    const catSelector = useAppSelector((state) => state.categories)
-
-    useEffect(() => {
-        addInitial(goods)
-    }, [addInitial, goods])
-
-    // useEffect(() => {
-    //     dispatch({ type: 'goods/add_initial', payload: goods })
-    // }, [dispatch, goods])
-
+function Goods(props: PropsFromRedux) {
     return (
         <GoodsPage
             goods={props.reduxGoods}
-            categories={catSelector.length ? catSelector : props.categories}
+            categories={props.reduxCategories}
         />
     )
 }
 
 const mapState = (state: RootState) => ({
-    isInitialGoods: state.goods.initial,
-    reduxGoods: state.goods.data,
+    reduxGoods: state.goods,
     reduxCategories: state.categories,
 })
 
 const mapDispatch = {
-    addInitial: (goods: good[]) => ({
-        type: 'goods/initial',
-        payload: goods,
-    }),
+    addInitialGoods,
+    addInitialCategories,
 }
 
 const connector = connect(mapState, mapDispatch)
 type PropsFromRedux = ConnectedProps<typeof connector>
-type Props = PropsFromRedux & { goods: good[]; categories: category[] }
-export default connector(Goods)
 
-export async function getServerSideProps(ctx) {
-    ctx.routeName = '/'
-    //todo: refactor to one call
-    const goods = await container.resolve('GoodController').run(ctx)
-    const categories = await container
-        .resolve('CategoryController')
-        .getCategories()
-    console.log('categories', categories)
+export const getServerSideProps = wrapper.getServerSideProps(
+    (store) => async (ctx: ContextDynamicRoute) => {
+        ctx.routeName = '/'
+        const res = await container.resolve('GoodController').run(ctx)
+        const { goods, categories } = res.props?.data
+        store.dispatch(addInitialGoods(goods))
+        store.dispatch(addInitialCategories(categories))
 
-    return {
-        props: { goods: goods.props.data, categories },
+        return { props: {} }
     }
-}
+)
+
+export default connector(Goods)
