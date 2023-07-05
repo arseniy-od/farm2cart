@@ -18,7 +18,6 @@ import { activateGood, addInitialGood, deleteGood } from '@/redux/actions'
 
 function Good(props: Props) {
     const { good } = props
-    const [reviews, setReviews] = useState(good.reviews)
 
     const handleDelete = async (event: MouseEvent<HTMLButtonElement>) => {
         if (!good?.active) {
@@ -38,8 +37,7 @@ function Good(props: Props) {
     return (
         <GoodPage
             good={good}
-            reviews={good.reviews}
-            setReviews={setReviews}
+            reviews={good.reviews ? good.reviews : []}
             handleDelete={handleDelete}
         />
     )
@@ -72,13 +70,3 @@ export const getServerSideProps = wrapper.getServerSideProps(
 )
 
 export default connector(Good)
-
-// cant use static because of dynamic generated routes
-// export async function getServerSideProps(ctx: ContextDynamicRoute) {
-//     ctx.routeName = '/goods/:id'
-//     ctx.res.setHeader(
-//         'Cache-Control',
-//         'public, s-maxage=10, stale-while-revalidate=59'
-//     )
-//     return await container.resolve('GoodController').run(ctx)
-// }

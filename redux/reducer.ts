@@ -3,6 +3,7 @@ import userReducer from './features/user/userSlice'
 import categoriesReducer from './features/category/categorySlice'
 import goodsReducer from './features/good/goodSlice'
 import { HYDRATE } from 'next-redux-wrapper'
+import { diff, patch } from 'jsondiffpatch'
 
 const combinedReducer = combineReducers({
     user: userReducer,
@@ -12,27 +13,22 @@ const combinedReducer = combineReducers({
 
 const rootReducer = (state, action) => {
     if (action.type === HYDRATE) {
-        // const data = action.payload
-        // const mergedGoods = state.goods.concat(data.goods)
+        // const stateDiff = diff(state, action.payload) as any
+        // const nextState = JSON.parse(JSON.stringify(state))
+        // console.log('State:', nextState)
+        // patch(nextState, stateDiff)
+        // const wasBumpedOnClient = stateDiff?.page?.[0]?.endsWith('X') // or any other criteria
+        // console.log('Diff:', stateDiff)
+        // console.log('Next State:', nextState)
 
-        // const resultGoods = mergedGoods.reduce((acc, cur) => {
-        //     const index = acc.findIndex((obj) => obj.id === cur.id)
-        //     if (index === -1) {
-        //         acc.push(cur)
-        //     } else {
-        //         acc[index] = cur
-        //     }
-        //     return acc
-        // }, [])
-
-        return {
-            ...state,
-            ...action.payload,
-            /// remove old good while adding new one
-            // user: { ...state.user, ...action.payload.user },
-            // goods: resultGoods,
-            // categories: [...state.categories, ...action.payload.categories],
+        const hydrateState = action.payload
+        const nextState = JSON.parse(JSON.stringify(state))
+        for (const [key, value] of Object.entries(hydrateState)) {
+            if (value instanceof Object && Object.keys(value).length) {
+                nextState[key] = value
+            }
         }
+        return nextState
     } else {
         return combinedReducer(state, action)
     }

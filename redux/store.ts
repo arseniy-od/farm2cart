@@ -1,6 +1,10 @@
 import { configureStore, combineReducers } from '@reduxjs/toolkit'
 import { createWrapper } from 'next-redux-wrapper'
 import createSagaMiddleware from 'redux-saga'
+import {
+    nextReduxCookieMiddleware,
+    wrapMakeStore,
+} from 'next-redux-cookie-wrapper'
 
 import mySaga from './sagas'
 import rootReducer from './reducer'

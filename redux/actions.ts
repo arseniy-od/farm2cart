@@ -24,3 +24,11 @@ export const activateGood = (id) => ({
     type: 'goods/activate_good',
     payload: { id },
 })
+
+export const fetchUser = () => ({
+    type: 'user/fetch_request',
+})
+
+export const fetchCategories = () => ({
+    type: 'categories/fetch_request',
+})

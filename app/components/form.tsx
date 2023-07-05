@@ -1,7 +1,7 @@
 import { useField } from 'formik'
 
-export const FormInput = ({ label, ...props }) => {
-    const [field, meta] = useField(props)
+export const FormInput = ({ label, name, ...props }) => {
+    const [field, meta] = useField({ ...props, name })
 
     return (
         <div className="">
@@ -44,15 +44,61 @@ export const TextArea = ({ label, name, ...props }) => {
     )
 }
 
-export const FileUpload = ({ fileRef, ...props }) => {
-    const [field, meta] = useField(props)
+export const Checkbox = ({ children, name, ...props }) => {
+    // React treats radios and checkbox inputs differently from other input types: select and textarea.
+
+    // Formik does this too! When you specify `type` to useField(), it will
+
+    // return the correct bag of props for you -- a `checked` prop will be included
+
+    // in `field` alongside `name`, `value`, `onChange`, and `onBlur`
+
+    const [field, meta] = useField({ ...props, name })
+
     return (
-        <div className="flex items-center justify-center w-full">
+        <div>
+            <label className="checkbox-input">
+                <input type="checkbox" {...field} {...props} />
+
+                {children}
+            </label>
+
+            {meta.touched && meta.error ? (
+                <div className="error">{meta.error}</div>
+            ) : null}
+        </div>
+    )
+}
+
+export const FileUpload = ({ fileRef, name, ...props }) => {
+    const [field, meta] = useField({ ...props, name })
+    return (
+        <div>
+            <div>
+                <label htmlFor="file">Choose image:</label>{' '}
+            </div>
+            <input
+                className="block w-full text-sm text-gray-900 border border-gray-300 cursor-pointer bg-gray-50  focus:outline-none"
+                ref={fileRef}
+                multiple={false}
+                type="file"
+                {...field}
+            />
+            {meta.touched && meta.error ? (
+                <div style={{ color: 'red' }}>{meta.error}</div>
+            ) : null}
+        </div>
+    )
+}
+
+// Drag and drop file upload
+{
+    /* <div className="flex items-center justify-center w-full">
             <label
                 htmlFor="file"
-                // className="flex flex-col items-center justify-center w-full h-64 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50"
+                className="flex flex-col items-center justify-center w-full h-64 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50"
             >
-                {/* <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                <div className="flex flex-col items-center justify-center pt-5 pb-6">
                     <svg
                         className="w-8 h-8 mb-4 text-gray-500"
                         aria-hidden="true"
@@ -75,32 +121,15 @@ export const FileUpload = ({ fileRef, ...props }) => {
                     <p className="text-xs text-gray-500">
                         SVG, PNG, JPG or GIF (MAX. 800x400px)
                     </p>
-                </div> */}
+                </div>
+                <input
+                    ref={fileRef}
+                    multiple={false}
+                    type="file"
+                    id="file"
+                    className="hidden"
+                    {...field}
+                />
             </label>
-            <input
-                ref={fileRef}
-                multiple={false}
-                type="file"
-                id="file"
-                // className="hidden"
-                {...field}
-            />
-        </div>
-    )
+        </div> */
 }
-
-// <div>
-//     <div>
-//         <label htmlFor="file">Upload file:</label>{' '}
-//     </div>
-//     <input
-//         className="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50  focus:outline-none"
-//         ref={fileRef}
-//         multiple={false}
-//         type="file"
-//         {...field}
-//     />
-//     {meta.touched && meta.error ? (
-//         <div style={{ color: 'red' }}>{meta.error}</div>
-//     ) : null}
-// </div>

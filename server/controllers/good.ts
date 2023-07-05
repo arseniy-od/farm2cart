@@ -68,7 +68,7 @@ export default class GoodController extends BaseController {
     // @USE(validate(goodSchema)) // problems with form-data
     async updateGood({ body, identity, file }: NextApiRequestFile) {
         // console.log('==========[GoodController]==============')
-
+        // console.log('Body:', body)
         if (!identity) {
             return { error: true, message: 'You are not logged in' }
         }
@@ -83,6 +83,7 @@ export default class GoodController extends BaseController {
             console.log('File:', file)
             goodData.imageUrl = file.path.replace('public', '')
         }
+
         const good = await this.GoodService.updateGood(goodData)
         return good
     }

@@ -18,7 +18,7 @@ interface IGood extends IGoodBase {
     categories: category[]
 }
 interface IGoodCategoryIds extends IGoodBase {
-    categories: number[]
+    categories: string[]
 }
 
 export default function Home({
@@ -28,7 +28,7 @@ export default function Home({
     good: IGood
     categories: category[]
 }) {
-    const categoryIds = good.categories.map((c) => c.id)
+    const categoryIds = good.categories.map((c) => c.id.toString())
     console.log('Cat ids: ', categoryIds)
     const [goodData, setGoodData] = useState<IGoodCategoryIds>({
         ...good,

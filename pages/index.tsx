@@ -36,6 +36,7 @@ export const getServerSideProps = wrapper.getServerSideProps(
         ctx.routeName = '/'
         const res = await container.resolve('GoodController').run(ctx)
         const { goods, categories } = res.props?.data
+        console.log('\n\n\nStore state:', store.getState())
         store.dispatch(addInitialGoods(goods))
         store.dispatch(addInitialCategories(categories))
 

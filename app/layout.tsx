@@ -5,24 +5,35 @@ import './globals.css'
 
 import Sidebar from './components/sidebar'
 import { useAppDispatch } from '@/redux/hooks'
+import { ConnectedProps, connect } from 'react-redux'
+import { RootState } from '@/redux/store'
+import { fetchUser, fetchCategories } from '@/redux/actions'
 
 export const siteTitle = 'farm2cart'
 
-export default function Layout({ children, home = false }) {
+function Layout({
+    children,
+    home = false,
+    dispatchUser,
+    dispatchCategories,
+    user,
+    categories,
+}: Props) {
     const [isMenuOpen, setIsMenuOpen] = useState(false)
-    const dispatch = useAppDispatch()
 
-    const dispatchUser = () => {
-        console.log('dispatchUser called')
-
-        dispatch({ type: 'user/fetch_request' })
+    function getUser() {
+        if (Object.keys(user).length === 0) {
+            dispatchUser()
+        }
+    }
+    function getCategories() {
+        if (Object.keys(categories).length === 0) {
+            dispatchCategories()
+        }
     }
 
-    const dispatchCategories = () => {
-        dispatch({ type: 'categories/fetch_request' })
-    }
-    useEffect(dispatchUser, [dispatch])
-    useEffect(dispatchCategories, [dispatch])
+    useEffect(getUser, [dispatchUser, user])
+    useEffect(getCategories, [dispatchCategories, categories])
 
     if (typeof window != 'undefined') {
         if (isMenuOpen) {
@@ -103,79 +114,20 @@ export default function Layout({ children, home = false }) {
     )
 }
 
-// export const getStaticProps: GetStaticProps = async ({ params }) => {
-//     const categories = await container
-//         .resolve('CategoryController')
-//         .getCategoriesWithGoods()
-//     return { props: categories }
-// }
+const mapState = (state: RootState) => ({
+    user: state.user,
+    categories: state.categories,
+})
 
-//! old sidebar
-// <div className="relative">
-//     <div className="absolute fixed z-20 bg-gray-100 w-2/3 min-h-screen">
-//         <div className="py-2 flex flex-col border-b-2">
-//             {!user || user.error ? (
-//                 <div>
-//                     <Link
-//                         className="block "
-//                         href="http://localhost:3000/signup"
-//                     >
-//                         Sign up
-//                     </Link>
-//                     <Link className="block " href="http://localhost:3000/login">
-//                         Login
-//                     </Link>
-//                 </div>
-//             ) : (
-//                 <div className="">
-//                     <Link
-//                         className="block ml-4"
-//                         href="http://localhost:3000/users/me"
-//                     >
-//                         <div className="mt-2 flex items-center">
-//                             <svg
-//                                 xmlns="http://www.w3.org/2000/svg"
-//                                 height="1em"
-//                                 viewBox="0 0 448 512"
-//                             >
-//                                 <path d="M304 128a80 80 0 1 0 -160 0 80 80 0 1 0 160 0zM96 128a128 128 0 1 1 256 0A128 128 0 1 1 96 128zM49.3 464H398.7c-8.9-63.3-63.3-112-129-112H178.3c-65.7 0-120.1 48.7-129 112zM0 482.3C0 383.8 79.8 304 178.3 304h91.4C368.2 304 448 383.8 448 482.3c0 16.4-13.3 29.7-29.7 29.7H29.7C13.3 512 0 498.7 0 482.3z" />
-//                             </svg>
-//                             <div className="ml-2 font-semibold">
-//                                 {user.username}
-//                             </div>
-//                         </div>
-//                     </Link>
+const mapDispatch = {
+    dispatchUser: fetchUser,
+    dispatchCategories: fetchCategories,
+}
 
-//                     {user.role === 'seller' && (
-//                         <Link className="mt-2 block px-4" href="/goods/create">
-//                             Add new product
-//                         </Link>
-//                     )}
-//                     <button className="mt-2 block px-4" onClick={handleLogout}>
-//                         Logout
-//                     </button>
-//                 </div>
-//             )}
-//         </div>
+const connector = connect(mapState, mapDispatch)
+type Props = ConnectedProps<typeof connector> & {
+    home: boolean
+    [key: string]: any
+}
 
-//         <div>
-//             <div className="ml-4 mt-2 font-semibold">Categories:</div>
-//             {categories.length &&
-//                 categories.map((category, i) => (
-//                     <div key={i}>
-//                         <div className="ml-4 mt-1">
-//                             <Link
-//                                 href={`/categories/${category.text.toLowerCase()}`}
-//                             >
-//                                 {category.text}
-//                             </Link>
-//                         </div>
-//                     </div>
-//                 ))}
-//         </div>
-//     </div>
-
-//     <button onClick={() => setIsMenuOpen(false)} className="block">
-//         <div className="absolute z-10 fixed bg-gray-900 opacity-[50%] min-h-screen w-screen cursor-default"></div>
-//     </button>
-// </div>
+export default connector(Layout)

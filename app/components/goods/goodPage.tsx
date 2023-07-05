@@ -9,7 +9,7 @@ import ReviewCard from '../reviews/reviewCard'
 import { ReactElement } from 'react'
 import { HalfStar, BlankStar, Star } from '../icons/star'
 
-export default function GoodPage({ good, reviews, handleDelete, setReviews }) {
+export default function GoodPage({ good, reviews, handleDelete }) {
     function roundHalf(num: number) {
         return Math.round(num * 2) / 2
     }
@@ -128,11 +128,7 @@ export default function GoodPage({ good, reviews, handleDelete, setReviews }) {
                           })
                         : null}
                 </div>
-                <CreateReview
-                    good={good}
-                    reviews={reviews}
-                    setReviews={setReviews}
-                />
+                <CreateReview good={good} />
             </div>
         </Layout>
     )

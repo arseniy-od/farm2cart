@@ -141,6 +141,7 @@ export default class GoodService extends BaseContext {
         }
         await good.update(goodData)
         console.log('[GoodService] good after:', good)
+        await good.setCategories([])
         await goodData.categories.forEach(async (catId) => {
             const categoryGood = await this.Category.findOne({
                 where: { id: catId },

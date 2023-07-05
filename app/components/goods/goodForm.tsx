@@ -7,13 +7,14 @@ import {
     useRef,
 } from 'react'
 import axios from 'axios'
-import { Formik, Field, Form, ErrorMessage, useField } from 'formik'
+import { Formik, Field, Form, ErrorMessage, useField, FieldArray } from 'formik'
+import * as Yup from 'yup'
 
 import Layout from '@/app/layout'
 import { category } from '@/app/types/interfaces'
 import { useAppDispatch } from '@/redux/hooks'
 import goods from '@/pages/api/goods'
-import { TextArea, FormInput, FileUpload } from '../form'
+import { TextArea, FormInput, FileUpload, Checkbox } from '../form'
 
 interface IGood {
     id?: string
@@ -35,27 +36,25 @@ type Props = {
 
 export default function GoodForm({ good, setGood, categories, method }: Props) {
     const { push } = useRouter()
-    const fileRef = useRef(null)
+    const fileRef = useRef({ files: [] })
     const dispatch = useAppDispatch()
-    const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
-        if (event.target.files) {
-            const file = event.target.files[0]
-            setGood({ ...good, file })
-        } else {
-            console.error('[File change] File not found')
-        }
-    }
 
-    const handleCategoryChange = (event: ChangeEvent<HTMLInputElement>) => {
-        const categoryId = parseInt(event.target.name)
+    // const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
+    //     if (event.target.files) {
+    //         const file = event.target.files[0]
+    //         setGood({ ...good, file })
+    //     } else {
+    //         console.error('[File change] File not found')
+    //     }
+    // }
+
+    const handleCategoryChange = (event, index, arrayHelpers) => {
         const isChecked = event.target.checked
+        console.log('isChecked: ', event.target)
         if (isChecked) {
-            setGood({ ...good, categories: [...good.categories, categoryId] })
+            arrayHelpers.push(index, event.target.value)
         } else {
-            setGood({
-                ...good,
-                categories: good.categories.filter((c) => c !== categoryId),
-            })
+            arrayHelpers.remove(index)
         }
     }
 
@@ -80,8 +79,9 @@ export default function GoodForm({ good, setGood, categories, method }: Props) {
         formData.append('active', '1')
 
         good.categories.forEach((category) => {
-            formData.append('categories', category.toString())
+            formData.append('categories', category)
         })
+        console.log('formData:', formData)
         return formData
     }
 
@@ -104,7 +104,7 @@ export default function GoodForm({ good, setGood, categories, method }: Props) {
                     categories: goodCategories,
                 },
             })
-            push('/goods/' + response.data.id)
+            return response.data
         } else {
             console.error(response.statusText)
         }
@@ -128,7 +128,7 @@ export default function GoodForm({ good, setGood, categories, method }: Props) {
                     categories: goodCategories,
                 },
             })
-            push('/goods/' + good.id)
+            return response.data
         } else {
             console.error(response.statusText)
         }
@@ -140,9 +140,11 @@ export default function GoodForm({ good, setGood, categories, method }: Props) {
         const formData = toFormData(good, method)
 
         if (method === 'post') {
-            await apiPost(formData)
+            const goodRes = await apiPost(formData)
+            push('/goods/' + goodRes.id)
         } else if (method === 'put') {
-            await apiPut(formData)
+            const goodRes = await apiPut(formData)
+            push('/goods/' + goodRes.id)
         } else {
             console.error(
                 `Method ${method} is not implemented. Use 'post' or 'put'`
@@ -150,10 +152,23 @@ export default function GoodForm({ good, setGood, categories, method }: Props) {
         }
     }
 
+    const validationSchema = Yup.object({
+        title: Yup.string()
+            .max(20, 'Must be 20 characters or less')
+            .required('Required'),
+        description: Yup.string().max(255, 'Must be 255 characters or less'),
+        price: Yup.number().required('Required'),
+        available: Yup.number().required('Required'),
+    })
+
     return (
         <Layout>
             <div className="mt-6 grid place-items-center">
-                <Formik initialValues={good} onSubmit={handleSubmit}>
+                <Formik
+                    initialValues={good}
+                    validationSchema={validationSchema}
+                    onSubmit={handleSubmit}
+                >
                     <Form
                         method={method}
                         encType="multipart/form-data"
@@ -194,30 +209,40 @@ export default function GoodForm({ good, setGood, categories, method }: Props) {
                                 min="1"
                             />
 
-                            <h3>Choose categories: </h3>
-                            <div className="grid grid-cols-2">
-                                {categories.map((category, i) => (
-                                    <div key={i}>
-                                        <p>
-                                            <label
-                                                htmlFor={category.id.toString()}
-                                            >
-                                                {' '}
-                                                {category.text}
-                                            </label>
-                                            <input
+                            <div>
+                                <div id="checkbox-group">Choose categories</div>
+                                <div
+                                    className="grid grid-cols-2"
+                                    role="group"
+                                    aria-labelledby="checkbox-group"
+                                >
+                                    {categories.map((category, i) => (
+                                        <label key={i}>
+                                            <Field
                                                 type="checkbox"
-                                                name={category.id.toString()}
-                                                checked={good.categories.includes(
-                                                    category.id
-                                                )}
-                                                onChange={handleCategoryChange}
+                                                name="categories"
+                                                value={category.id.toString()}
                                             />
-                                        </p>
-                                    </div>
-                                ))}
+                                            {category.text}
+                                        </label>
+                                    ))}
+                                </div>
                             </div>
                         </div>
+
+                        {/* <div id="checkbox-group">Checked</div>
+                        <div role="group" aria-labelledby="checkbox-group">
+                            {['One', 'Two', 'Three'].map((check, i) => (
+                                <label key={i}>
+                                    <Field
+                                        type="checkbox"
+                                        name="checked"
+                                        value={check}
+                                    />
+                                    {check}
+                                </label>
+                            ))}
+                        </div> */}
 
                         <button
                             type="submit"
@@ -231,3 +256,21 @@ export default function GoodForm({ good, setGood, categories, method }: Props) {
         </Layout>
     )
 }
+
+// <div key={i}>
+//     <p>
+//         <label
+//             htmlFor={category.id.toString()}
+//         >
+//             {category.text}
+//         </label>
+//         <input
+//             type="checkbox"
+//             name={category.id.toString()}
+//             checked={good.categories.includes(
+//                 category.id
+//             )}
+//             onChange={handleCategoryChange}
+//         />
+//     </p>
+// </div>

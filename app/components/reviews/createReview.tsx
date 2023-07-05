@@ -13,11 +13,9 @@ import { GoodProps, review, good } from '@/app/types/interfaces'
 
 type ownProps = {
     good: good
-    reviews: review[]
-    setReviews: Dispatch<SetStateAction<review[]>>
 }
 
-function CreateReview({ good, reviews, setReviews, addReview }: Props) {
+function CreateReview({ good, addReview }: Props) {
     const [review, setReview] = useState({
         goodId: good.id,
         text: '',
