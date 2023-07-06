@@ -42,7 +42,7 @@ export default class GoodService extends BaseContext {
                 },
                 {
                     model: this.Category,
-                    attributes: ['text'],
+                    attributes: ['id', 'text'],
                 },
                 {
                     model: this.Review,
@@ -74,7 +74,7 @@ export default class GoodService extends BaseContext {
                 {
                     model: this.Review,
                     as: 'reviews',
-                    attributes: ['text', 'authorId', 'score', 'datepub'],
+                    attributes: ['id', 'text', 'authorId', 'score', 'datepub'],
                     include: [
                         {
                             model: this.User,

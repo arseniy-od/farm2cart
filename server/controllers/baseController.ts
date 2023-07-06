@@ -15,8 +15,6 @@ import {
 import { ParsedUrlQuery } from 'querystring'
 
 export default class BaseController extends BaseContext {
-    private UserService = this.di.UserService
-
     private useClassMiddleware(router) {
         const classMiddleware = Reflect.getMetadata(
             this.constructor.name,
@@ -62,6 +60,7 @@ export default class BaseController extends BaseContext {
             } as any)
             data = JSON.parse(JSON.stringify(data))
             if (data.notFound || !data) {
+                console.log('[BaseController] Data not found')
                 return { notFound: true }
             }
 

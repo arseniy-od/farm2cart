@@ -57,13 +57,6 @@ export const userSchema = {
             type: 'string',
             enum: ['customer', 'seller'],
         },
-        phoneNumber: {
-            type: 'string',
-            pattern: '^[0-9]+$',
-            errorMessage: {
-                pattern: "Should only contain numbers",
-            },
-        },
         companyId: {
             type: 'string',
             pattern: '^[0-9]+$',

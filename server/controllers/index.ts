@@ -10,23 +10,23 @@ import CartController from './cart'
 
 export interface IControllerContainer {
     CompanyController: CompanyController
+    AuthController: AuthController
     UserController: UserController
     GoodController: GoodController
     OrderController: OrderController
     ReviewController: ReviewController
     CategoryController: CategoryController
-    AuthController: AuthController
     CartController: CartController
 }
 
 const controllers = {
     CompanyController: asClass(CompanyController).singleton(),
+    AuthController: asClass(AuthController).singleton(),
     UserController: asClass(UserController).singleton(),
     GoodController: asClass(GoodController).singleton(),
     OrderController: asClass(OrderController).singleton(),
     ReviewController: asClass(ReviewController).singleton(),
     CategoryController: asClass(CategoryController).singleton(),
-    AuthController: asClass(AuthController).singleton(),
     CartController: asClass(CartController).singleton(),
 }
 

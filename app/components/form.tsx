@@ -10,7 +10,9 @@ export const FormInput = ({ label, name, ...props }) => {
             </div>
 
             <input
-                className="mt-2 px-4 py-3 w-full max-w-xs border-2"
+                className={`mt-2 px-4 py-3 w-full max-w-xs border-2 ${
+                    meta.touched && meta.error && ' border-red-700'
+                }`}
                 {...field}
                 {...props}
             />
@@ -28,7 +30,7 @@ export const TextArea = ({ label, name, ...props }) => {
     return (
         <div className="">
             <div>
-                <label htmlFor={props.id || props.name}>{label}</label>
+                <label htmlFor={props.id || name}>{label}</label>
             </div>
 
             <textarea
@@ -44,6 +46,36 @@ export const TextArea = ({ label, name, ...props }) => {
     )
 }
 
+export const Select = ({ children, name, ...props }) => {
+    // React treats radios and checkbox inputs differently from other input types: select and textarea.
+
+    // Formik does this too! When you specify `type` to useField(), it will
+
+    // return the correct bag of props for you -- a `checked` prop will be included
+
+    // in `field` alongside `name`, `value`, `onChange`, and `onBlur`
+
+    const [field, meta] = useField({ ...props, name })
+
+    return (
+        <div>
+            <label htmlFor={props.id || name}>{props.label}</label>
+            <select
+                className="mt-2 px-4 py-3 w-full max-w-xs border-2 bg-white"
+                {...field}
+                {...props}
+            >
+                {children}
+            </select>
+
+            {meta.touched && meta.error ? (
+                <div className="text-red-700">{meta.error}</div>
+            ) : null}
+        </div>
+    )
+}
+
+// This component currently is not used
 export const Checkbox = ({ children, name, ...props }) => {
     // React treats radios and checkbox inputs differently from other input types: select and textarea.
 

@@ -53,7 +53,7 @@ export default function Cart() {
                     payload: { id: good.id, quantity: good.quantity },
                 })
             )
-            //todo dispatch new order
+            dispatch({ type: 'orders/add_order', payload: response.data })
             const orderId = response.data.id
             push('/orders/' + orderId)
         }

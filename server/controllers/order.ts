@@ -27,8 +27,13 @@ export default class OrderController extends BaseController {
 
     @SSR('/orders')
     @GET('/api/orders')
-    async getOrders() {
-        const result = await this.OrderService.getOrders()
+    async getOrdersForUser({ identity }) {
+        if (!identity) {
+            return { error: true, message: 'You are not logged in' }
+        }
+        const result = await this.OrderService.getOrdersByCustomerId(
+            identity.id
+        )
         const orders = JSON.parse(JSON.stringify(result))
         if (!orders || !orders.length) {
             return { notFound: true }
@@ -57,7 +62,7 @@ export default class OrderController extends BaseController {
     async getOrder({
         params,
     }: GetServerSidePropsContext<ParsedUrlQuery, PreviewData>) {
-        const { id } = params
+        const id = params?.id
         if (!id || id instanceof Array) {
             return { error: true, message: 'No order id or id is an array' }
         }

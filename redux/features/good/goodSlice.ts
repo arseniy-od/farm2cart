@@ -1,6 +1,6 @@
 import { good } from '@/app/types/interfaces'
 
-type goodState = good[]
+export type goodState = good[]
 
 const initialState: goodState = []
 
@@ -10,6 +10,9 @@ export default function goodsReducer(
 ): goodState {
     switch (action.type) {
         case 'goods/fetch_success': {
+            return [...action.payload]
+        }
+        case 'goods/fetch_my_success': {
             return [...action.payload]
         }
         case 'goods/initial': {

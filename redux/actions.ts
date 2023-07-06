@@ -32,3 +32,12 @@ export const fetchUser = () => ({
 export const fetchCategories = () => ({
     type: 'categories/fetch_request',
 })
+
+export const fetchOrders = () => ({
+    type: 'orders/fetch_request',
+})
+
+export const fetchMyGoods = (id) => ({
+    type: 'goods/fetch_my_request',
+    payload: id,
+})

@@ -31,8 +31,13 @@ export default class GoodController extends BaseController {
     private GoodService = this.di.GoodService
     private CategoryService = this.di.CategoryService
 
-    @SSR('/')
     @GET('/api/goods')
+    async getGoodsApi() {
+        const goods = await this.GoodService.getGoods()
+        return goods
+    }
+
+    @SSR('/')
     async getGoods() {
         const goods = await this.GoodService.getGoods()
         const categories = await this.CategoryService.getCategories()

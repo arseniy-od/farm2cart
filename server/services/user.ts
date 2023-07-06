@@ -36,7 +36,8 @@ export default class UserService extends BaseContext {
         if (userEmail) {
             return { error: 'This email is already registered' }
         } else {
-            return this.User.create(userData)
+            const user = await this.User.create(userData)
+            return user
         }
     }
 

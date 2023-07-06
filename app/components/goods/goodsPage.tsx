@@ -1,10 +1,12 @@
 import Layout from '@/app/layout'
 import CategoryIcon from '../categories/categoryIcon'
 import GoodCard from './goodCard'
+import Link from 'next/link'
 
 export default function GoodsPage({ categories, goods }) {
     return (
         <Layout home={true}>
+            <Link href="/normalizr">Normalizr</Link>
             <div className="mx-4 flex flex-wrap justify-center">
                 {categories?.length ? (
                     <>

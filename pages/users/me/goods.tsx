@@ -8,9 +8,20 @@ import GoodCard from '@/app/components/goods/goodCard'
 import container from '@/server/container'
 import { NextApiRequest, NextApiResponse } from 'next'
 import { GoodsProps, UserGoodsOrdersProps, user } from '@/app/types/interfaces'
+import { RootState } from '@/redux/store'
+import { ConnectedProps, connect } from 'react-redux'
+import { fetchMyGoods } from '@/redux/actions'
 // import OrderCard from '@/app/components/orderCard'
 
-export default function User({ user, goods }: UserGoodsOrdersProps) {
+function MyGoods({ user, goods, fetchMyGoods }: Props) {
+    const MyGoods = goods.filter((good) => good.seller.id === user.id)
+
+    function getGoods() {
+        fetchMyGoods(user.id)
+    }
+
+    useEffect(getGoods, [fetchMyGoods, user])
+
     if (user.error) {
         return (
             <Layout>
@@ -29,7 +40,7 @@ export default function User({ user, goods }: UserGoodsOrdersProps) {
                 {user.role === 'seller' || 'admin' ? (
                     <div>
                         <h3 className="ml-5 mt-3 text-xl">Your products:</h3>
-                        {goods.map((good, i) => (
+                        {MyGoods.map((good, i) => (
                             <div key={i}>
                                 <div>
                                     <GoodCard good={good} />
@@ -43,21 +54,15 @@ export default function User({ user, goods }: UserGoodsOrdersProps) {
     )
 }
 
-// const router = createRouter()
-//     .use(session)
-//     .use(middlewares.asyncPassportInit)
-//     .use(middlewares.asyncPassportSession)
-//     .get(async (req, res) => {
-//         return await container.resolve('UserController').getGoodsForUser(req)
-//     })
+const mapState = (state: RootState) => ({
+    user: state.user,
+    goods: state.goods,
+})
 
-// export async function getServerSideProps({
-//     req,
-//     res,
-// }: {
-//     req: NextApiRequest
-//     res: NextApiResponse
-// }) {
-//     const response = await router.run(req, res)
-//     return response
-// }
+const mapDispatch = {
+    fetchMyGoods,
+}
+
+const connector = connect(mapState, mapDispatch)
+type Props = ConnectedProps<typeof connector>
+export default connector(MyGoods)

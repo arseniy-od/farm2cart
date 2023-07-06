@@ -1,23 +1,37 @@
-import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { useState, MouseEvent } from 'react'
+import { Formik, Form, Field } from 'formik'
+import * as Yup from 'yup'
 
 import Layout from '../app/layout'
+import { FormInput, Select } from '@/app/components/form'
+import { useAppDispatch } from '@/redux/hooks'
 
-export default function Home() {
+export default function SignUp() {
     const { push } = useRouter()
-    const [user, setUser] = useState({
-        firstName: '',
-        lastName: '',
-        email: '',
-        username: '',
-        password: '',
-        phoneNumber: '',
-        role: 'customer',
-    })
+    const dispatch = useAppDispatch()
 
-    const handleSubmit = async (event: MouseEvent<HTMLButtonElement>) => {
-        event.preventDefault()
+    const login = async (user) => {
+        const res = await fetch('/api/auth', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(user),
+        })
+        console.log('User: ', user)
+
+        if (res.ok) {
+            const user = await res.json()
+            console.log('Login successful')
+            dispatch({ type: 'user/fetch_success', payload: user })
+            push('/')
+        } else {
+            console.error('Login error:', res.statusText)
+        }
+    }
+
+    const handleSubmit = async (user) => {
+        console.log('Values: ', user)
 
         const res = await fetch('/api/users', {
             method: 'POST',
@@ -28,132 +42,89 @@ export default function Home() {
         })
 
         if (res.ok) {
-            const user = await res.json()
-            console.log('Sign up successful')
-            push('/login')
+            const createdUser = await res.json()
+            console.log('Sign up successful, user: ', createdUser)
+            await login(user)
         } else {
-            console.log('Sign up error')
+            console.error('Sign up error: ', res.statusText)
         }
     }
 
     return (
-        <div id="app" className="">
-            <Layout>
-                <div className="mt-6">
-                    <form className="text-center">
-                        <h3 className="text-xl">Registration</h3>
-                        <div>
-                            <input
-                                type="text"
-                                value={user.firstName}
-                                onChange={(event) =>
-                                    setUser({
-                                        ...user,
-                                        firstName: event.target.value,
-                                    })
-                                }
-                                className="mt-2 px-4 py-3 w-full max-w-xs border-2"
-                                placeholder="first name"
-                            />
-                        </div>
-                        <div>
-                            <input
-                                type="text"
-                                value={user.lastName}
-                                onCh
-                                ange={(event) =>
-                                    setUser({
-                                        ...user,
-                                        lastName: event.target.value,
-                                    })
-                                }
-                                className="mt-2 px-4 py-3 w-full max-w-xs border-2"
-                                placeholder="last name"
-                            />
-                        </div>
-                        <div>
-                            <input
-                                type="text"
-                                value={user.email}
-                                onChange={(event) =>
-                                    setUser({
-                                        ...user,
-                                        email: event.target.value,
-                                    })
-                                }
-                                className="mt-2 px-4 py-3 w-full max-w-xs border-2"
-                                name="email"
-                                placeholder="email"
-                                autoComplete="email"
-                            />
-                        </div>
-                        <div>
-                            <input
-                                type="text"
-                                value={user.username}
-                                onChange={(event) =>
-                                    setUser({
-                                        ...user,
-                                        username: event.target.value,
-                                    })
-                                }
-                                className="mt-2 px-4 py-3 w-full max-w-xs border-2"
-                                placeholder="username"
-                                autoComplete="off"
-                            />
-                        </div>
-                        <div>
-                            <input
-                                type="password"
-                                value={user.password}
-                                onChange={(event) =>
-                                    setUser({
-                                        ...user,
-                                        password: event.target.value,
-                                    })
-                                }
-                                className="mt-2 px-4 py-3 w-full max-w-xs border-2"
-                                placeholder="password"
-                            />
-                        </div>
-                        <div>
-                            <input
-                                type="text"
-                                value={user.phoneNumber}
-                                onChange={(event) =>
-                                    setUser({
-                                        ...user,
-                                        phoneNumber: event.target.value,
-                                    })
-                                }
-                                className="mt-2 px-4 py-3 w-full max-w-xs border-2"
-                                placeholder="phone number"
-                            />
-                        </div>
-                        <div>
-                            <input
-                                type="text"
-                                value={user.role}
-                                onChange={(event) =>
-                                    setUser({
-                                        ...user,
-                                        role: event.target.value,
-                                    })
-                                }
-                                className="mt-2 px-4 py-3 w-full max-w-xs border-2"
-                                placeholder="role"
-                            />
-                        </div>
+        <Layout>
+            <div className="mt-6 grid place-items-center">
+                <Formik
+                    initialValues={{
+                        firstName: '',
+                        lastName: '',
+                        email: '',
+                        username: '',
+                        password: '',
+                        role: 'customer',
+                    }}
+                    validationSchema={Yup.object({
+                        firstName: Yup.string()
+                            .max(15, 'Must be 15 characters or less')
+                            .min(2, 'Must be 2 characters or more')
+                            .required('Required'),
+                        lastName: Yup.string()
+                            .max(20, 'Must be 20 characters or less')
+                            .min(2, 'Must be 2 characters or more')
+                            .required('Required'),
+                        email: Yup.string()
+                            .email('Invalid email address')
+                            .required('Required'),
+                        username: Yup.string()
+                            .max(15, 'Must be 15 characters or less')
+                            .min(3, 'Must be 3 characters or more')
+                            .required('Required'),
+                        password: Yup.string()
+                            .max(20, 'Must be 20 characters or less')
+                            .min(4, 'Must be 4 characters or more')
+                            .required('Required'),
+                    })}
+                    onSubmit={handleSubmit}
+                >
+                    <Form className="content-center">
+                        <h3 className="py-3 text-xl">Registration</h3>
+                        <FormInput
+                            label="First name:"
+                            name="firstName"
+                            type="text"
+                        />
+                        <FormInput
+                            label="Last name:"
+                            name="lastName"
+                            type="text"
+                        />
+                        <FormInput label="Email:" name="email" type="email" />
+                        <FormInput
+                            label="Username:"
+                            name="username"
+                            type="text"
+                        />
+                        <FormInput
+                            label="Password:"
+                            name="password"
+                            type="password"
+                        />
+
+                        <label htmlFor="role">Select your role:</label>
+
+                        <Select id="role" name="role" multiple={false}>
+                            <option value="customer">Customer</option>
+
+                            <option value="seller">Seller</option>
+                        </Select>
                         <button
-                            onClick={handleSubmit}
                             type="submit"
                             className="mt-4 inline-block items-center bg-gray-400 hover:bg-gray-600 focus:outline-none focus:shadow-outline rounded-lg shadow px-8 py-2"
                         >
                             Submit
                         </button>
-                    </form>
-                </div>
-            </Layout>
-        </div>
+                    </Form>
+                </Formik>
+            </div>
+        </Layout>
     )
 }

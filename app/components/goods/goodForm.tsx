@@ -1,11 +1,5 @@
 import { useRouter } from 'next/navigation'
-import {
-    ChangeEvent,
-    Dispatch,
-    MouseEvent,
-    SetStateAction,
-    useRef,
-} from 'react'
+import { Dispatch, SetStateAction, useRef } from 'react'
 import axios from 'axios'
 import { Formik, Field, Form, ErrorMessage, useField, FieldArray } from 'formik'
 import * as Yup from 'yup'
@@ -48,15 +42,15 @@ export default function GoodForm({ good, setGood, categories, method }: Props) {
     //     }
     // }
 
-    const handleCategoryChange = (event, index, arrayHelpers) => {
-        const isChecked = event.target.checked
-        console.log('isChecked: ', event.target)
-        if (isChecked) {
-            arrayHelpers.push(index, event.target.value)
-        } else {
-            arrayHelpers.remove(index)
-        }
-    }
+    // const handleCategoryChange = (event, index, arrayHelpers) => {
+    //     const isChecked = event.target.checked
+    //     console.log('isChecked: ', event.target)
+    //     if (isChecked) {
+    //         arrayHelpers.push(index, event.target.value)
+    //     } else {
+    //         arrayHelpers.remove(index)
+    //     }
+    // }
 
     function toFormData(good, method) {
         const formData = new FormData()

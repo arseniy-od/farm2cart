@@ -17,7 +17,6 @@ import SSR from '../decorators/ssr'
 
 import session, { passportInit, passportSession } from '@/middleware/session'
 import BaseController from './baseController'
-import passport from '@/middleware/passport'
 import { userSchema } from '../validation/schemas'
 import validate from '../validation/validator'
 
@@ -40,11 +39,15 @@ export default class UserController extends BaseController {
 
     @POST('/api/users')
     @USE(validate(userSchema))
-    async createUser(req: NextApiRequest) {
+    async createUser(req: NextApiRequestWithUser) {
         const result = await this.UserService.createUser(req.body)
         const user = JSON.parse(JSON.stringify(result))
-        if (!user || !user.length) {
+        if (!user) {
             return { notFound: true }
+        }
+        if (user.error) {
+            console.error('[UserController/createUser]: ', user.message)
+            return user
         }
         return user
     }

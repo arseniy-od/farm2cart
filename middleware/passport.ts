@@ -64,6 +64,7 @@ export const passportAuth = (
     next: NextHandler
 ) => {
     passport.authenticate('local', (err, user, info) => {
+        console.log('Starting passport authenticate')
         if (err) {
             console.error('\nPassport authenticate error:\n', err)
             return next()
@@ -76,10 +77,11 @@ export const passportAuth = (
         }
         req.logIn(user, (err) => {
             if (err) {
-                console.log('\nDev: LogIn Error: \n', err)
+                console.error('\nDev: LogIn Error: \n', err)
                 // req.session.user = JSON.parse(JSON.stringify(user))category image
                 return next()
             }
+            console.log('[passport.ts] Login ok, user:', user)
             return res.json({ user })
         })
 

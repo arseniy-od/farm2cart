@@ -14,26 +14,28 @@ export const siteTitle = 'farm2cart'
 function Layout({
     children,
     home = false,
-    dispatchUser,
-    dispatchCategories,
+    fetchUser,
+    fetchCategories,
     user,
     categories,
 }: Props) {
     const [isMenuOpen, setIsMenuOpen] = useState(false)
 
     function getUser() {
+        console.log('getUser called')
+        console.log('[Layout] user: ', user)
         if (Object.keys(user).length === 0) {
-            dispatchUser()
+            fetchUser()
         }
     }
     function getCategories() {
         if (Object.keys(categories).length === 0) {
-            dispatchCategories()
+            fetchCategories()
         }
     }
 
-    useEffect(getUser, [dispatchUser, user])
-    useEffect(getCategories, [dispatchCategories, categories])
+    useEffect(getUser, [fetchUser, user])
+    useEffect(getCategories, [fetchCategories, categories])
 
     if (typeof window != 'undefined') {
         if (isMenuOpen) {
@@ -48,7 +50,7 @@ function Layout({
     }
 
     return (
-        <div className="bg-gray-100 min-h-screen text-gray-900">
+        <div className="bg-gray-200 min-h-screen text-gray-900">
             <div>
                 <Head>
                     <title>{siteTitle}</title>
@@ -120,8 +122,8 @@ const mapState = (state: RootState) => ({
 })
 
 const mapDispatch = {
-    dispatchUser: fetchUser,
-    dispatchCategories: fetchCategories,
+    fetchUser,
+    fetchCategories,
 }
 
 const connector = connect(mapState, mapDispatch)

@@ -93,7 +93,7 @@ export default function Sidebar({
                             </button>
                             <Link
                                 className="mt-2 px-4 block w-2/3 hover:shadow-lg"
-                                href={`/users/me/orders`}
+                                href={`/orders`}
                             >
                                 My orders
                             </Link>

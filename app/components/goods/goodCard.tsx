@@ -29,7 +29,7 @@ export default function GoodCard({ good }: { good: good }) {
 
     return (
         <div className="mt-4 mx-3">
-            <div className="px-4 py-2 max-w-xs w-full text-lg bg-gray-100">
+            <div className="px-4 py-2 max-w-xs w-full text-lg">
                 <div className="shadow-lg">
                     <div className="z-0 relative flex items-center justify-center overflow-hidden w-full h-56">
                         <Link

@@ -18,7 +18,8 @@ export default class AuthController extends BaseController {
     @POST('/api/auth')
     @USE(passportAuth)
     @USE(validate(loginSchema))
-    async loginUser(req: NextApiRequestWithUser) {
+    loginUser(req: NextApiRequestWithUser) {
+        console.log('[AuthController] identity:', req.identity)
         return req.identity
     }
 
