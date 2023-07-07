@@ -15,6 +15,7 @@ function Normalizr({ goods }) {
         categories: [category],
     })
     const goodsSchema = [goodSchema]
+
     const normGoods = normalize(goods, goodsSchema)
     console.log('Normalized:', JSON.stringify(normGoods))
 

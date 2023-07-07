@@ -29,9 +29,7 @@ function Layout({
         }
     }
     function getCategories() {
-        if (Object.keys(categories).length === 0) {
-            fetchCategories()
-        }
+        fetchCategories()
     }
 
     useEffect(getUser, [fetchUser, user])
@@ -118,7 +116,7 @@ function Layout({
 
 const mapState = (state: RootState) => ({
     user: state.user,
-    categories: state.categories,
+    categories: state.entities.categories,
 })
 
 const mapDispatch = {

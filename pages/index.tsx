@@ -1,13 +1,17 @@
 import { connect, ConnectedProps } from 'react-redux'
+import { normalize } from 'normalizr'
 
 import container from '@/server/container'
-import { category, ContextDynamicRoute, good } from '@/app/types/interfaces'
-import { useEffect } from 'react'
-import { useAppSelector } from '@/redux/hooks'
+import { ContextDynamicRoute } from '@/app/types/interfaces'
 import GoodsPage from '@/app/components/goods/goodsPage'
 import { RootState } from '@/redux/store'
 import { wrapper } from '@/redux/store'
-import { addInitialCategories, addInitialGoods } from '@/redux/actions'
+import {
+    addInitialCategories,
+    addInitialGoods,
+    updateEntities,
+} from '@/redux/actions'
+import { goodsSchema, categoriesSchema } from '@/redux/normalSchemas'
 
 function Goods(props: PropsFromRedux) {
     return (
@@ -19,8 +23,8 @@ function Goods(props: PropsFromRedux) {
 }
 
 const mapState = (state: RootState) => ({
-    reduxGoods: state.goods,
-    reduxCategories: state.categories,
+    reduxGoods: state.entities.goods,
+    reduxCategories: state.entities.categories,
 })
 
 const mapDispatch = {
@@ -36,9 +40,16 @@ export const getServerSideProps = wrapper.getServerSideProps(
         ctx.routeName = '/'
         const res = await container.resolve('GoodController').run(ctx)
         const { goods, categories } = res.props?.data
-        console.log('\n\n\nStore state:', store.getState())
-        store.dispatch(addInitialGoods(goods))
-        store.dispatch(addInitialCategories(categories))
+        // console.log('\n\n\nStore state:', store.getState())
+        console.log('\n\n\nGoods: ', goods)
+        const normGoods = normalize(goods, goodsSchema)
+        const normCategories = normalize(categories, categoriesSchema)
+        console.log('Norm goods:', normGoods)
+        console.log('Norm categories:', normCategories)
+        store.dispatch(updateEntities(normGoods))
+        store.dispatch(updateEntities(normCategories))
+        // store.dispatch(addInitialGoods(goods))
+        // store.dispatch(addInitialCategories(categories))
 
         return { props: {} }
     }

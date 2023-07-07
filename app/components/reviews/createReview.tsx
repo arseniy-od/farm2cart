@@ -143,10 +143,7 @@ function CreateReview({ good, addReview }: Props) {
     )
 }
 
-const mapState = (state: RootState, ownProps: ownProps) => ({
-    reduxReviews: state.goods.find((good) => good.id === ownProps.good.id)
-        ?.reviews,
-})
+const mapState = (state: RootState, ownProps: ownProps) => ({})
 
 const mapDispatch = {
     addReview: (review: review) => ({

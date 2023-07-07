@@ -8,8 +8,11 @@ import CreateReview from '../reviews/createReview'
 import ReviewCard from '../reviews/reviewCard'
 import { ReactElement } from 'react'
 import { HalfStar, BlankStar, Star } from '../icons/star'
+import { ConnectedProps, connect } from 'react-redux'
+import { RootState } from '@/redux/store'
+import { good } from '@/app/types/interfaces'
 
-export default function GoodPage({ good, reviews, handleDelete }) {
+function GoodPage({ good, reviews, goodCategories, seller, handleDelete }) {
     function roundHalf(num: number) {
         return Math.round(num * 2) / 2
     }
@@ -52,7 +55,7 @@ export default function GoodPage({ good, reviews, handleDelete }) {
                                 href={'/users/' + good.seller.id}
                                 className="text-gray-700"
                             >
-                                {good.seller.username}
+                                {seller.username}
                             </Link>
 
                             {good.averageScore && good.reviewsCount ? (
@@ -102,6 +105,20 @@ export default function GoodPage({ good, reviews, handleDelete }) {
                                 <div className="text-gray-700">
                                     Available: {good.available}
                                 </div>
+                                <div className="flex">
+                                    {goodCategories.map((category, i) => (
+                                        <div
+                                            key={i}
+                                            className="pr-3 underline text-gray-700 hover:text-gray-900"
+                                        >
+                                            <Link
+                                                href={`/categories/${category.text.toLowerCase()}`}
+                                            >
+                                                {category.text}
+                                            </Link>
+                                        </div>
+                                    ))}
+                                </div>
                             </div>
                         </div>
                         <div className="mt-2 mx-auto flex justify-between">
@@ -133,3 +150,37 @@ export default function GoodPage({ good, reviews, handleDelete }) {
         </Layout>
     )
 }
+
+function getReviews(state, goodId) {
+    const good = state.entities.goods[goodId]
+    if (good.reviews) {
+        const reviews = good.reviews.reduce((acc, reviewId) => {
+            acc.push(state.entities.reviews[reviewId])
+            return acc
+        }, [])
+        return reviews
+    } else {
+        const reviews = []
+        return reviews
+    }
+}
+
+function getCategories(state, goodId) {
+    const good = state.entities.goods[goodId]
+    const categories = good.categories.reduce((acc, categoryId) => {
+        acc.push(state.entities.categories[categoryId])
+        return acc
+    }, [])
+    return categories
+}
+
+const mapState = (state: RootState, ownProps) => ({
+    reviews: getReviews(state, ownProps.good.id),
+    goodCategories: getCategories(state, ownProps.good.id),
+    seller: state.entities.users[state.entities.goods[ownProps.good.id].seller],
+})
+
+const connector = connect(mapState, null)
+type PropsFromRedux = ConnectedProps<typeof connector>
+type Props = PropsFromRedux & { good: good }
+export default connector(GoodPage)

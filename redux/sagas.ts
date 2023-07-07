@@ -24,7 +24,10 @@ function* fetchUser(action) {
 function* fetchCategories(action) {
     try {
         const categories = yield call(fetchCategoriesApi)
-        yield put({ type: 'categories/fetch_success', payload: categories })
+        yield put({
+            type: 'entities/update',
+            payload: { entities: { categories } },
+        })
     } catch (e) {
         yield put({ type: 'categories/fetch_fail', payload: e.message })
     }

@@ -5,20 +5,17 @@ import goodsReducer, { goodState } from './features/good/goodSlice'
 import { HYDRATE } from 'next-redux-wrapper'
 import { diff, patch } from 'jsondiffpatch'
 import ordersReducer, { orderState } from './features/order/orderSlice'
+import entitiesReducer from './entities/entityReducer'
 
 const combinedReducer = combineReducers({
     user: userReducer,
-    categories: categoriesReducer,
-    goods: goodsReducer,
-    orders: ordersReducer,
+    entities: entitiesReducer,
 })
 
 const rootReducer = (
     state: CombinedState<{
         user: any
-        categories: any[]
-        goods: goodState
-        orders: orderState
+        entities: any
     }>,
     action
 ) => {
@@ -31,9 +28,9 @@ const rootReducer = (
         // console.log('Diff:', stateDiff)
         // console.log('Next State:', nextState)
 
-        const hydrateState = action.payload
+        const hydratedState = action.payload
         const nextState = {}
-        for (const [key, value] of Object.entries(hydrateState)) {
+        for (const [key, value] of Object.entries(hydratedState)) {
             if (value instanceof Object && Object.keys(value).length) {
                 nextState[key] = value
             }

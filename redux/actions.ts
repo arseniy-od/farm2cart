@@ -41,3 +41,8 @@ export const fetchMyGoods = (id) => ({
     type: 'goods/fetch_my_request',
     payload: id,
 })
+
+export const updateEntities = (entities) => ({
+    type: 'entities/update',
+    payload: entities,
+})

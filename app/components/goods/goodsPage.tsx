@@ -6,22 +6,21 @@ import Link from 'next/link'
 export default function GoodsPage({ categories, goods }) {
     return (
         <Layout home={true}>
-            <Link href="/normalizr">Normalizr</Link>
             <div className="mx-4 flex flex-wrap justify-center">
-                {categories?.length ? (
+                {Object.values(categories)?.length ? (
                     <>
                         <CategoryIcon
-                            text={categories[0].text}
+                            text={categories[1].text}
                             imageUrl="/categories/percent.jpg"
                             link="/categories/sale"
                         />
                         <CategoryIcon
-                            text={categories[1].text}
+                            text={categories[2].text}
                             imageUrl="/categories/leaves.jpg"
                             link="/categories/organic"
                         />
                         <CategoryIcon
-                            text={categories[2].text}
+                            text={categories[3].text}
                             imageUrl="/categories/berries.jpg"
                             link="/categories/berry"
                         />
@@ -37,9 +36,9 @@ export default function GoodsPage({ categories, goods }) {
             </div>
             <div className="mx-auto flex flex-wrap justify-center">
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-                    {goods.map((good, i) => (
+                    {Object.keys(goods).map((goodId, i) => (
                         <div key={i}>
-                            <GoodCard good={good} />
+                            <GoodCard good={goods[goodId]} />
                         </div>
                     ))}
                 </div>

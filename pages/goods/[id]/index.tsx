@@ -1,23 +1,34 @@
 import { useRouter } from 'next/navigation'
-import { useState, MouseEvent, Component, ReactElement, useEffect } from 'react'
+import { useState, MouseEvent } from 'react'
 
-import { ConnectedProps, connect, useStore } from 'react-redux'
+import { ConnectedProps, connect } from 'react-redux'
+import { normalize } from 'normalizr'
 
 import { apiDelete, apiActivate } from '@/app/utils'
 import container from '@/server/container'
-import {
-    ContextDynamicRoute,
-    GoodProps,
-    category,
-    good,
-} from '@/app/types/interfaces'
+import { ContextDynamicRoute, GoodProps } from '@/app/types/interfaces'
 
 import GoodPage from '@/app/components/goods/goodPage'
 import { RootState, wrapper } from '@/redux/store'
-import { activateGood, addInitialGood, deleteGood } from '@/redux/actions'
+import {
+    activateGood,
+    addInitialGood,
+    deleteGood,
+    updateEntities,
+} from '@/redux/actions'
+import Layout from '@/app/layout'
+import { goodSchema } from '@/redux/normalSchemas'
 
 function Good(props: Props) {
     const { good } = props
+
+    if (!good) {
+        return (
+            <Layout>
+                <h1>Good not found</h1>
+            </Layout>
+        )
+    }
 
     const handleDelete = async (event: MouseEvent<HTMLButtonElement>) => {
         if (!good?.active) {
@@ -34,17 +45,11 @@ function Good(props: Props) {
         }
     }
 
-    return (
-        <GoodPage
-            good={good}
-            reviews={good.reviews ? good.reviews : []}
-            handleDelete={handleDelete}
-        />
-    )
+    return <GoodPage good={good} handleDelete={handleDelete} />
 }
 
 const mapState = (state: RootState, ownProps) => ({
-    good: state.goods.find((good) => good.id === ownProps.id),
+    good: state.entities.goods[ownProps.id],
 })
 
 const mapDispatch = {
@@ -55,7 +60,7 @@ const mapDispatch = {
 
 const connector = connect(mapState, mapDispatch)
 type PropsFromRedux = ConnectedProps<typeof connector>
-type Props = PropsFromRedux & GoodProps
+type Props = PropsFromRedux & { id: number }
 
 export const getServerSideProps = wrapper.getServerSideProps(
     (store) => async (ctx: ContextDynamicRoute) => {
@@ -63,7 +68,9 @@ export const getServerSideProps = wrapper.getServerSideProps(
         const res = await container.resolve('GoodController').run(ctx)
         const good = res.props?.data
         console.log('Good is: ', good)
-        store.dispatch(addInitialGood(good))
+        const normGood = normalize(good, goodSchema)
+        store.dispatch(updateEntities(normGood))
+        // store.dispatch(addInitialGood(good))
 
         return { props: { id: good.id } }
     }

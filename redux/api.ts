@@ -32,7 +32,7 @@ export async function fetchGoodsApi() {
     }
 }
 
-// todo: fetch only specific goods
+// todo: fetch only user-specific goods
 export async function fetchMyGoodsApi() {
     console.log('fetchMyGoodsApi called')
 

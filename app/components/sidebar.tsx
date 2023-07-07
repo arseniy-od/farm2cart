@@ -9,6 +9,7 @@ import {
 } from 'react'
 import { category, user } from '../types/interfaces'
 import { useAppDispatch, useAppSelector } from '@/redux/hooks'
+import { isEmpty } from '../utils'
 
 export default function Sidebar({
     setIsMenuOpen,
@@ -20,7 +21,7 @@ export default function Sidebar({
     const dispatch = useAppDispatch()
     // const [categories, setCategories] = useState<category[]>([])
     const user = useAppSelector((state) => state.user)
-    const categories = useAppSelector((state) => state.categories)
+    const categories = useAppSelector((state) => state.entities.categories)
 
     const { push } = useRouter()
 
@@ -123,8 +124,8 @@ export default function Sidebar({
                         <div className="ml-4 mt-2 font-semibold">
                             Categories:
                         </div>
-                        {categories.length &&
-                            categories.map((category, i) => (
+                        {!isEmpty(categories) &&
+                            Object.values(categories).map((category, i) => (
                                 <div key={i}>
                                     <div className="ml-4 mt-1 w-2/3 hover:shadow-lg">
                                         <Link

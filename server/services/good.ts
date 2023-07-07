@@ -9,6 +9,7 @@ export default class GoodService extends BaseContext {
     private Review = this.di.Review
     private Category = this.di.Category
     private Order = this.di.Order
+    private CategoryGood = this.di.CategoryGood
 
     async getGoods() {
         const goods = await this.Good.findAll({
@@ -33,7 +34,13 @@ export default class GoodService extends BaseContext {
                     'reviewsCount',
                 ],
             ],
-            group: ['good.id', 'title', 'categories.text', 'categories.id'],
+            group: [
+                'good.id',
+                'title',
+                'categories.text',
+                'categories.id',
+                'categories.CategoryGood.id',
+            ],
             include: [
                 {
                     attributes: ['id', 'username', 'email'],
@@ -43,6 +50,7 @@ export default class GoodService extends BaseContext {
                 {
                     model: this.Category,
                     attributes: ['id', 'text'],
+                    through: { attributes: ['id', 'categoryId', 'goodId'] },
                 },
                 {
                     model: this.Review,
@@ -70,6 +78,7 @@ export default class GoodService extends BaseContext {
                 {
                     model: this.Category,
                     attributes: ['id', 'text'],
+                    through: { attributes: ['id', 'categoryId', 'goodId'] },
                 },
                 {
                     model: this.Review,
@@ -183,6 +192,7 @@ export default class GoodService extends BaseContext {
                 {
                     model: this.Category,
                     attributes: ['text'],
+                    through: { attributes: ['id', 'categoryId', 'goodId'] },
                 },
                 {
                     model: this.Review,
