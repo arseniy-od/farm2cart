@@ -2,6 +2,7 @@ import Layout from '@/app/layout'
 import CategoryIcon from '../categories/categoryIcon'
 import GoodCard from './goodCard'
 import Link from 'next/link'
+import { useMemo } from 'react'
 
 export default function GoodsPage({ categories, goods }) {
     return (
@@ -10,17 +11,17 @@ export default function GoodsPage({ categories, goods }) {
                 {Object.values(categories)?.length ? (
                     <>
                         <CategoryIcon
-                            text={categories[1].text}
+                            text={categories[1]?.text}
                             imageUrl="/categories/percent.jpg"
                             link="/categories/sale"
                         />
                         <CategoryIcon
-                            text={categories[2].text}
+                            text={categories[2]?.text}
                             imageUrl="/categories/leaves.jpg"
                             link="/categories/organic"
                         />
                         <CategoryIcon
-                            text={categories[3].text}
+                            text={categories[3]?.text}
                             imageUrl="/categories/berries.jpg"
                             link="/categories/berry"
                         />

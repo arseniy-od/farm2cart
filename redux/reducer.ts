@@ -6,6 +6,8 @@ import { HYDRATE } from 'next-redux-wrapper'
 import { diff, patch } from 'jsondiffpatch'
 import ordersReducer, { orderState } from './features/order/orderSlice'
 import entitiesReducer from './entities/entityReducer'
+import { isEmpty, jsonCopy } from '@/app/utils'
+import _ from 'lodash'
 
 const combinedReducer = combineReducers({
     user: userReducer,
@@ -29,10 +31,33 @@ const rootReducer = (
         // console.log('Next State:', nextState)
 
         const hydratedState = action.payload
-        const nextState = {}
+        const nextState: { [key: string]: any; entities?: any } = {}
         for (const [key, value] of Object.entries(hydratedState)) {
             if (value instanceof Object && Object.keys(value).length) {
                 nextState[key] = value
+            }
+        }
+        console.log('NextState1: ', nextState)
+        if (hydratedState && hydratedState.entities) {
+            nextState.entities = jsonCopy(state.entities)
+            const { entities } = hydratedState
+            if (!isEmpty(entities)) {
+                Object.keys(entities).map((entityName) => {
+                    let entityList = nextState[entityName]
+                    // console.log('[previous state] entityList:', entityList)
+                    if (entityList && !isEmpty(entityList)) {
+                        Object.keys(entities[entityName]).map(
+                            (id) => (entityList = delete entityList[id])
+                        )
+                    }
+                })
+                nextState.entities = _.merge(nextState.entities, entities)
+                // console.log('Next state: ', nextState)
+
+                // to prevent infinite loop of useEffect calls
+                if (_.isEqual(state.entities, nextState.entities)) {
+                    nextState.entities = state.entities
+                }
             }
         }
         return { ...state, ...nextState }

@@ -11,6 +11,8 @@ export default class CategoryService extends BaseContext {
             include: [
                 {
                     model: this.Good,
+                    attributes: ['id'],
+                    through: { attributes: ['id', 'goodId', 'categoryId'] },
                     // include : [
                     //     {model: this.User, as: "seller"},
                     //     {model: this.Category, as: "categories"}
@@ -40,6 +42,7 @@ export default class CategoryService extends BaseContext {
             include: [
                 {
                     model: this.Good,
+                    through: { attributes: ['id', 'goodId', 'categoryId'] },
                 },
             ],
         })

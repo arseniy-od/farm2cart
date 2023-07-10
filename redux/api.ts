@@ -21,17 +21,6 @@ export async function fetchCategoriesApi() {
     }
 }
 
-export async function fetchGoodsApi() {
-    console.log('fetchGoodsApi called')
-
-    const res = await fetch('/api/goods')
-    const data = await res.json()
-    console.log('fetched goods:', data)
-    if (data) {
-        return data
-    }
-}
-
 // todo: fetch only user-specific goods
 export async function fetchMyGoodsApi() {
     console.log('fetchMyGoodsApi called')

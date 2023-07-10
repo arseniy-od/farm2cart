@@ -20,6 +20,7 @@ function Layout({
     categories,
 }: Props) {
     const [isMenuOpen, setIsMenuOpen] = useState(false)
+    // useEffect(() => setIsMenuOpen(false), [])
 
     function getUser() {
         console.log('getUser called')

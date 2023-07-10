@@ -6,6 +6,7 @@ export default class OrderService extends BaseContext {
     private Review = this.di.Review
     private Category = this.di.Category
     private Order = this.di.Order
+    private OrderGood = this.di.OrderGood
 
     async getOrders() {
         return await this.Order.findAll({
@@ -18,7 +19,7 @@ export default class OrderService extends BaseContext {
                 {
                     model: this.Good,
                     as: 'goods',
-                    through: { attributes: ['quantity'] },
+                    through: { attributes: ['id', 'quantity'] },
                 },
             ],
         })
@@ -48,7 +49,9 @@ export default class OrderService extends BaseContext {
             include: {
                 model: this.Good,
                 as: 'goods',
-                through: { attributes: ['quantity'] },
+                through: {
+                    attributes: ['id', 'goodId', 'orderId', 'quantity'],
+                },
             },
         })
     }
@@ -56,11 +59,19 @@ export default class OrderService extends BaseContext {
     async getOrdersByCustomerId(id: string | number) {
         return await this.Order.findAll({
             where: { customerId: id },
-            include: {
-                model: this.Good,
-                as: 'goods',
-                through: { attributes: ['quantity'] },
-            },
+            include: [
+                {
+                    model: this.Good,
+                    as: 'goods',
+                    through: {
+                        attributes: [],
+                    },
+                },
+                {
+                    model: this.OrderGood,
+                    attributes: ['id', 'goodId', 'orderId', 'quantity'],
+                },
+            ],
         })
     }
 }

@@ -23,8 +23,8 @@ function Goods(props: PropsFromRedux) {
 }
 
 const mapState = (state: RootState) => ({
-    reduxGoods: state.entities.goods,
-    reduxCategories: state.entities.categories,
+    reduxGoods: state.entities.goods || {},
+    reduxCategories: state.entities.categories || {},
 })
 
 const mapDispatch = {
@@ -41,11 +41,11 @@ export const getServerSideProps = wrapper.getServerSideProps(
         const res = await container.resolve('GoodController').run(ctx)
         const { goods, categories } = res.props?.data
         // console.log('\n\n\nStore state:', store.getState())
-        console.log('\n\n\nGoods: ', goods)
+        // console.log('\n\n\nGoods: ', goods)
         const normGoods = normalize(goods, goodsSchema)
         const normCategories = normalize(categories, categoriesSchema)
-        console.log('Norm goods:', normGoods)
-        console.log('Norm categories:', normCategories)
+        // console.log('Norm goods:', normGoods)
+        // console.log('Norm categories:', normCategories)
         store.dispatch(updateEntities(normGoods))
         store.dispatch(updateEntities(normCategories))
         // store.dispatch(addInitialGoods(goods))

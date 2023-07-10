@@ -1,11 +1,13 @@
 import { call, put, takeEvery, takeLatest } from 'redux-saga/effects'
+import { normalize } from 'normalizr'
+
 import {
     fetchUserApi,
     fetchCategoriesApi,
-    fetchGoodsApi,
     fetchOrdersApi,
     fetchMyGoodsApi,
 } from './api'
+import { categoriesSchema, ordersSchema } from './normalSchemas'
 
 function* fetchUser(action) {
     try {
@@ -24,28 +26,24 @@ function* fetchUser(action) {
 function* fetchCategories(action) {
     try {
         const categories = yield call(fetchCategoriesApi)
+        const normCategories = normalize(categories, categoriesSchema)
         yield put({
             type: 'entities/update',
-            payload: { entities: { categories } },
+            payload: { entities: normCategories.entities },
         })
     } catch (e) {
         yield put({ type: 'categories/fetch_fail', payload: e.message })
     }
 }
 
-function* fetchGoods(action) {
-    try {
-        const goods = yield call(fetchGoodsApi)
-        yield put({ type: 'goods/fetch_success', payload: goods })
-    } catch (e) {
-        yield put({ type: 'goods/fetch_fail', payload: e.message })
-    }
-}
-
 function* fetchOrders(action) {
     try {
         const orders = yield call(fetchOrdersApi)
-        yield put({ type: 'orders/fetch_success', payload: orders })
+        const normOrders = normalize(orders, ordersSchema)
+        yield put({
+            type: 'entities/update',
+            payload: { entities: normOrders.entities },
+        })
     } catch (e) {
         yield put({ type: 'orders/fetch_fail', payload: e.message })
     }
@@ -61,11 +59,10 @@ function* fetchMyGoods(action) {
 }
 
 function* mySaga() {
-    yield takeEvery('user/fetch_request', fetchUser)
-    yield takeEvery('categories/fetch_request', fetchCategories)
-    yield takeEvery('goods/fetch_request', fetchGoods) // not used, goods are fetched using serverSideProps
-    yield takeEvery('orders/fetch_request', fetchOrders)
-    yield takeEvery('goods/fetch_my_request', fetchMyGoods)
+    yield takeEvery('saga/fetch_user', fetchUser)
+    yield takeEvery('saga/fetch_categories', fetchCategories)
+    yield takeEvery('saga/fetch_orders', fetchOrders)
+    yield takeEvery('saga/fetch_my_goods', fetchMyGoods)
 }
 
 export default mySaga

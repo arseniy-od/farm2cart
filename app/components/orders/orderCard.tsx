@@ -5,7 +5,7 @@ import {
     orderWithGoodsCreate,
 } from '../../types/interfaces'
 
-export default function OrderCard({ order }: { order: orderWithGoods }) {
+export default function OrderCard({ order, goods, orderGoods }) {
     return (
         <div className="ml-4 mt-4 px-4 py-3 bg-gray-100 max-w-xs shadow-lg">
             <Link href={`/orders/${order.id}`}>
@@ -16,17 +16,18 @@ export default function OrderCard({ order }: { order: orderWithGoods }) {
             <div>total: ₴{order.total}</div>
             <div className="mt-4">
                 <div>Goods: </div>
-                {order.goods.map((good, i) => (
+                {Object.values(order.OrderGoods).map((OrderGoodId, i) => (
                     <div key={i}>
                         <div>
-                            {good.OrderGood.quantity}x{' '}
+                            {orderGoods[OrderGoodId].quantity}x{' '}
                             <Link
-                                href={`/goods/${good.id}`}
+                                href={`/goods/${orderGoods[OrderGoodId].goodId}`}
                                 className="text-indigo-700"
                             >
-                                {good.title}
+                                {goods[orderGoods[OrderGoodId].goodId].title}
                             </Link>{' '}
-                            for ₴{good.price} each
+                            for ₴{goods[orderGoods[OrderGoodId].goodId].price}{' '}
+                            each
                         </div>
                     </div>
                 ))}

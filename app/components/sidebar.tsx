@@ -19,19 +19,12 @@ export default function Sidebar({
     home: boolean
 }) {
     const dispatch = useAppDispatch()
-    // const [categories, setCategories] = useState<category[]>([])
+
     const user = useAppSelector((state) => state.user)
     const categories = useAppSelector((state) => state.entities.categories)
+    console.log('Sidebar categories:', categories)
 
     const { push } = useRouter()
-
-    // function fetchCategories() {
-    //     fetch('/api/categories')
-    //         .then((res) => res.json())
-    //         .then((data) => {
-    //             setCategories(data)
-    //         })
-    // }
 
     const handleLogout = async (event: MouseEvent<HTMLButtonElement>) => {
         const res = await fetch('/api/auth/logout')
@@ -43,9 +36,6 @@ export default function Sidebar({
             console.log('Logout error')
         }
     }
-
-    // useEffect(fetchUser, [])
-    // useEffect(fetchCategories, [])
 
     return (
         <div className="">
@@ -130,6 +120,7 @@ export default function Sidebar({
                                     <div className="ml-4 mt-1 w-2/3 hover:shadow-lg">
                                         <Link
                                             href={`/categories/${category.text.toLowerCase()}`}
+                                            onClick={() => setIsMenuOpen(false)}
                                         >
                                             {category.text}
                                         </Link>

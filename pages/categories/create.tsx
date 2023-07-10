@@ -4,6 +4,7 @@ import axios from 'axios'
 import Layout from '@/app/layout'
 import { category } from '@/app/types/interfaces'
 
+// not used now (categories are static)
 export default function CategoryCreate() {
     const [text, setText] = useState('')
 

@@ -7,15 +7,15 @@ const initialState = {}
 export default function entitiesReducer(state = initialState, action) {
     switch (action.type) {
         case 'entities/update': {
-            console.log('\n\n==========UPDATE=================')
-            console.log('Payload: ', action.payload)
+            // console.log('\n\n==========UPDATE=================')
+            // console.log('Payload: ', action.payload)
             if (action.payload && action.payload.entities) {
                 let nextState = jsonCopy(state)
                 const { entities } = action.payload
                 if (!isEmpty(entities)) {
                     Object.keys(entities).map((entityName) => {
                         let entityList = nextState[entityName]
-                        console.log('[previous state] entityList:', entityList)
+                        // console.log('[previous state] entityList:', entityList)
                         if (entityList && !isEmpty(entityList)) {
                             Object.keys(entities[entityName]).map(
                                 (id) => (entityList = delete entityList[id])
@@ -23,7 +23,7 @@ export default function entitiesReducer(state = initialState, action) {
                         }
                     })
                     nextState = _.merge(nextState, entities)
-                    console.log('Next state: ', nextState)
+                    // console.log('Next state: ', nextState)
 
                     // to prevent infinite loop of useEffect calls
                     if (_.isEqual(state, nextState)) {

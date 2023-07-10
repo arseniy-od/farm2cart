@@ -9,21 +9,19 @@ import { RootState } from '@/redux/store'
 import { fetchOrders } from '@/redux/actions'
 import { useEffect } from 'react'
 import OrderCard from '@/app/components/orders/orderCard'
+import { isEmpty } from '@/app/utils'
 
-function MyOrders({ user, orders, fetchOrders }: Props) {
-    function getOrders() {
-        if (Object.keys(orders).length === 0) {
-            fetchOrders()
-        }
-    }
-
-    useEffect(getOrders, [fetchOrders, orders])
+function MyOrders({ user, orders, goods, orderGoods, fetchOrders }: Props) {
+    useEffect(() => {
+        fetchOrders()
+    }, [])
 
     console.log('Orders: ', orders)
-    if (orders.length === 0) {
+
+    if (!orders || isEmpty(orders)) {
         return (
             <Layout>
-                <h3>You have no orders</h3>
+                <h3>{orders ? 'You have no orders' : 'Loading...'}</h3>
             </Layout>
         )
     }
@@ -37,10 +35,14 @@ function MyOrders({ user, orders, fetchOrders }: Props) {
                     <div>
                         <h3 className="ml-5 mt-3 text-xl">Your orders:</h3>
 
-                        {orders.map((order, i) => (
+                        {Object.values(orders).map((order, i) => (
                             <div key={i}>
                                 <div key={i}>
-                                    <OrderCard order={order} />
+                                    <OrderCard
+                                        order={order}
+                                        goods={goods}
+                                        orderGoods={orderGoods}
+                                    />
                                 </div>
                             </div>
                         ))}
@@ -53,7 +55,9 @@ function MyOrders({ user, orders, fetchOrders }: Props) {
 
 const mapState = (state: RootState) => ({
     user: state.user,
-    orders: state.orders,
+    orders: state.entities.orders,
+    goods: state.entities.goods,
+    orderGoods: state.entities.orderGoods,
 })
 
 const mapDispatch = {
