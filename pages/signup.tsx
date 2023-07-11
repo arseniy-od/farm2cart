@@ -5,6 +5,7 @@ import * as Yup from 'yup'
 import Layout from '../app/layout'
 import { FormInput, Select } from '@/app/components/form'
 import { useAppDispatch } from '@/redux/hooks'
+import { addUser } from '@/redux/actions'
 
 export default function SignUp() {
     const { push } = useRouter()
@@ -23,7 +24,7 @@ export default function SignUp() {
         if (res.ok) {
             const user = await res.json()
             console.log('Login successful')
-            dispatch({ type: 'user/fetch_success', payload: user })
+            dispatch(addUser(user))
             push('/')
         } else {
             console.error('Login error:', res.statusText)

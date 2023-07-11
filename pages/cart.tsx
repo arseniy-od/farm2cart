@@ -50,7 +50,7 @@ export default function Cart() {
             cartGoods.forEach((good) =>
                 dispatch({
                     type: 'goods/decrement_quantity',
-                    payload: { id: good.id, quantity: good.quantity },
+                    payload: good,
                 })
             )
             dispatch({ type: 'orders/add_order', payload: response.data })
@@ -67,38 +67,3 @@ export default function Cart() {
         />
     )
 }
-
-// const router = createRouter()
-//     .use(session)
-//     .use(middlewares.asyncPassportInit)
-//     .use(middlewares.asyncPassportSession)
-//     .get(async (req, res) => {
-//         // console.log("session: ", req.session);
-//         const cart = req.session.cart
-//         if (!cart) {
-//             return { notFound: true }
-//         }
-//         return cart
-//     })
-
-// export async function getServerSideProps({
-//     req,
-//     res,
-// }: {
-//     req: NextApiRequest
-//     res: NextApiResponse
-// }) {
-//     const cart = await router.run(req, res)
-//     if (cart.notFound) {
-//         return { props: { cart: { notFound: true, goods: [] } } }
-//     }
-//     let cartGoods = []
-//     for (let cartEl of cart) {
-//         const good = await container
-//             .resolve('GoodService')
-//             .getGoodByIdExtended(cartEl.goodId)
-//         cartGoods.push({ quantity: 1, ...good })
-//     }
-
-//     return { props: { cart: { goods: cartGoods } } }
-// }

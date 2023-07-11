@@ -1,33 +1,52 @@
-import { useRouter } from 'next/navigation'
-import { useState, MouseEvent } from 'react'
-
+import Link from 'next/link'
+import Image from 'next/image'
+import { useState, MouseEvent, ReactElement } from 'react'
 import { ConnectedProps, connect } from 'react-redux'
 import { normalize } from 'normalizr'
 
-import { apiDelete, apiActivate } from '@/app/utils'
 import container from '@/server/container'
-import { ContextDynamicRoute, GoodProps } from '@/app/types/interfaces'
+import { apiDelete, apiActivate } from '@/app/utils'
 
-import GoodPage from '@/app/components/goods/goodPage'
 import { RootState, wrapper } from '@/redux/store'
-import {
-    activateGood,
-    addInitialGood,
-    deleteGood,
-    updateEntities,
-} from '@/redux/actions'
+import { activateGood, deactivateGood, updateEntities } from '@/redux/actions'
+import { categoriesSchema, goodSchema } from '@/redux/normalSchemas'
+
 import Layout from '@/app/layout'
-import { goodSchema } from '@/redux/normalSchemas'
+import { HalfStar, BlankStar, Star } from '@/app/components/icons/star'
+import CartHandler from '@/app/components/cart/cartHandler'
+import CreateReview from '@/app/components/reviews/createReview'
+import ReviewCard from '@/app/components/reviews/reviewCard'
 
-function Good(props: Props) {
-    const { good } = props
+import { ContextDynamicRoute } from '@/app/types/interfaces'
+import GoodFull from '@/app/components/goods/goodFull'
 
-    if (!good) {
-        return (
-            <Layout>
-                <h1>Good not found</h1>
-            </Layout>
-        )
+function Good({
+    good,
+    reviews,
+    goodCategories,
+    seller,
+    activateGood,
+    deactivateGood,
+}: Props) {
+    // const [isActive, setIsActive] = useState(good.active && good.available)
+    function roundHalf(num: number) {
+        return Math.round(num * 2) / 2
+    }
+
+    let stars: ReactElement[] = []
+    if (good.averageScore) {
+        let score = roundHalf(good.averageScore)
+        for (let i = 0; i < 5; i++) {
+            if (score === 0.5) {
+                stars.push(<HalfStar />)
+                score = 0
+            } else if (score === 0) {
+                stars.push(<BlankStar />)
+            } else {
+                stars.push(<Star />)
+                score -= 1
+            }
+        }
     }
 
     const handleDelete = async (event: MouseEvent<HTMLButtonElement>) => {
@@ -35,27 +54,83 @@ function Good(props: Props) {
             const res = await apiActivate(`/api/goods/?id=${good.id}`, good.id)
             console.log(res)
             if (!res.error) {
-                props.activateGood(good.id)
+                activateGood(good)
             }
         } else {
             const res = await apiDelete(`/api/goods/?id=${good.id}`)
             if (!res.error) {
-                props.deleteGood(good.id)
+                deactivateGood(good)
             }
         }
     }
 
-    return <GoodPage good={good} handleDelete={handleDelete} />
+    if (!good || good.error) {
+        return (
+            <Layout>
+                <div className="ml-6 mt-6 text-2xl font-semibold">
+                    {good.message || 'Good not found'}
+                </div>
+            </Layout>
+        )
+    }
+
+    return (
+        <Layout>
+            <div className="flex flex-col justify-center">
+                <GoodFull
+                    good={good}
+                    seller={seller}
+                    stars={stars}
+                    categories={goodCategories}
+                    handleDelete={handleDelete}
+                />
+
+                <div className="flex flex-col items-center justify-center">
+                    {reviews.length !== 0
+                        ? reviews.map((review, i) => {
+                              return <ReviewCard review={review} key={i} />
+                          })
+                        : null}
+                </div>
+                <CreateReview good={good} />
+            </div>
+        </Layout>
+    )
+}
+
+function getReviews(state, goodId) {
+    const good = state.entities.goods[goodId]
+    if (good.reviews) {
+        const reviews = good.reviews.reduce((acc, reviewId) => {
+            acc.push(state.entities.reviews[reviewId])
+            return acc
+        }, [])
+        return reviews
+    } else {
+        const reviews = []
+        return reviews
+    }
+}
+
+function getCategories(state, goodId) {
+    const good = state.entities.goods[goodId]
+    const categories = good.categories.reduce((acc, categoryId) => {
+        acc.push(state.entities.categories[categoryId])
+        return acc
+    }, [])
+    return categories
 }
 
 const mapState = (state: RootState, ownProps) => ({
     good: state.entities.goods[ownProps.id],
+    reviews: getReviews(state, ownProps.id),
+    goodCategories: getCategories(state, ownProps.id),
+    seller: state.entities.users[state.entities.goods[ownProps.id].seller],
 })
 
 const mapDispatch = {
-    addInitialGood,
-    deleteGood,
     activateGood,
+    deactivateGood,
 }
 
 const connector = connect(mapState, mapDispatch)
@@ -66,10 +141,13 @@ export const getServerSideProps = wrapper.getServerSideProps(
     (store) => async (ctx: ContextDynamicRoute) => {
         ctx.routeName = '/goods/:id'
         const res = await container.resolve('GoodController').run(ctx)
-        const good = res.props?.data
+        const good = res.props?.data.good
+        const categories = res.props?.data.categories
         console.log('Good is: ', good)
         const normGood = normalize(good, goodSchema)
+        const normCategories = normalize(categories, categoriesSchema)
         store.dispatch(updateEntities(normGood))
+        store.dispatch(updateEntities(normCategories))
         // store.dispatch(addInitialGood(good))
 
         return { props: { id: good.id } }

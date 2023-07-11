@@ -5,52 +5,19 @@ import { Formik, Field, Form, ErrorMessage, useField, FieldArray } from 'formik'
 import * as Yup from 'yup'
 
 import Layout from '@/app/layout'
-import { category } from '@/app/types/interfaces'
 import { useAppDispatch } from '@/redux/hooks'
 import goods from '@/pages/api/goods'
 import { TextArea, FormInput, FileUpload, Checkbox } from '../form'
+import { category, good } from '@/app/types/entities'
+import { addGood } from '@/redux/actions'
+import { ConnectedProps, connect } from 'react-redux'
 
-interface IGood {
-    id?: string
-    title: string
-    description: string
-    imageUrl: string
-    price: string
-    categories: number[]
-    file: File | null
-    available: string
-}
-
-type Props = {
-    good: IGood
-    setGood: Dispatch<SetStateAction<IGood>>
-    categories: category[]
-    method: 'post' | 'put'
-}
-
-export default function GoodForm({ good, setGood, categories, method }: Props) {
+export default function GoodForm({ good, categories, method, addGood }: Props) {
     const { push } = useRouter()
     const fileRef = useRef({ files: [] })
-    const dispatch = useAppDispatch()
-
-    // const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
-    //     if (event.target.files) {
-    //         const file = event.target.files[0]
-    //         setGood({ ...good, file })
-    //     } else {
-    //         console.error('[File change] File not found')
-    //     }
-    // }
-
-    // const handleCategoryChange = (event, index, arrayHelpers) => {
-    //     const isChecked = event.target.checked
-    //     console.log('isChecked: ', event.target)
-    //     if (isChecked) {
-    //         arrayHelpers.push(index, event.target.value)
-    //     } else {
-    //         arrayHelpers.remove(index)
-    //     }
-    // }
+    // todo
+    // const dispatch = useAppDispatch()
+    const initialCategories = good.categories.map((id) => id.toString())
 
     function toFormData(good, method) {
         const formData = new FormData()
@@ -85,19 +52,6 @@ export default function GoodForm({ good, setGood, categories, method }: Props) {
         }
         const response = await axios.post('/api/goods', formData, config)
         if (response.status === 200) {
-            const goodCategories = categories.filter((c) =>
-                good.categories.includes(c.id)
-            )
-            dispatch({
-                type: 'goods/create_good',
-                payload: {
-                    ...good,
-                    id: response.data.id,
-                    price: parseFloat(good.price),
-                    available: parseInt(good.available),
-                    categories: goodCategories,
-                },
-            })
             return response.data
         } else {
             console.error(response.statusText)
@@ -110,18 +64,6 @@ export default function GoodForm({ good, setGood, categories, method }: Props) {
         }
         const response = await axios.put('/api/goods', formData, config)
         if (response.status === 200) {
-            const goodCategories = categories.filter((c) =>
-                good.categories.includes(c.id)
-            )
-            dispatch({
-                type: 'goods/edit_good',
-                payload: {
-                    ...good,
-                    price: parseFloat(good.price),
-                    available: parseInt(good.available),
-                    categories: goodCategories,
-                },
-            })
             return response.data
         } else {
             console.error(response.statusText)
@@ -129,20 +71,22 @@ export default function GoodForm({ good, setGood, categories, method }: Props) {
     }
 
     const handleSubmit = async (values) => {
-        const good = values
-        console.log('Form values', values)
-        const formData = toFormData(good, method)
-
+        const formData = toFormData(values, method)
+        values.categories = values.categories.map((id) => parseInt(id))
+        let goodRes: good | null = null
         if (method === 'post') {
-            const goodRes = await apiPost(formData)
-            push('/goods/' + goodRes.id)
+            goodRes = await apiPost(formData)
         } else if (method === 'put') {
-            const goodRes = await apiPut(formData)
-            push('/goods/' + goodRes.id)
+            goodRes = await apiPut(formData)
         } else {
             console.error(
                 `Method ${method} is not implemented. Use 'post' or 'put'`
             )
+            return
+        }
+        addGood(values)
+        if (goodRes?.id) {
+            push('/goods/' + goodRes.id)
         }
     }
 
@@ -151,7 +95,9 @@ export default function GoodForm({ good, setGood, categories, method }: Props) {
             .max(20, 'Must be 20 characters or less')
             .required('Required'),
         description: Yup.string().max(255, 'Must be 255 characters or less'),
-        price: Yup.number().required('Required'),
+        price: Yup.number()
+            .min(0, 'Price cant be negative')
+            .required('Required'),
         available: Yup.number().required('Required'),
     })
 
@@ -159,7 +105,7 @@ export default function GoodForm({ good, setGood, categories, method }: Props) {
         <Layout>
             <div className="mt-6 grid place-items-center">
                 <Formik
-                    initialValues={good}
+                    initialValues={{ ...good, categories: initialCategories }}
                     validationSchema={validationSchema}
                     onSubmit={handleSubmit}
                 >
@@ -210,34 +156,21 @@ export default function GoodForm({ good, setGood, categories, method }: Props) {
                                     role="group"
                                     aria-labelledby="checkbox-group"
                                 >
-                                    {categories.map((category, i) => (
-                                        <label key={i}>
-                                            <Field
-                                                type="checkbox"
-                                                name="categories"
-                                                value={category.id.toString()}
-                                            />
-                                            {category.text}
-                                        </label>
-                                    ))}
+                                    {Object.values(categories || {}).map(
+                                        (category, i) => (
+                                            <label key={i}>
+                                                <Field
+                                                    type="checkbox"
+                                                    name="categories"
+                                                    value={category.id.toString()}
+                                                />
+                                                {category.text}
+                                            </label>
+                                        )
+                                    )}
                                 </div>
                             </div>
                         </div>
-
-                        {/* <div id="checkbox-group">Checked</div>
-                        <div role="group" aria-labelledby="checkbox-group">
-                            {['One', 'Two', 'Three'].map((check, i) => (
-                                <label key={i}>
-                                    <Field
-                                        type="checkbox"
-                                        name="checked"
-                                        value={check}
-                                    />
-                                    {check}
-                                </label>
-                            ))}
-                        </div> */}
-
                         <button
                             type="submit"
                             className="mt-4 inline-block items-center bg-gray-400 hover:bg-gray-600 focus:outline-none focus:shadow-outline rounded-lg shadow px-8 py-2"
@@ -251,20 +184,16 @@ export default function GoodForm({ good, setGood, categories, method }: Props) {
     )
 }
 
-// <div key={i}>
-//     <p>
-//         <label
-//             htmlFor={category.id.toString()}
-//         >
-//             {category.text}
-//         </label>
-//         <input
-//             type="checkbox"
-//             name={category.id.toString()}
-//             checked={good.categories.includes(
-//                 category.id
-//             )}
-//             onChange={handleCategoryChange}
-//         />
-//     </p>
-// </div>
+const mapDispatch = {
+    addGood,
+}
+
+const connector = connect(null, mapDispatch)
+type Props = ConnectedProps<typeof connector> & {
+    good: good & {
+        categories: number[] | string[]
+        file?: File | null
+    }
+    categories?: { [key: number]: category }
+    method: 'post' | 'put'
+}

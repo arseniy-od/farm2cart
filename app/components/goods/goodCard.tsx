@@ -1,12 +1,14 @@
 import Link from 'next/link'
 import Image from 'next/image'
-import { useState, MouseEvent, ReactElement } from 'react'
+import { ReactElement } from 'react'
 
-import { category, good } from '../../types/interfaces'
+import { category, good, user } from '../../types/interfaces'
 import { HalfStar, BlankStar, Star } from '../icons/star'
 import CartHandler from '../cart/cartHandler'
+import { ConnectedProps, connect } from 'react-redux'
+import { RootState } from '@/redux/store'
 
-export default function GoodCard({ good }: { good: good }) {
+function GoodCard({ good, seller }: Props) {
     function roundHalf(num: number) {
         return Math.round(num * 2) / 2
     }
@@ -48,17 +50,17 @@ export default function GoodCard({ good }: { good: good }) {
                                 className="object-cover object-center w-full h-full"
                             />
                         </Link>
-                        <div className="mr-3 mb-3 absolute flex items-center justify-center  bottom-0 right-0 bg-gray-100 min-w-[2rem;] min-h-[2rem;] rounded-full items-center">
+                        <div className="mr-3 mb-3 absolute flex justify-center  bottom-0 right-0 bg-gray-100 min-w-[2rem;] min-h-[2rem;] rounded-full items-center">
                             <CartHandler good={good} />
                         </div>
                     </div>
 
                     <div className="px-2 py-2 bg-gray-100">
                         <Link
-                            href={'/users/' + good.seller.id}
+                            href={'/users/' + seller.id}
                             className="text-gray-700"
                         >
-                            {good.seller.username}
+                            {seller.username}
                         </Link>
                         <Link href={'/goods/' + good.id}>
                             <h3 className="text-xl font-semibold">
@@ -92,3 +94,12 @@ export default function GoodCard({ good }: { good: good }) {
         </div>
     )
 }
+
+const mapState = (state: RootState, ownProps) => ({
+    seller: state.entities.users[ownProps.good.seller],
+})
+
+const connector = connect(mapState, null)
+type PropsFromRedux = ConnectedProps<typeof connector>
+type Props = PropsFromRedux & { good: good }
+export default connector(GoodCard)

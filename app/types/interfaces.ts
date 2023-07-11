@@ -55,11 +55,11 @@ export type user = {
     firstName: string
     lastName: string
     username: string
-    password: string
+    password?: string
     email: string
-    phoneNumber: string
+    phoneNumber?: string
     role: string
-    companyId: number
+    companyId?: number
     registrationDate: Date
 }
 
@@ -138,10 +138,6 @@ export type orderWithGoods = order & {
     goods: goodWithQuantity[]
 }
 
-type orderWithGoodsAndCustomer = orderWithGoods & {
-    customer: userMin
-}
-
 export type orderWithGoodsCreate = order & {
     goods: { quantity: number; id: number }[]
 }
@@ -149,61 +145,6 @@ export type orderWithGoodsCreate = order & {
 export type category = {
     id: number
     text: string
-}
-
-export interface CategoryProps {
-    category: {
-        text: string
-    }
-    goods: object[]
-}
-
-export interface CompanyProps {
-    data: company[]
-}
-
-export interface GoodProps {
-    data: good
-}
-
-export interface GoodsProps {
-    goods: good[]
-}
-
-export interface OrderProps {
-    order: orderWithGoods
-}
-
-export interface OrdersProps {
-    notFound?: boolean
-    orders: orderWithGoodsAndCustomer[]
-}
-
-export interface ReviewsProps {
-    notFound?: boolean
-    reviews: review[]
-}
-
-export interface UserGoodsProps {
-    error?: boolean
-    message?: boolean
-    data: {
-        user: user
-        goods: good[]
-    }
-}
-
-type userType = user & { error?: string; message?: string }
-
-export interface UserGoodsOrdersProps {
-    notFound?: boolean
-    user: userType
-    goods: good[]
-    orders: orderWithGoods[]
-}
-
-export interface UsersProps {
-    users: userWithCompany[]
 }
 
 export type ContextDynamicRoute = GetServerSidePropsContext<

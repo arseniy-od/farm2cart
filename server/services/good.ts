@@ -43,8 +43,8 @@ export default class GoodService extends BaseContext {
             ],
             include: [
                 {
-                    attributes: ['id', 'username', 'email'],
                     model: this.User,
+                    attributes: ['id', 'username', 'email'],
                     as: 'seller',
                 },
                 {
@@ -182,16 +182,22 @@ export default class GoodService extends BaseContext {
                     'reviewsCount',
                 ],
             ],
-            group: ['good.id', 'title', 'categories.text', 'categories.id'],
+            group: [
+                'good.id',
+                'title',
+                'categories.text',
+                'categories.id',
+                'categories.CategoryGood.id',
+            ],
             include: [
                 {
-                    attributes: ['id', 'username', 'email'],
                     model: this.User,
+                    attributes: ['id', 'username', 'email'],
                     as: 'seller',
                 },
                 {
                     model: this.Category,
-                    attributes: ['text'],
+                    attributes: ['id', 'text'],
                     through: { attributes: ['id', 'categoryId', 'goodId'] },
                 },
                 {

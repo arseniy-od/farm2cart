@@ -42,8 +42,6 @@ export default class BaseController extends BaseContext {
     }
 
     public run = async (context: ContextDynamicRoute) => {
-        // createRouter()
-        //     .get(async (req, res) => {
         try {
             const routeName = context.routeName || context.req.url
             const method = 'SSR'
@@ -67,9 +65,8 @@ export default class BaseController extends BaseContext {
             return {
                 props: { data },
             }
-            // }
         } catch (error: any) {
-            console.error('ERROR in getStaticProps:', error)
+            console.error('[BaseController] error:', error)
             return {
                 props: {
                     error: true,

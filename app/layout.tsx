@@ -8,6 +8,7 @@ import { useAppDispatch } from '@/redux/hooks'
 import { ConnectedProps, connect } from 'react-redux'
 import { RootState } from '@/redux/store'
 import { fetchUser, fetchCategories } from '@/redux/actions'
+import { isEmpty } from './utils'
 
 export const siteTitle = 'farm2cart'
 
@@ -25,17 +26,20 @@ function Layout({
     function getUser() {
         console.log('getUser called')
         console.log('[Layout] user: ', user)
-        if (Object.keys(user).length === 0) {
+        if (isEmpty(user)) {
             fetchUser()
         }
     }
     function getCategories() {
-        fetchCategories()
+        if (!categories || isEmpty(categories)) {
+            fetchCategories()
+        }
     }
 
     useEffect(getUser, [fetchUser, user])
     useEffect(getCategories, [fetchCategories, categories])
 
+    // to disable scrolling when sidebar is open
     if (typeof window != 'undefined') {
         if (isMenuOpen) {
             document
@@ -104,7 +108,6 @@ function Layout({
                     </div>
                 </header>
 
-                {/* Sidebar menu */}
                 {isMenuOpen && (
                     <Sidebar setIsMenuOpen={setIsMenuOpen} home={home} />
                 )}

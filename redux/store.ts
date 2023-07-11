@@ -8,6 +8,7 @@ import {
 
 import mySaga from './sagas'
 import rootReducer from './reducer'
+import { entities, user } from '@/app/types/entities'
 // import userReducer from './features/user/userSlice'
 // import categoryReducer from './features/category/categorySlice'
 
@@ -24,7 +25,7 @@ export const setupStore = () => {
 }
 
 export const wrapper = createWrapper<AppStore>(setupStore)
-export type RootState = ReturnType<typeof rootReducer>
+export type RootState = { user: user; entities: entities }
 export type AppStore = ReturnType<typeof setupStore>
 
 export type AppDispatch = AppStore['dispatch']

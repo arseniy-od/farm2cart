@@ -6,11 +6,7 @@ import { ContextDynamicRoute } from '@/app/types/interfaces'
 import GoodsPage from '@/app/components/goods/goodsPage'
 import { RootState } from '@/redux/store'
 import { wrapper } from '@/redux/store'
-import {
-    addInitialCategories,
-    addInitialGoods,
-    updateEntities,
-} from '@/redux/actions'
+import { updateEntities } from '@/redux/actions'
 import { goodsSchema, categoriesSchema } from '@/redux/normalSchemas'
 
 function Goods(props: PropsFromRedux) {
@@ -22,17 +18,17 @@ function Goods(props: PropsFromRedux) {
     )
 }
 
+function getActiveGoods(state: RootState) {
+    const goods = Object.values(state.entities.goods)
+    return goods.filter((good) => good.active && good.available)
+}
+
 const mapState = (state: RootState) => ({
-    reduxGoods: state.entities.goods || {},
+    reduxGoods: getActiveGoods(state) || [],
     reduxCategories: state.entities.categories || {},
 })
 
-const mapDispatch = {
-    addInitialGoods,
-    addInitialCategories,
-}
-
-const connector = connect(mapState, mapDispatch)
+const connector = connect(mapState, null)
 type PropsFromRedux = ConnectedProps<typeof connector>
 
 export const getServerSideProps = wrapper.getServerSideProps(

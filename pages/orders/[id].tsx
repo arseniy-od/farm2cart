@@ -10,12 +10,13 @@ import { normalize } from 'normalizr'
 import { orderSchema } from '@/redux/normalSchemas'
 import { updateEntities } from '@/redux/actions'
 import orders from '.'
+import ErrorMessage from '@/app/components/errorMessage'
 
 function Order({ order, goods, orderGoods }: Props) {
-    if (order.notFound) {
+    if (!order || order.notFound) {
         return (
             <Layout>
-                <h1 className="text-2xl font-semibold">Order not found</h1>
+                <ErrorMessage message="Order not found" />
             </Layout>
         )
     }
@@ -27,7 +28,7 @@ function Order({ order, goods, orderGoods }: Props) {
 }
 
 const mapState = (state: RootState, ownProps) => ({
-    order: state.entities.orders[ownProps.id],
+    order: state.entities.orders?.[ownProps.id],
     user: state.user,
     orders: state.entities.orders,
     goods: state.entities.goods,

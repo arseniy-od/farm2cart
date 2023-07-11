@@ -1,28 +1,45 @@
-import { category, good } from '@/app/types/interfaces'
+import { entities, good } from '@/app/types/entities'
+import { user } from '@/app/types/interfaces'
 
-// export const addInitialGoods = (goods: good[]) => ({
-//     type: 'goods/initial',
-//     payload: goods,
-// })
-
-// export const addInitialCategories = (categories: category[]) => ({
-//     type: 'categories/initial',
-//     payload: categories,
-// })
-
-// export const addInitialGood = (good: good) => ({
-//     type: 'goods/initial_good',
-//     payload: good,
-// })
-
-export const deleteGood = (id) => ({
-    type: 'goods/delete_good',
-    payload: { id },
+export const deactivateGood = (good: good) => ({
+    type: 'entities/update',
+    payload: {
+        entities: {
+            goods: { [good.id]: { ...good, active: false } },
+        },
+    },
 })
 
-export const activateGood = (id) => ({
-    type: 'goods/activate_good',
-    payload: { id },
+export const activateGood = (good: good) => ({
+    type: 'entities/update',
+    payload: {
+        entities: {
+            goods: { [good.id]: { ...good, active: true } },
+        },
+    },
+})
+
+export const decrementQuantity = (good: good, quantity: number) => ({
+    type: 'entities/update_one',
+    payload: {
+        entityName: 'goods',
+        entityId: good.id,
+        entityFields: { available: good.available - quantity },
+    },
+})
+
+export const addGood = (good: good) => ({
+    type: 'entities/update',
+    payload: {
+        entities: {
+            goods: { [good.id]: good },
+        },
+    },
+})
+
+export const addUser = (user: user) => ({
+    type: 'user/fetch_success',
+    payload: user,
 })
 
 export const fetchUser = () => ({
@@ -37,12 +54,12 @@ export const fetchOrders = () => ({
     type: 'saga/fetch_orders',
 })
 
-export const fetchMyGoods = (id) => ({
+export const fetchMyGoods = (id: number | string) => ({
     type: 'saga/fetch_my_goods',
     payload: id,
 })
 
-export const updateEntities = (entities) => ({
+export const updateEntities = (entities: entities) => ({
     type: 'entities/update',
     payload: entities,
 })

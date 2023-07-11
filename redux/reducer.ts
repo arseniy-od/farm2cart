@@ -8,6 +8,8 @@ import ordersReducer, { orderState } from './features/order/orderSlice'
 import entitiesReducer from './entities/entityReducer'
 import { isEmpty, jsonCopy } from '@/app/utils'
 import _ from 'lodash'
+import { user } from '@/app/types/interfaces'
+import { entities } from '@/app/types/entities'
 
 const combinedReducer = combineReducers({
     user: userReducer,
@@ -16,8 +18,8 @@ const combinedReducer = combineReducers({
 
 const rootReducer = (
     state: CombinedState<{
-        user: any
-        entities: any
+        user: user
+        entities: entities
     }>,
     action
 ) => {

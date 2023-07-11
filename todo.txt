@@ -1,5 +1,3 @@
-Add categories to product page
-
 Change structure of interfaces folder & rewrite interfaces
 
 Remove companies
@@ -9,9 +7,6 @@ Refactor users/[id] page:
 
 Add api endpoint for user-specific goods 
 
-Normalizr:
- - read about redux normalization
-
 Styling:
  - style goods/create page ? templates from tailwind don`t work
  - add flex & grid to all pages with goods
@@ -19,3 +14,5 @@ Styling:
 
 
 Read about redux-saga take 
+
+Refactor entities reducer to ...

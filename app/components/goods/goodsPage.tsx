@@ -37,9 +37,9 @@ export default function GoodsPage({ categories, goods }) {
             </div>
             <div className="mx-auto flex flex-wrap justify-center">
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-                    {Object.keys(goods).map((goodId, i) => (
+                    {goods.map((good, i) => (
                         <div key={i}>
-                            <GoodCard good={goods[goodId]} />
+                            <GoodCard good={good} />
                         </div>
                     ))}
                 </div>

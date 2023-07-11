@@ -46,13 +46,19 @@ export default class OrderService extends BaseContext {
     async getOrderById(id: string) {
         return await this.Order.findOne({
             where: { id },
-            include: {
-                model: this.Good,
-                as: 'goods',
-                through: {
+            include: [
+                {
+                    model: this.Good,
+                    as: 'goods',
+                    through: {
+                        attributes: [],
+                    },
+                },
+                {
+                    model: this.OrderGood,
                     attributes: ['id', 'goodId', 'orderId', 'quantity'],
                 },
-            },
+            ],
         })
     }
 

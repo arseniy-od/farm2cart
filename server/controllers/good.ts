@@ -9,6 +9,7 @@ import { ParsedUrlQuery } from 'querystring'
 import {
     NextApiRequestFile,
     NextApiRequestWithUser,
+    category,
     good,
 } from '@/app/types/interfaces'
 
@@ -134,6 +135,8 @@ export default class GoodController extends BaseController {
             return { notFound: true }
         }
         const good: good = await this.GoodService.getGoodByIdExtended(id)
+        const categories: category[] =
+            await this.CategoryService.getCategories()
         if (good.reviews) {
             good.reviews.sort(
                 (a, b) =>
@@ -141,7 +144,7 @@ export default class GoodController extends BaseController {
                     new Date(b.datepub).getTime()
             )
         }
-        return good
+        return { good, categories }
     }
 
     async getStaticPaths() {

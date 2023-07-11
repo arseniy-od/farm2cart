@@ -6,6 +6,7 @@ import container from '@/server/container'
 import { GetServerSideProps, NextApiRequest, NextApiResponse } from 'next'
 import { UsersProps } from '@/app/types/interfaces'
 
+//! not used now
 export default function User(props: UsersProps) {
     const users = props.data
     return (

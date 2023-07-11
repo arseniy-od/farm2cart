@@ -1,3 +1,4 @@
+import { good } from '@/app/types/interfaces'
 import { schema, normalize } from 'normalizr'
 
 const categoryGoodSchema = new schema.Entity('categoryGoods')
@@ -7,16 +8,16 @@ const goodMinSchema = new schema.Entity('goods', {
     CategoryGood: categoryGoodSchema,
 })
 
-const user = new schema.Entity('users')
-const reviewSchema = new schema.Entity('reviews', { author: user })
+export const userSchema = new schema.Entity('users')
+const reviewSchema = new schema.Entity('reviews', { author: userSchema })
 
 export const categorySchema = new schema.Entity('categories', {
     CategoryGood: categoryGoodSchema,
     goods: [goodMinSchema],
 })
 
-export const goodSchema = new schema.Entity('goods', {
-    seller: user,
+export const goodSchema = new schema.Entity<good>('goods', {
+    seller: userSchema,
     categories: [categorySchema],
     reviews: [reviewSchema],
     OrderGood: orderGoodsSchema,

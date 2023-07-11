@@ -16,37 +16,21 @@ import container from '@/server/container'
 import { category } from '@/app/types/interfaces'
 import GoodForm from '@/app/components/goods/goodForm'
 
-interface Good {
-    id?: string
-    title: string
-    description: string
-    imageUrl: string
-    price: string
-    categories: number[]
-    file: File | null
-    available: string
-}
-
 export default function Home({ categories }: { categories: category[] }) {
     const { push } = useRouter()
-    const [good, setGood] = useState<Good>({
+    const good = {
+        id: 0,
         title: '',
         description: '',
         imageUrl: '',
-        price: '',
+        price: 0,
         categories: [],
-        file: null,
-        available: '1',
-    })
+        available: 1,
+        active: true,
+        seller: 0,
+    }
 
-    return (
-        <GoodForm
-            good={good}
-            setGood={setGood}
-            categories={categories}
-            method="post"
-        />
-    )
+    return <GoodForm good={good} categories={categories} method="post" />
 }
 
 export const getStaticProps: GetStaticProps = async ({ params }) => {

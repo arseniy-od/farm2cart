@@ -1,10 +1,12 @@
-import Layout from '../app/layout'
-import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Formik, Form } from 'formik'
-import { FormInput } from '@/app/components/form'
 import * as Yup from 'yup'
+
 import { useAppDispatch } from '@/redux/hooks'
+
+import { FormInput } from '@/app/components/form'
+import Layout from '../app/layout'
+import { addUser } from '@/redux/actions'
 
 export default function Home() {
     const { push } = useRouter()
@@ -24,7 +26,7 @@ export default function Home() {
         if (res.ok) {
             const user = await res.json()
             console.log('Login successful')
-            dispatch({ type: 'user/fetch_success', payload: user })
+            dispatch(addUser(user))
             push('/')
         } else {
             console.error('Login error:', res.statusText)

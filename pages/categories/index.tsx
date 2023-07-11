@@ -14,10 +14,16 @@ import { RootState, wrapper } from '@/redux/store'
 import { normalize } from 'normalizr'
 import { updateEntities } from '@/redux/actions'
 import { ConnectedProps, connect } from 'react-redux'
+import ErrorMessage from '@/app/components/errorMessage'
 
-function Categories(props) {
-    const categories = props.categories
-
+function Categories({ categories }: PropsFromRedux) {
+    if (!categories) {
+        return (
+            <Layout>
+                <ErrorMessage message="Categories not found" />
+            </Layout>
+        )
+    }
     return (
         <Layout>
             {Object.values(categories).map((category, i) => (
@@ -48,11 +54,9 @@ export const getStaticProps: GetStaticProps = wrapper.getStaticProps(
     (store) => async (ctx) => {
         const categories = await container
             .resolve('CategoryController')
-            .getCategories(ctx)
+            .getCategories()
         // const categories = props
-        console.log('categories:', categories)
         const normCategories = normalize(categories, categoriesSchema)
-        console.log('normal categories:', normCategories)
         store.dispatch(updateEntities(normCategories))
 
         return { props: {} }

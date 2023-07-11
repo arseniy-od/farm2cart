@@ -7,11 +7,10 @@ import {
     fetchOrdersApi,
     fetchMyGoodsApi,
 } from './api'
-import { categoriesSchema, ordersSchema } from './normalSchemas'
+import { categoriesSchema, goodsSchema, ordersSchema } from './normalSchemas'
 
 function* fetchUser(action) {
     try {
-        console.log('fetchUser saga')
         const user = yield call(fetchUserApi)
         if (Object.keys(user).length) {
             yield put({ type: 'user/fetch_success', payload: user })
@@ -29,7 +28,7 @@ function* fetchCategories(action) {
         const normCategories = normalize(categories, categoriesSchema)
         yield put({
             type: 'entities/update',
-            payload: { entities: normCategories.entities },
+            payload: normCategories,
         })
     } catch (e) {
         yield put({ type: 'categories/fetch_fail', payload: e.message })
@@ -42,7 +41,7 @@ function* fetchOrders(action) {
         const normOrders = normalize(orders, ordersSchema)
         yield put({
             type: 'entities/update',
-            payload: { entities: normOrders.entities },
+            payload: normOrders,
         })
     } catch (e) {
         yield put({ type: 'orders/fetch_fail', payload: e.message })
@@ -52,7 +51,8 @@ function* fetchOrders(action) {
 function* fetchMyGoods(action) {
     try {
         const goods = yield call(fetchMyGoodsApi)
-        yield put({ type: 'goods/fetch_my_success', payload: goods })
+        const normGoods = normalize(goods, goodsSchema)
+        yield put({ type: 'entities/update', payload: normGoods })
     } catch (e) {
         yield put({ type: 'goods/fetch_my_fail', payload: e.message })
     }
