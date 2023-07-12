@@ -1,5 +1,21 @@
-import { entities, good } from '@/app/types/entities'
+import { entities, good, review } from '@/app/types/entities'
 import { user } from '@/app/types/interfaces'
+import { categoriesSchema, goodsSchema, ordersSchema } from './normalSchemas'
+
+export const action = (type: string, payload?: any) => ({
+    type,
+    payload,
+})
+
+export const deactivateGood1 = (good: good) =>
+    action('entities/update', {
+        entities: {
+            goods: { [good.id]: { ...good, active: false } },
+        },
+    })
+
+export const fetchFailed = (message) => action('saga/fetch_failed', message)
+export const fetchSucceeded = (data) => action('saga/fetch_succeeded', data)
 
 export const deactivateGood = (good: good) => ({
     type: 'entities/update',
@@ -19,7 +35,7 @@ export const activateGood = (good: good) => ({
     },
 })
 
-export const decrementQuantity = (good: good, quantity: number) => ({
+export const decrementQuantity = (good, quantity: number) => ({
     type: 'entities/update_one',
     payload: {
         entityName: 'goods',
@@ -43,20 +59,24 @@ export const addUser = (user: user) => ({
 })
 
 export const fetchUser = () => ({
-    type: 'saga/fetch_user',
+    type: 'saga/fetch',
+    payload: { url: '/api/users/me' },
 })
 
-export const fetchCategories = () => ({
-    type: 'saga/fetch_categories',
-})
+export const fetchCategories = () =>
+    action('saga/fetch', {
+        url: '/api/categories',
+        normalSchema: categoriesSchema,
+    })
 
 export const fetchOrders = () => ({
-    type: 'saga/fetch_orders',
+    type: 'saga/fetch',
+    payload: { url: '/api/orders', normalSchema: ordersSchema },
 })
 
-export const fetchMyGoods = (id: number | string) => ({
-    type: 'saga/fetch_my_goods',
-    payload: id,
+export const fetchMyGoods = () => ({
+    type: 'saga/fetch',
+    payload: { url: '/api/goods', normalSchema: goodsSchema },
 })
 
 export const updateEntities = (entities: entities) => ({

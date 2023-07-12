@@ -20,6 +20,7 @@ export default function entitiesReducer(state = initialState, action) {
                             })
                         }
                     })
+
                     nextState = _.merge(nextState, entities)
 
                     // to prevent infinite loop of useEffect calls
@@ -33,7 +34,7 @@ export default function entitiesReducer(state = initialState, action) {
         case 'entities/update_one': {
             if (action.payload) {
                 const { entityName, entityId, entityFields } = action.payload
-                const entity = state[entityName][entityId]
+                const entity = state[entityName][entityId] //! Error with user/[id] if user is a customer
                 const updatedEntity = { ...entity, ...entityFields }
                 const nextEntityList = { ...state[entityName], updatedEntity }
                 return { ...state, nextEntityList }

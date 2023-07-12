@@ -24,8 +24,6 @@ function Layout({
     // useEffect(() => setIsMenuOpen(false), [])
 
     function getUser() {
-        console.log('getUser called')
-        console.log('[Layout] user: ', user)
         if (isEmpty(user)) {
             fetchUser()
         }

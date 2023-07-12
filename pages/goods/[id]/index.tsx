@@ -13,12 +13,12 @@ import { categoriesSchema, goodSchema } from '@/redux/normalSchemas'
 
 import Layout from '@/app/layout'
 import { HalfStar, BlankStar, Star } from '@/app/components/icons/star'
-import CartHandler from '@/app/components/cart/cartHandler'
 import CreateReview from '@/app/components/reviews/createReview'
 import ReviewCard from '@/app/components/reviews/reviewCard'
 
 import { ContextDynamicRoute } from '@/app/types/interfaces'
 import GoodFull from '@/app/components/goods/goodFull'
+import ErrorMessage from '@/app/components/errorMessage'
 
 function Good({
     good,
@@ -31,6 +31,13 @@ function Good({
     // const [isActive, setIsActive] = useState(good.active && good.available)
     function roundHalf(num: number) {
         return Math.round(num * 2) / 2
+    }
+    if (!good || good.error) {
+        return (
+            <Layout>
+                <ErrorMessage message={good?.message || 'Good not found'} />
+            </Layout>
+        )
     }
 
     let stars: ReactElement[] = []
@@ -62,16 +69,6 @@ function Good({
                 deactivateGood(good)
             }
         }
-    }
-
-    if (!good || good.error) {
-        return (
-            <Layout>
-                <div className="ml-6 mt-6 text-2xl font-semibold">
-                    {good.message || 'Good not found'}
-                </div>
-            </Layout>
-        )
     }
 
     return (
@@ -122,10 +119,12 @@ function getCategories(state, goodId) {
 }
 
 const mapState = (state: RootState, ownProps) => ({
-    good: state.entities.goods[ownProps.id],
+    good: state.entities.goods?.[ownProps.id],
     reviews: getReviews(state, ownProps.id),
     goodCategories: getCategories(state, ownProps.id),
-    seller: state.entities.users[state.entities.goods[ownProps.id].seller],
+    seller: state.entities.users?.[
+        state.entities.goods?.[ownProps.id]?.seller || ''
+    ],
 })
 
 const mapDispatch = {
@@ -146,6 +145,7 @@ export const getServerSideProps = wrapper.getServerSideProps(
         console.log('Good is: ', good)
         const normGood = normalize(good, goodSchema)
         const normCategories = normalize(categories, categoriesSchema)
+        console.log('Norm good:', normGood)
         store.dispatch(updateEntities(normGood))
         store.dispatch(updateEntities(normCategories))
         // store.dispatch(addInitialGood(good))

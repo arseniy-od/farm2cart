@@ -1,15 +1,12 @@
-import { GetServerSideProps } from 'next'
-
 import Layout from '@/app/layout'
 import container from '@/server/container'
-import { ContextDynamicRoute, OrderProps } from '@/app/types/interfaces'
+import { ContextDynamicRoute } from '@/app/types/interfaces'
 import OrderCard from '@/app/components/orders/orderCard'
 import { ConnectedProps, connect } from 'react-redux'
 import { RootState, wrapper } from '@/redux/store'
 import { normalize } from 'normalizr'
 import { orderSchema } from '@/redux/normalSchemas'
 import { updateEntities } from '@/redux/actions'
-import orders from '.'
 import ErrorMessage from '@/app/components/errorMessage'
 
 function Order({ order, goods, orderGoods }: Props) {

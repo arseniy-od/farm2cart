@@ -70,24 +70,24 @@ export type orderGood = {
 
 export type entities = {
     users?: {
-        [key: number]: user
+        [key: number | string]: user
     }
     reviews?: {
-        [key: number]: review
+        [key: number | string]: review
     }
     goods?: {
-        [key: number]: good
+        [key: number | string]: good
     }
     orders?: {
-        [key: number]: order
+        [key: number | string]: order
     }
     categories?: {
-        [key: number]: category
+        [key: number | string]: category
     }
     categoryGoods?: {
-        [key: number]: categoryGood
+        [key: number | string]: categoryGood
     }
     orderGoods?: {
-        [key: number]: orderGood
+        [key: number | string]: orderGood
     }
 }

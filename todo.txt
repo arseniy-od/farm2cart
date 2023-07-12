@@ -13,6 +13,4 @@ Styling:
  - add footer to layout
 
 
-Read about redux-saga take 
-
-Refactor entities reducer to ...
+? Refactor entities reducer to ...

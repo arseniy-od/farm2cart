@@ -7,6 +7,9 @@ import { good } from '@/app/types/interfaces'
 import { useAppDispatch } from '@/redux/hooks'
 import CartMain from '@/app/components/cart/cartMain'
 import { apiDelete, getTotal } from '@/app/utils'
+import { decrementQuantity, updateEntities } from '@/redux/actions'
+import { normalize } from 'normalizr'
+import { orderSchema } from '@/redux/normalSchemas'
 
 type cart = {
     blank?: boolean
@@ -48,12 +51,11 @@ export default function Cart() {
         console.log('response: ', response)
         if (response.status === 200) {
             cartGoods.forEach((good) =>
-                dispatch({
-                    type: 'goods/decrement_quantity',
-                    payload: good,
-                })
+                dispatch(decrementQuantity(good, good.quantity))
             )
-            dispatch({ type: 'orders/add_order', payload: response.data })
+            const order = response.data
+            const normOrder = normalize(order, orderSchema)
+            dispatch(updateEntities(normOrder))
             const orderId = response.data.id
             push('/orders/' + orderId)
         }

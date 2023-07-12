@@ -24,22 +24,17 @@ const rootReducer = (
     action
 ) => {
     if (action.type === HYDRATE) {
-        // const stateDiff = diff(state, action.payload) as any
-        // const nextState = JSON.parse(JSON.stringify(state))
-        // console.log('State:', nextState)
-        // patch(nextState, stateDiff)
-        // const wasBumpedOnClient = stateDiff?.page?.[0]?.endsWith('X') // or any other criteria
-        // console.log('Diff:', stateDiff)
-        // console.log('Next State:', nextState)
-
         const hydratedState = action.payload
         const nextState: { [key: string]: any; entities?: any } = {}
+
+        // adding not normalized fields
         for (const [key, value] of Object.entries(hydratedState)) {
             if (value instanceof Object && Object.keys(value).length) {
                 nextState[key] = value
             }
         }
-        console.log('NextState1: ', nextState)
+
+        // replacing entities with new ones by id
         if (hydratedState && hydratedState.entities) {
             nextState.entities = jsonCopy(state.entities)
             const { entities } = hydratedState

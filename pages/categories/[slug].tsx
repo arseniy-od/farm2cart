@@ -45,7 +45,7 @@ function Category({ goods, category }: PropsFromRedux) {
     )
 }
 
-function getGoods(state: RootState, goodIds: number[]) {
+function getGoodsByIds(state: RootState, goodIds: number[]) {
     if (state.entities.goods) {
         return Object.values(state.entities.goods).filter((good) =>
             goodIds.includes(good.id)
@@ -56,7 +56,7 @@ function getGoods(state: RootState, goodIds: number[]) {
 
 const mapState = (state: RootState, ownProps) => ({
     category: state.entities.categories?.[ownProps.id],
-    goods: getGoods(state, ownProps.goodIds),
+    goods: getGoodsByIds(state, ownProps.goodIds),
 })
 
 const connector = connect(mapState, null)

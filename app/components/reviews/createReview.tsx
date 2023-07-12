@@ -9,13 +9,16 @@ import { BlankStar, Star } from '../icons/star'
 import { useAppDispatch } from '@/redux/hooks'
 import { RootState } from '@/redux/store'
 import { ConnectedProps, connect } from 'react-redux'
-import { GoodProps, review, good } from '@/app/types/interfaces'
+import { review, good } from '@/app/types/entities'
+import { updateEntities } from '@/redux/actions'
+import { normalize } from 'normalizr'
+import { reviewSchema } from '@/redux/normalSchemas'
 
 type ownProps = {
     good: good
 }
 
-function CreateReview({ good, addReview }: Props) {
+function CreateReview({ good, updateEntities }: Props) {
     const [review, setReview] = useState({
         goodId: good.id,
         text: '',
@@ -36,7 +39,8 @@ function CreateReview({ good, addReview }: Props) {
 
         if (res.ok) {
             const newReview = await res.json()
-            addReview(newReview)
+            const normReview = normalize(newReview, reviewSchema)
+            updateEntities(normReview)
             // setReviews([...reviews, newReview])
             setReview({
                 goodId: good.id,
@@ -146,10 +150,7 @@ function CreateReview({ good, addReview }: Props) {
 const mapState = (state: RootState, ownProps: ownProps) => ({})
 
 const mapDispatch = {
-    addReview: (review: review) => ({
-        type: 'goods/add_review',
-        payload: review,
-    }),
+    updateEntities,
 }
 
 const connector = connect(mapState, mapDispatch)

@@ -1,6 +1,3 @@
-import { GetStaticProps, GetStaticPaths, GetServerSideProps } from 'next'
-import Link from 'next/link'
-
 import Layout from '@/app/layout'
 import GoodCard from '@/app/components/goods/goodCard'
 import container from '@/server/container'
@@ -10,10 +7,13 @@ import { goodsSchema, userSchema } from '@/redux/normalSchemas'
 import { RootState, wrapper } from '@/redux/store'
 import { updateEntities } from '@/redux/actions'
 import { ConnectedProps, connect } from 'react-redux'
+import { useEffect } from 'react'
+import { toTitle, formatDate } from '@/app/utils'
 
 function User(props: Props) {
     const user = props.user
     const goods = props.goods
+    useEffect(() => console.log('User [id]: ', user))
     if (!user || props.error) {
         return (
             <Layout>
@@ -24,7 +24,20 @@ function User(props: Props) {
     return (
         <Layout>
             <div>
-                {user.role === 'seller' || 'admin' ? (
+                <div className="ml-4 max-w-xs">
+                    <div className="mt-4 px-4 py-3 text-lg bg-gray-100 shadow-lg">
+                        <div className="text-indigo-500">@{user.username}</div>
+                        <p>
+                            {toTitle(user.firstName)} {toTitle(user.lastName)}
+                        </p>
+                        <p>{user.email}</p>
+                        <p>
+                            Registration date:{' '}
+                            {formatDate(user.registrationDate)}
+                        </p>
+                    </div>
+                </div>
+                {user.role === ('seller' || 'admin') ? (
                     <div>
                         <h3 className="ml-5 mt-3 text-xl">
                             {user.username}&apos;s products:
@@ -69,10 +82,13 @@ export const getServerSideProps = wrapper.getServerSideProps(
         }
         const user = res.props?.data.user
         const goods = res.props?.data.goods
+        console.log('\n\nGoods:', goods)
         const normUser = normalize(user, userSchema)
-        const normGoods = normalize(goods, goodsSchema)
+        if (goods.length) {
+            const normGoods = normalize(goods, goodsSchema)
+            store.dispatch(updateEntities(normGoods))
+        }
         store.dispatch(updateEntities(normUser))
-        store.dispatch(updateEntities(normGoods))
         return { props: { error: false, message: '', id: user.id } }
     }
 )

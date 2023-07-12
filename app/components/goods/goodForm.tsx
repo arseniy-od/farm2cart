@@ -12,11 +12,10 @@ import { category, good } from '@/app/types/entities'
 import { addGood } from '@/redux/actions'
 import { ConnectedProps, connect } from 'react-redux'
 
-export default function GoodForm({ good, categories, method, addGood }: Props) {
+function GoodForm({ good, categories, method, addGood }: Props) {
     const { push } = useRouter()
     const fileRef = useRef({ files: [] })
-    // todo
-    // const dispatch = useAppDispatch()
+    const dispatch = useAppDispatch()
     const initialCategories = good.categories.map((id) => id.toString())
 
     function toFormData(good, method) {
@@ -197,3 +196,5 @@ type Props = ConnectedProps<typeof connector> & {
     categories?: { [key: number]: category }
     method: 'post' | 'put'
 }
+
+export default connector(GoodForm)
