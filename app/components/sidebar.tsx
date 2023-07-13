@@ -114,7 +114,8 @@ export default function Sidebar({
                         <div className="ml-4 mt-2 font-semibold">
                             Categories:
                         </div>
-                        {!isEmpty(categories) &&
+                        {categories &&
+                            !isEmpty(categories) &&
                             Object.values(categories).map((category, i) => (
                                 <div key={i}>
                                     <div className="ml-4 mt-1 w-2/3 hover:shadow-lg">

@@ -7,7 +7,7 @@ import { good } from '@/app/types/interfaces'
 import { useAppDispatch } from '@/redux/hooks'
 import CartMain from '@/app/components/cart/cartMain'
 import { apiDelete, getTotal } from '@/app/utils'
-import { decrementQuantity, updateEntities } from '@/redux/actions'
+import { createOrder, decrementQuantity, updateEntities } from '@/redux/actions'
 import { normalize } from 'normalizr'
 import { orderSchema } from '@/redux/normalSchemas'
 
@@ -20,7 +20,6 @@ export default function Cart() {
     const [cartGoods, setCartGoods] = useState<(good & { quantity: number })[]>(
         []
     )
-    const { push } = useRouter()
     const dispatch = useAppDispatch()
     const config = {
         headers: { 'content-type': 'application/json' },
@@ -45,21 +44,10 @@ export default function Cart() {
 
     async function handleSubmit(event: MouseEvent<HTMLButtonElement>) {
         event.preventDefault()
-        // console.log('Submit')
         const cartData = { goods: cartGoods, total: getTotal(cartGoods) }
-        const response = await axios.post('/api/orders', cartData, config)
-        console.log('response: ', response)
-        if (response.status === 200) {
-            cartGoods.forEach((good) =>
-                dispatch(decrementQuantity(good, good.quantity))
-            )
-            const order = response.data
-            const normOrder = normalize(order, orderSchema)
-            dispatch(updateEntities(normOrder))
-            const orderId = response.data.id
-            push('/orders/' + orderId)
-        }
+        dispatch(createOrder(cartData))
     }
+
     return (
         <CartMain
             goods={cartGoods}

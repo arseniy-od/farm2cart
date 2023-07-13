@@ -19,12 +19,12 @@ function Goods(props: PropsFromRedux) {
 }
 
 function getActiveGoods(state: RootState) {
-    const goods = Object.values(state.entities.goods)
+    const goods = Object.values(state.entities.goods || {})
     return goods.filter((good) => good.active && good.available)
 }
 
 const mapState = (state: RootState) => ({
-    reduxGoods: getActiveGoods(state) || [],
+    reduxGoods: getActiveGoods(state),
     reduxCategories: state.entities.categories || {},
 })
 

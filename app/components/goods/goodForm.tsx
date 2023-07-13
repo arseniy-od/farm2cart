@@ -11,11 +11,12 @@ import { TextArea, FormInput, FileUpload, Checkbox } from '../form'
 import { category, good } from '@/app/types/entities'
 import { addGood } from '@/redux/actions'
 import { ConnectedProps, connect } from 'react-redux'
+import { normalize } from 'normalizr'
+import { goodSchema } from '@/redux/normalSchemas'
 
 function GoodForm({ good, categories, method, addGood }: Props) {
     const { push } = useRouter()
     const fileRef = useRef({ files: [] })
-    const dispatch = useAppDispatch()
     const initialCategories = good.categories.map((id) => id.toString())
 
     function toFormData(good, method) {
@@ -75,15 +76,17 @@ function GoodForm({ good, categories, method, addGood }: Props) {
         let goodRes: good | null = null
         if (method === 'post') {
             goodRes = await apiPost(formData)
+            const normGood = normalize(goodRes, goodSchema)
+            addGood(normGood)
         } else if (method === 'put') {
             goodRes = await apiPut(formData)
+            const normGood = normalize(goodRes, goodSchema)
+            addGood(normGood)
         } else {
-            console.error(
+            throw new Error(
                 `Method ${method} is not implemented. Use 'post' or 'put'`
             )
-            return
         }
-        addGood(values)
         if (goodRes?.id) {
             push('/goods/' + goodRes.id)
         }

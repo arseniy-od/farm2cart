@@ -6,31 +6,14 @@ import { useAppDispatch } from '@/redux/hooks'
 
 import { FormInput } from '@/app/components/form'
 import Layout from '../app/layout'
-import { addUser } from '@/redux/actions'
+import { addUser, loginUser } from '@/redux/actions'
 
 export default function Home() {
     const { push } = useRouter()
     const dispatch = useAppDispatch()
 
     const handleSubmit = async (user) => {
-        console.log('User:', user)
-        const res = await fetch('/api/auth', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(user),
-        })
-        console.log('User: ', user)
-
-        if (res.ok) {
-            const user = await res.json()
-            console.log('Login successful')
-            dispatch(addUser(user))
-            push('/')
-        } else {
-            console.error('Login error:', res.statusText)
-        }
+        dispatch(loginUser(user))
     }
 
     return (

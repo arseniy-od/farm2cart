@@ -1,16 +1,15 @@
 import { configureStore, combineReducers } from '@reduxjs/toolkit'
 import { createWrapper } from 'next-redux-wrapper'
 import createSagaMiddleware from 'redux-saga'
-import {
-    nextReduxCookieMiddleware,
-    wrapMakeStore,
-} from 'next-redux-cookie-wrapper'
 
 import mySaga from './sagas'
 import rootReducer from './reducer'
 import { entities, user } from '@/app/types/entities'
-// import userReducer from './features/user/userSlice'
-// import categoryReducer from './features/category/categorySlice'
+import categoryInstance from './models/category'
+import orderInstance from './models/order'
+import userInstance from './models/user'
+import goodInstance from './models/good'
+import authInstance from './models/auth'
 
 const sagaMiddleware = createSagaMiddleware()
 
@@ -20,7 +19,10 @@ export const setupStore = () => {
         middleware: (getDefaultMiddleware) =>
             getDefaultMiddleware().concat(sagaMiddleware),
     })
-    sagaMiddleware.run(mySaga)
+    sagaMiddleware.run(categoryInstance.categorySaga)
+    sagaMiddleware.run(orderInstance.orderSaga)
+    sagaMiddleware.run(authInstance.authSaga)
+    sagaMiddleware.run(goodInstance.goodSaga)
     return store
 }
 

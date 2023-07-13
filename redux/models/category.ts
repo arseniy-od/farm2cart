@@ -1,26 +1,39 @@
-import BaseEntity from './entity'
-import { call } from 'redux-saga/effects'
+import Entity from './entity'
+import { all, call, fork, put, take } from 'redux-saga/effects'
 import { schema } from 'normalizr'
 
 import action from '../decorators/action'
 
-export default class CategoryEntity extends BaseEntity {
+class CategoryEntity extends Entity {
     constructor() {
         super()
-        this.initSchema('stores', {
-            user: new schema.Entity('users'),
-            review: [new schema.Entity('reviews')],
-            product: [new schema.Entity('products')],
+        this.categorySaga = this.categorySaga.bind(this)
+        this.fetchCategories = this.fetchCategories.bind(this)
+
+        this.initSchema('categories', {
+            CategoryGood: new schema.Entity('categoryGoods'),
+            goods: [
+                new schema.Entity('goods', {
+                    CategoryGood: new schema.Entity('categoryGoods'),
+                }),
+            ],
         })
     }
 
-    @action() // writes to 'sagas' metadata
-    protected *fetchCategories() {
-        yield call(this.readData, '/api/categories')
+    *fetchCategories() {
+        console.log('fetchCategories')
+        while (true) {
+            yield take('saga/fetch_categories')
+            yield call(this.readData, '/api/categories')
+        }
     }
 
-    @action()
-    protected *fetchCategoryBySlug(data) {
-        yield call(this.readData, `/api/categories/${data.payload}`)
+    *categorySaga() {
+        console.log('categorySaga')
+        yield all([call(this.fetchCategories)])
     }
 }
+
+const categoryInstance = new CategoryEntity()
+
+export default categoryInstance

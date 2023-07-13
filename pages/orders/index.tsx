@@ -3,7 +3,7 @@ import Link from 'next/link'
 
 import Layout from '@/app/layout'
 import container from '@/server/container'
-import { OrdersProps } from '@/app/types/interfaces'
+
 import { ConnectedProps, connect } from 'react-redux'
 import { RootState } from '@/redux/store'
 import { fetchOrders } from '@/redux/actions'
@@ -15,8 +15,6 @@ function MyOrders({ user, orders, goods, orderGoods, fetchOrders }: Props) {
     useEffect(() => {
         fetchOrders()
     }, [])
-
-    console.log('Orders: ', orders)
 
     if (!orders || isEmpty(orders)) {
         return (

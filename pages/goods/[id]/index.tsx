@@ -58,7 +58,7 @@ function Good({
 
     const handleDelete = async (event: MouseEvent<HTMLButtonElement>) => {
         if (!good?.active) {
-            const res = await apiActivate(`/api/goods/?id=${good.id}`, good.id)
+            const res = await apiActivate(`/api/goods/?id=${good.id}`, good.id) //!
             console.log(res)
             if (!res.error) {
                 activateGood(good)

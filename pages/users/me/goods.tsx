@@ -9,7 +9,7 @@ import { fetchMyGoods } from '@/redux/actions'
 
 function MyGoods({ user, goods, fetchMyGoods }: Props) {
     useEffect(() => {
-        fetchMyGoods(user.id)
+        fetchMyGoods()
     }, [fetchMyGoods, user])
 
     if (user.error) {

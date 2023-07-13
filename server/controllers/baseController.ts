@@ -101,14 +101,28 @@ export default class BaseController extends BaseContext {
                                 file: req?.file,
                             } as any)
                             data = JSON.parse(JSON.stringify(data))
+                            if (!data) {
+                                return res.status(500).json({
+                                    error: true,
+                                    message: 'Data not found',
+                                })
+                            }
                             if (data.error || data.notFound) {
                                 console.error(data.message || data)
-                                return res.status(500).json(data)
+                                return res
+                                    .status(500)
+                                    .json({
+                                        error: true,
+                                        message:
+                                            data.message || 'Data not found',
+                                    })
                             }
                             return res.status(200).json(data)
                         } catch (err: any) {
                             const message = err?.message ? err.message : err
-                            return res.status(400).json({ message })
+                            return res
+                                .status(400)
+                                .json({ error: true, message })
                         }
                     }
                     const args = [...methodArgs, action]

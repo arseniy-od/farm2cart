@@ -14,3 +14,8 @@ Styling:
 
 
 ? Refactor entities reducer to ...
+
+
+Grand entities refactor:
+ - good/id activate/deactivate
+ - good/id/edit & create post form-data 

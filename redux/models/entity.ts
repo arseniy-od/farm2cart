@@ -2,7 +2,7 @@ import { call, fork, put, take } from 'redux-saga/effects'
 import { schema, normalize } from 'normalizr'
 
 import { METHODS } from '@/app/constants'
-import { action, fetchFailed, fetchSucceeded } from '../actions'
+import { action, deleteEntity, fetchFailed, updateEntities } from '../actions'
 import 'reflect-metadata'
 import { ISagaMethods } from '@/app/types/common'
 import CategoryEntity from './category'
@@ -13,14 +13,14 @@ interface IOptions {
     body?: string
 }
 
-export default class BaseEntity {
+export default class Entity {
     constructor() {
         this.fetchApi = this.fetchApi.bind(this)
         this.readData = this.readData.bind(this)
         this.saveData = this.saveData.bind(this)
     }
 
-    private schema: any
+    protected schema: any
     private static _actions = []
 
     protected initSchema(entityName = '', attributes: any = {}) {
@@ -49,7 +49,10 @@ export default class BaseEntity {
             const result = await res.json()
             return result
         } else {
-            throw new Error('Fetching error: ' + res.statusText)
+            const result = await res.json()
+            throw new Error(
+                'Fetching error: ' + (result.message || res.statusText)
+            )
         }
     }
 
@@ -66,9 +69,16 @@ export default class BaseEntity {
         data?: Record<string, any>
     ) {
         try {
+            if (method === METHODS.DELETE) {
+                yield this.fetchApi(url, method)
+                yield put(deleteEntity(data?.id))
+                return
+            }
             const result = yield this.fetchApi(url, method, data)
             const normalizedResult = this.normalizeData(result)
-            yield put(fetchSucceeded(normalizedResult))
+            const id = normalizedResult.result
+            yield put(updateEntities(normalizedResult))
+            return { data: normalizedResult.entities, id: id }
         } catch (error) {
             yield put(fetchFailed(error.message))
         }
@@ -82,9 +92,14 @@ export default class BaseEntity {
         return this.actionRequest(url, METHODS.POST, data)
     }
 
+    protected deleteData(url: string, id: number) {
+        return this.actionRequest(url, METHODS.DELETE, { id })
+    }
+
+    // not used now
     // metadata is written is @action() at entity class
     public static sagas() {
-        const objects: ISagaMethods[] = Reflect.getMetadata('sagas', BaseEntity)
+        const objects: ISagaMethods[] = Reflect.getMetadata('sagas', Entity)
         return objects.map((obj) => {
             const actionName = obj.className + '_' + obj.methodName // 'CategoryEntity_fetchCategories'
 
@@ -97,17 +112,16 @@ export default class BaseEntity {
                     yield call(method, data)
                 }
             }
-            BaseEntity._actions = {
-                ...BaseEntity._actions,
+            Entity._actions = {
+                ...Entity._actions,
                 [actionName]: (data) => action(actionName, data),
             }
             return fork(saga)
         })
     }
 
+    // not used
     public action(methodName, data?) {
-        return BaseEntity._actions[this.constructor.name + '_' + methodName](
-            data
-        ) // _actions['categories_']
+        return Entity._actions[this.constructor.name + '_' + methodName](data) // _actions['categories_']
     }
 }

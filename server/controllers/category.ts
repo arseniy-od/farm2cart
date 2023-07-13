@@ -31,9 +31,7 @@ export default class CategoryController extends BaseController {
 
     @GET('/api/categories')
     async getCategories() {
-        let categories = await this.CategoryService.getCategories()
-        categories = JSON.parse(JSON.stringify(categories))
-        return categories
+        return await this.CategoryService.getCategories()
     }
 
     @POST('/api/categories')

@@ -1,16 +1,16 @@
-import { useState } from 'react'
+import { ConnectedProps, connect } from 'react-redux'
+import { normalize } from 'normalizr'
+
+import container from '@/server/container'
+import { RootState, wrapper } from '@/redux/store'
+import { categoriesSchema, goodSchema } from '@/redux/normalSchemas'
+import { updateEntities } from '@/redux/actions'
 
 import GoodForm from '@/app/components/goods/goodForm'
-import container from '@/server/container'
-import { ContextDynamicRoute, category } from '@/app/types/interfaces'
-import { good } from '@/app/types/entities'
-import { normalize } from 'normalizr'
-import { categoriesSchema, goodSchema } from '@/redux/normalSchemas'
-import { RootState, wrapper } from '@/redux/store'
-import { updateEntities } from '@/redux/actions'
-import { ConnectedProps, connect } from 'react-redux'
 import Layout from '@/app/layout'
 import ErrorMessage from '@/app/components/errorMessage'
+
+import { ContextDynamicRoute } from '@/app/types/interfaces'
 
 function EditGood({ good, categories }: Props) {
     if (!good) {
