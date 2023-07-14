@@ -87,7 +87,7 @@ export default class UserController extends BaseController {
     getUser(req) {
         console.log('getUser called')
 
-        return { user: req.identity }
+        return req.identity
     }
 
     //! Client router with middleware is incompatible with controller with middleware

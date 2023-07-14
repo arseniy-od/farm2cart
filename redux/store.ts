@@ -10,6 +10,8 @@ import orderInstance from './models/order'
 import userInstance from './models/user'
 import goodInstance from './models/good'
 import authInstance from './models/auth'
+import reviewInstance from './models/review'
+import cartInstance from './models/cart'
 
 const sagaMiddleware = createSagaMiddleware()
 
@@ -23,6 +25,8 @@ export const setupStore = () => {
     sagaMiddleware.run(orderInstance.orderSaga)
     sagaMiddleware.run(authInstance.authSaga)
     sagaMiddleware.run(goodInstance.goodSaga)
+    sagaMiddleware.run(reviewInstance.reviewSaga)
+    sagaMiddleware.run(cartInstance.cartSaga)
     return store
 }
 

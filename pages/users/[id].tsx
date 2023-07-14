@@ -9,15 +9,15 @@ import { updateEntities } from '@/redux/actions'
 import { ConnectedProps, connect } from 'react-redux'
 import { useEffect } from 'react'
 import { toTitle, formatDate } from '@/app/utils'
+import ErrorMessage from '@/app/components/errorMessage'
 
 function User(props: Props) {
     const user = props.user
     const goods = props.goods
-    useEffect(() => console.log('User [id]: ', user))
     if (!user || props.error) {
         return (
             <Layout>
-                <h1 className="text-2xl">User not found</h1>
+                <ErrorMessage message="User not found" />
             </Layout>
         )
     }

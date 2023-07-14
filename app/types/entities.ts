@@ -68,6 +68,12 @@ export type orderGood = {
     quantity: number
 }
 
+export type cartItem = {
+    id: number
+    quantity: number
+    good: number
+}
+
 export type entities = {
     users?: {
         [key: number | string]: user
@@ -89,5 +95,8 @@ export type entities = {
     }
     orderGoods?: {
         [key: number | string]: orderGood
+    }
+    cartItems?: {
+        [key: number | string]: cartItem
     }
 }

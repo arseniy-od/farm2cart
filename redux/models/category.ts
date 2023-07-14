@@ -1,7 +1,7 @@
 import Entity from './entity'
 import { all, call, fork, put, take } from 'redux-saga/effects'
-import { schema } from 'normalizr'
 
+import { categoryGoodSchema, goodSchema } from '../normalSchemas'
 import action from '../decorators/action'
 
 class CategoryEntity extends Entity {
@@ -11,12 +11,8 @@ class CategoryEntity extends Entity {
         this.fetchCategories = this.fetchCategories.bind(this)
 
         this.initSchema('categories', {
-            CategoryGood: new schema.Entity('categoryGoods'),
-            goods: [
-                new schema.Entity('goods', {
-                    CategoryGood: new schema.Entity('categoryGoods'),
-                }),
-            ],
+            CategoryGood: categoryGoodSchema,
+            goods: [goodSchema],
         })
     }
 

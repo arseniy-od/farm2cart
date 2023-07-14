@@ -1,12 +1,11 @@
-import Entity from './entity'
 import { all, call, fork, put, take } from 'redux-saga/effects'
-import { normalize, schema } from 'normalizr'
 
-import action from '../decorators/action'
+import Entity from './entity'
 import { goodsSchema, orderGoodsSchema } from '../normalSchemas'
 import Router from 'next/router'
 import { createOrderFail, decrementQuantity } from '../actions'
 
+import action from '../decorators/action'
 class OrderEntity extends Entity {
     constructor() {
         super()

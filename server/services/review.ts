@@ -28,17 +28,12 @@ export default class ReviewService extends BaseContext {
     async getReviewById(id: string | number) {
         return await this.Review.findOne({
             where: { id },
-            attributes: ['text', 'score', 'datepub'],
+            attributes: ['id', 'text', 'score', 'datepub'],
             include: [
                 {
-                    attributes: ['username', 'email'],
+                    attributes: ['id', 'username', 'email'],
                     model: this.User,
                     as: 'author',
-                },
-                {
-                    attributes: ['id', 'title'],
-                    model: this.Good,
-                    as: 'good',
                 },
             ],
         })

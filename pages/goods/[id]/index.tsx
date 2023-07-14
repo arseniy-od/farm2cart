@@ -5,10 +5,13 @@ import { ConnectedProps, connect } from 'react-redux'
 import { normalize } from 'normalizr'
 
 import container from '@/server/container'
-import { apiDelete, apiActivate } from '@/app/utils'
 
 import { RootState, wrapper } from '@/redux/store'
-import { activateGood, deactivateGood, updateEntities } from '@/redux/actions'
+import {
+    activateGoodSaga,
+    deactivateGoodSaga,
+    updateEntities,
+} from '@/redux/actions'
 import { categoriesSchema, goodSchema } from '@/redux/normalSchemas'
 
 import Layout from '@/app/layout'
@@ -25,8 +28,8 @@ function Good({
     reviews,
     goodCategories,
     seller,
-    activateGood,
-    deactivateGood,
+    activateGoodSaga,
+    deactivateGoodSaga,
 }: Props) {
     // const [isActive, setIsActive] = useState(good.active && good.available)
     function roundHalf(num: number) {
@@ -58,16 +61,9 @@ function Good({
 
     const handleDelete = async (event: MouseEvent<HTMLButtonElement>) => {
         if (!good?.active) {
-            const res = await apiActivate(`/api/goods/?id=${good.id}`, good.id) //!
-            console.log(res)
-            if (!res.error) {
-                activateGood(good)
-            }
+            activateGoodSaga(good)
         } else {
-            const res = await apiDelete(`/api/goods/?id=${good.id}`)
-            if (!res.error) {
-                deactivateGood(good)
-            }
+            deactivateGoodSaga(good)
         }
     }
 
@@ -128,8 +124,8 @@ const mapState = (state: RootState, ownProps) => ({
 })
 
 const mapDispatch = {
-    activateGood,
-    deactivateGood,
+    activateGoodSaga,
+    deactivateGoodSaga,
 }
 
 const connector = connect(mapState, mapDispatch)

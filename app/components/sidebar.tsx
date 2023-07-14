@@ -10,6 +10,7 @@ import {
 import { category, user } from '../types/interfaces'
 import { useAppDispatch, useAppSelector } from '@/redux/hooks'
 import { isEmpty } from '../utils'
+import { logoutSaga } from '@/redux/actions'
 
 export default function Sidebar({
     setIsMenuOpen,
@@ -24,17 +25,8 @@ export default function Sidebar({
     const categories = useAppSelector((state) => state.entities.categories)
     console.log('Sidebar categories:', categories)
 
-    const { push } = useRouter()
-
     const handleLogout = async (event: MouseEvent<HTMLButtonElement>) => {
-        const res = await fetch('/api/auth/logout')
-        if (res.ok) {
-            console.log('Logout successful')
-            dispatch({ type: 'user/logout' })
-            home || push('/')
-        } else {
-            console.log('Logout error')
-        }
+        dispatch(logoutSaga())
     }
 
     return (

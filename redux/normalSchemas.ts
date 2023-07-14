@@ -1,5 +1,5 @@
 import { good } from '@/app/types/interfaces'
-import { schema, normalize } from 'normalizr'
+import { schema } from 'normalizr'
 
 export const categoryGoodSchema = new schema.Entity('categoryGoods')
 export const orderGoodsSchema = new schema.Entity('orderGoods')

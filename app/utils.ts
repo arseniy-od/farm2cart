@@ -55,28 +55,6 @@ export async function apiDelete(url) {
     }
 }
 
-export async function apiActivate(url, id) {
-    try {
-        const config = {
-            headers: { 'content-type': 'application/json' },
-            query: { id },
-            params: { id },
-        }
-        const res = await axios.patch('/api/goods', {}, config)
-
-        if (res.status === 200) {
-            console.log('Entity activated')
-            return await res.data
-        } else {
-            console.error('Entity not activated', res.statusText)
-            return { error: true, message: res.statusText }
-        }
-    } catch (e) {
-        console.error('ERR: ', e)
-        return { error: true, message: e.message }
-    }
-}
-
 export function getTotal(goods: (good & { quantity: number })[]) {
     let total: number = 0
     for (let good of goods) {

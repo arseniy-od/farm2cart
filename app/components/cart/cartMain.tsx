@@ -1,13 +1,22 @@
 import Layout from '@/app/layout'
 import CartGood from './cartGood'
+import { cartItem, good } from '@/app/types/entities'
 
 export default function CartMain({
+    cartItems,
     goods,
     setCartGoods,
     handleDelete,
     handleSubmit,
 }) {
-    if (goods.length === 0) {
+    if (!cartItems) {
+        return (
+            <Layout>
+                <h1 className="mt-6 text-center text-2xl">Loading...</h1>
+            </Layout>
+        )
+    }
+    if (cartItems.length === 0) {
         return (
             <Layout>
                 <h1 className="mt-6 text-center text-2xl">Cart is empty</h1>
@@ -20,12 +29,13 @@ export default function CartMain({
                 <h1 className="ml-4 mt-4 text-2xl">Cart</h1>
                 <div>
                     <form>
-                        {goods.map((good, i) => (
+                        {Object.values(cartItems).map((cartItem, i) => (
                             <div key={i}>
                                 <CartGood
-                                    good={good}
+                                    cartItem={cartItem}
+                                    good={goods[cartItem.good]}
                                     index={i}
-                                    cartGoods={goods}
+                                    cartItems={cartItems}
                                     setCartGoods={setCartGoods}
                                     handleDelete={handleDelete}
                                 />

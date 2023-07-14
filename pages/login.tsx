@@ -9,7 +9,6 @@ import Layout from '../app/layout'
 import { addUser, loginUser } from '@/redux/actions'
 
 export default function Home() {
-    const { push } = useRouter()
     const dispatch = useAppDispatch()
 
     const handleSubmit = async (user) => {

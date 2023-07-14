@@ -18,6 +18,9 @@ export default class Entity {
         this.fetchApi = this.fetchApi.bind(this)
         this.readData = this.readData.bind(this)
         this.saveData = this.saveData.bind(this)
+        this.updateData = this.updateData.bind(this)
+        this.patchData = this.patchData.bind(this)
+        this.deleteData = this.deleteData.bind(this)
     }
 
     protected schema: any
@@ -71,7 +74,11 @@ export default class Entity {
         try {
             if (method === METHODS.DELETE) {
                 yield this.fetchApi(url, method)
-                yield put(deleteEntity(data?.id))
+                // yield put(deleteEntity(data?.id))
+                return
+            }
+            if (method == METHODS.PATCH) {
+                yield this.fetchApi(url, method)
                 return
             }
             const result = yield this.fetchApi(url, method, data)
@@ -89,11 +96,20 @@ export default class Entity {
     }
 
     protected saveData(url: string, data: Record<string, any>) {
+        console.log('saveData, data: ', data)
         return this.actionRequest(url, METHODS.POST, data)
     }
 
-    protected deleteData(url: string, id: number) {
-        return this.actionRequest(url, METHODS.DELETE, { id })
+    protected updateData(url: string, data: Record<string, any>) {
+        return this.actionRequest(url, METHODS.PUT, data)
+    }
+
+    protected patchData(url: string, data: Record<string, any>) {
+        return this.actionRequest(url, METHODS.PATCH, data)
+    }
+
+    protected deleteData(url: string) {
+        return this.actionRequest(url, METHODS.DELETE)
     }
 
     // not used now

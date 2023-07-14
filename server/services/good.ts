@@ -2,6 +2,7 @@ import { Sequelize, Op } from 'sequelize'
 
 import BaseContext from '../baseContext'
 import { category, good } from '@/app/types/interfaces'
+import { jsonCopy } from '@/app/utils'
 
 export default class GoodService extends BaseContext {
     private Good = this.di.Good
@@ -159,6 +160,25 @@ export default class GoodService extends BaseContext {
                 await good.addCategory(categoryGood)
             }
         })
+        return good
+    }
+
+    async patchGood(goodData: good) {
+        const good = await this.Good.findByPk(goodData.id)
+        if (!good) {
+            return { error: true, message: 'Good not found' }
+        }
+        await good.update(goodData)
+        if (goodData.categories?.length) {
+            await goodData.categories.forEach(async (catId) => {
+                const categoryGood = await this.Category.findOne({
+                    where: { id: catId },
+                })
+                if (categoryGood) {
+                    await good.addCategory(categoryGood)
+                }
+            })
+        }
         return good
     }
 

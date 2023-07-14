@@ -10,7 +10,7 @@ import { useAppDispatch } from '@/redux/hooks'
 import { RootState } from '@/redux/store'
 import { ConnectedProps, connect } from 'react-redux'
 import { review, good } from '@/app/types/entities'
-import { updateEntities } from '@/redux/actions'
+import { createReview, updateEntities } from '@/redux/actions'
 import { normalize } from 'normalizr'
 import { reviewSchema } from '@/redux/normalSchemas'
 
@@ -18,7 +18,7 @@ type ownProps = {
     good: good
 }
 
-function CreateReview({ good, updateEntities }: Props) {
+function CreateReview({ good, createReview }: Props) {
     const [review, setReview] = useState({
         goodId: good.id,
         text: '',
@@ -27,30 +27,35 @@ function CreateReview({ good, updateEntities }: Props) {
 
     const handleSubmit = async (event: MouseEvent<HTMLButtonElement>) => {
         event.preventDefault()
-        console.log('[submit]')
-
-        const res = await fetch('/api/reviews', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(review),
+        createReview(review, good.id)
+        setReview({
+            goodId: good.id,
+            text: '',
+            score: 5,
         })
 
-        if (res.ok) {
-            const newReview = await res.json()
-            const normReview = normalize(newReview, reviewSchema)
-            updateEntities(normReview)
-            // setReviews([...reviews, newReview])
-            setReview({
-                goodId: good.id,
-                text: '',
-                score: 5,
-            })
-            console.log('Review creation ok')
-        } else {
-            console.log('Review creation not ok')
-        }
+        // const res = await fetch('/api/reviews', {
+        //     method: 'POST',
+        //     headers: {
+        //         'Content-Type': 'application/json',
+        //     },
+        //     body: JSON.stringify(review),
+        // })
+
+        // if (res.ok) {
+        //     const newReview = await res.json()
+        //     const normReview = normalize(newReview, reviewSchema)
+        //     updateEntities(normReview)
+        //     // setReviews([...reviews, newReview])
+        //     setReview({
+        //         goodId: good.id,
+        //         text: '',
+        //         score: 5,
+        //     })
+        //     console.log('Review creation ok')
+        // } else {
+        //     console.log('Review creation not ok')
+        // }
     }
 
     function incrementScore() {
@@ -67,6 +72,7 @@ function CreateReview({ good, updateEntities }: Props) {
     function starLink(star: ReactElement, rating: number): ReactElement {
         return (
             <button
+                key={rating}
                 type="button"
                 onClick={() => setReview({ ...review, score: rating + 1 })}
             >
@@ -150,7 +156,7 @@ function CreateReview({ good, updateEntities }: Props) {
 const mapState = (state: RootState, ownProps: ownProps) => ({})
 
 const mapDispatch = {
-    updateEntities,
+    createReview,
 }
 
 const connector = connect(mapState, mapDispatch)

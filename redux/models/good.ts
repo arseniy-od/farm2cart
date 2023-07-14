@@ -9,18 +9,37 @@ import {
     reviewSchema,
     orderGoodsSchema,
 } from '../normalSchemas'
+import { activateGoodRedux, deactivateGoodRedux } from '../actions'
 
 class GoodEntity extends Entity {
     constructor() {
         super()
         this.goodSaga = this.goodSaga.bind(this)
         this.fetchGoods = this.fetchGoods.bind(this)
+        this.activateGood = this.activateGood.bind(this)
+        this.deactivateGood = this.deactivateGood.bind(this)
         this.initSchema('goods', {
             seller: userSchema,
             categories: [categorySchema],
             reviews: [reviewSchema],
             OrderGood: orderGoodsSchema,
         })
+    }
+
+    *activateGood() {
+        while (true) {
+            const { payload } = yield take('saga/activate_good')
+            yield call(this.patchData, `/api/goods/?id=${payload.id}`, {})
+            yield put(activateGoodRedux(payload))
+        }
+    }
+
+    *deactivateGood() {
+        while (true) {
+            const { payload } = yield take('saga/deactivate_good')
+            yield call(this.deleteData, `/api/goods/?id=${payload.id}`)
+            yield put(deactivateGoodRedux(payload))
+        }
     }
 
     *fetchGoods() {
@@ -31,7 +50,11 @@ class GoodEntity extends Entity {
     }
 
     *goodSaga() {
-        yield all([call(this.fetchGoods)])
+        yield all([
+            call(this.fetchGoods),
+            call(this.activateGood),
+            call(this.deactivateGood),
+        ])
     }
 }
 

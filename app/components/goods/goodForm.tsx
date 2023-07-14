@@ -6,7 +6,7 @@ import * as Yup from 'yup'
 
 import Layout from '@/app/layout'
 import { useAppDispatch } from '@/redux/hooks'
-import goods from '@/pages/api/goods'
+import goods from '@/pages/api/goods/goods'
 import { TextArea, FormInput, FileUpload, Checkbox } from '../form'
 import { category, good } from '@/app/types/entities'
 import { addGood } from '@/redux/actions'

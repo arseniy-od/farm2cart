@@ -1,11 +1,13 @@
 import Link from 'next/link'
-import {
-    order,
-    orderWithGoods,
-    orderWithGoodsCreate,
-} from '../../types/interfaces'
+import { good, order, orderGood } from '@/app/types/entities'
 
-export default function OrderCard({ order, goods, orderGoods }) {
+interface Props {
+    order: order
+    goods: good
+    orderGoods: orderGood
+}
+
+export default function OrderCard({ order, goods, orderGoods }: Props) {
     return (
         <div className="ml-4 mt-4 px-4 py-3 bg-gray-100 max-w-xs shadow-lg">
             <Link href={`/orders/${order.id}`}>
@@ -16,7 +18,7 @@ export default function OrderCard({ order, goods, orderGoods }) {
             <div>total: ₴{order.total}</div>
             <div className="mt-4">
                 <div>Goods: </div>
-                {Object.values(order.OrderGoods).map((OrderGoodId, i) => (
+                {Object.values(order.OrderGoods || {}).map((OrderGoodId, i) => (
                     <div key={i}>
                         <div>
                             {orderGoods[OrderGoodId].quantity}x{' '}

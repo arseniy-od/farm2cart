@@ -7,26 +7,32 @@ import {
     SetStateAction,
 } from 'react'
 import Image from 'next/image'
-import { good } from '../../types/interfaces'
+import { good } from '@/app/types/entities'
 
+type cartItem = { id: number; quantity: number; good: number }
 type cartGoodProps = {
-    good: good & { quantity: number }
+    cartItem: cartItem
+    good?: good
     index: number
+    cartItems: { [key: number]: cartItem }
     cartGoods: (good & { quantity: number })[]
     setCartGoods: Dispatch<SetStateAction<(good & { quantity: number })[]>>
     handleDelete: (index: number, id: number) => Promise<void>
 }
 
 export default function CartGood({
+    cartItem,
     good,
     index,
-    cartGoods,
+    cartItems,
     setCartGoods,
     handleDelete,
 }: cartGoodProps) {
+    //!rewrite
     function increment() {
-        if (good.quantity < good.available) {
-            let items = [...cartGoods]
+        // incrementGoodQuantity(goodId, quantity)
+        if (cartItem.quantity < good.available) {
+            let items = [...Object.values(cartItems)]
             let item = { ...items[index] }
             item.quantity = item.quantity + 1
             items[index] = item
@@ -34,9 +40,11 @@ export default function CartGood({
         }
     }
 
+    //!rewrite
     function decrement() {
-        if (good.quantity > 1) {
-            let items = [...cartGoods]
+        // decrementGoodQuantity(goodId, quantity)
+        if (cartItem.quantity > 1) {
+            let items = [...cartItems]
             let item = { ...items[index] }
             item.quantity = item.quantity - 1
             items[index] = item
@@ -50,7 +58,7 @@ export default function CartGood({
                 <div className="ml-4">
                     <div className="font-semibold text-xl">{good.title}</div>
                     <div>Price: {good.price}</div>
-                    <div>Total: {good.price * cartGoods[index].quantity}</div>
+                    <div>Total: {good.price * cartItem.quantity}</div>
                     <div className="flex w-24 items-center justify-left">
                         <button
                             type="button"
@@ -65,7 +73,7 @@ export default function CartGood({
                                 <path d="M432 256c0 17.7-14.3 32-32 32L48 288c-17.7 0-32-14.3-32-32s14.3-32 32-32l352 0c17.7 0 32 14.3 32 32z" />
                             </svg>
                         </button>
-                        <div>{good.quantity}</div>
+                        <div>{cartItem.quantity}</div>
                         <button
                             type="button"
                             className="px-2 py-2"
@@ -84,7 +92,7 @@ export default function CartGood({
                         <button
                             className="mt-2 px-4 py-2 block bg-red-500 hover:bg-red-700 rounded-lg text-white shadow-lg"
                             type="button"
-                            onClick={() => handleDelete(index, good.id)}
+                            onClick={() => handleDelete(index, cartItem.id)}
                         >
                             Delete
                         </button>
@@ -92,7 +100,7 @@ export default function CartGood({
                 </div>
                 <div className="ml-6 w-1/2 min-h-full">
                     <Image
-                        src={good.imageUrl}
+                        src={good.imageUrl || '/uploads/no_image.png'}
                         alt="image of product"
                         width="255"
                         height="255"

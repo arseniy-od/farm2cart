@@ -5,50 +5,13 @@ import * as Yup from 'yup'
 import Layout from '../app/layout'
 import { FormInput, Select } from '@/app/components/form'
 import { useAppDispatch } from '@/redux/hooks'
-import { addUser } from '@/redux/actions'
+import { addUser, createUser, loginUser } from '@/redux/actions'
 
 export default function SignUp() {
-    const { push } = useRouter()
     const dispatch = useAppDispatch()
 
-    const login = async (user) => {
-        const res = await fetch('/api/auth', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(user),
-        })
-        console.log('User: ', user)
-
-        if (res.ok) {
-            const user = await res.json()
-            console.log('Login successful')
-            dispatch(addUser(user))
-            push('/')
-        } else {
-            console.error('Login error:', res.statusText)
-        }
-    }
-
     const handleSubmit = async (user) => {
-        console.log('Values: ', user)
-
-        const res = await fetch('/api/users', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(user),
-        })
-
-        if (res.ok) {
-            const createdUser = await res.json()
-            console.log('Sign up successful, user: ', createdUser)
-            await login(user)
-        } else {
-            console.error('Sign up error: ', res.statusText)
-        }
+        dispatch(createUser(user))
     }
 
     return (

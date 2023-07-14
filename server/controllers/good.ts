@@ -103,7 +103,7 @@ export default class GoodController extends BaseController {
         }
         const goodData = { ...body, id: query.id, active: true }
         // console.log('[api/goods] goodData before: ', goodData)
-        if (!(goodData.categories instanceof Array)) {
+        if (!(goodData.categories instanceof Array) && goodData.categories) {
             goodData.categories = [goodData.categories]
         }
         // console.log('[api/goods] goodData after:', goodData)
@@ -112,7 +112,7 @@ export default class GoodController extends BaseController {
             console.log('File:', file)
             goodData.imageUrl = file.path.replace('public', '')
         }
-        const good = await this.GoodService.updateGood(goodData)
+        const good = await this.GoodService.patchGood(goodData)
         return good
     }
 

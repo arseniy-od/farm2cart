@@ -53,6 +53,40 @@ export default function entitiesReducer(state = initialState, action) {
                 }
             }
             break
+        case 'entities/update_array_field':
+            {
+                console.log('Update array field')
+                if (action.payload) {
+                    const {
+                        entityName,
+                        entityId,
+                        entityField,
+                        data,
+                    }: {
+                        entityName: string
+                        entityId: number
+                        entityField: string
+                        data: any
+                    } = action.payload
+                    if (!state[entityName] || !state[entityName][entityId]) {
+                        return state
+                    }
+                    const entity = state[entityName][entityId]
+                    const field = entity[entityField]
+                    const updatedField = [...field, data]
+                    const updatedEntity = {
+                        ...entity,
+                        [entityField]: updatedField,
+                    }
+                    const nextEntityList = {
+                        ...state[entityName],
+                        [entityId]: updatedEntity,
+                    }
+                    const nextState = { ...state, [entityName]: nextEntityList }
+                    return nextState
+                }
+            }
+            break
 
         default:
             return state

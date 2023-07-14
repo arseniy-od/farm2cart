@@ -16,9 +16,14 @@ function ReviewCard({ review, author }: Props) {
         <div className="mt-4 px-2 py-2 w-3/4 lg:w-1/2 xl:w-1/3 bg-gray-100 shadow-lg">
             <div>
                 <div className="px-3 py-2 flex justify-between">
-                    <Link href={'/users/' + author.id}>
-                        <div>{author.username}</div>
-                    </Link>
+                    {author ? (
+                        <Link href={'/users/' + author.id}>
+                            <div>{author.username}</div>
+                        </Link>
+                    ) : (
+                        <div>deleted</div>
+                    )}
+
                     <div className="text-gray-700">
                         {formatDateTime(review.datepub)}
                     </div>
@@ -33,7 +38,7 @@ function ReviewCard({ review, author }: Props) {
 }
 
 const mapState = (state: RootState, ownProps) => ({
-    author: state.entities.users[ownProps.review.author],
+    author: state.entities.users?.[ownProps.review.author],
 })
 
 const connector = connect(mapState, null)
