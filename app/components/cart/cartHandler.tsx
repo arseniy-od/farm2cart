@@ -1,45 +1,35 @@
-import good from '@/server/services/good'
+import { good } from '@/app/types/entities'
+import { isEmpty } from '@/app/utils'
+import {
+    addToCart,
+    createOrder,
+    deleteCartItem,
+    fetchCartItems,
+} from '@/redux/actions'
+import { useAppDispatch } from '@/redux/hooks'
+import { RootState } from '@/redux/store'
+import GoodController from '@/server/controllers/good'
 import { useState, MouseEvent, useEffect } from 'react'
+import { connect, ConnectedProps } from 'react-redux'
 
-export default function CartHandler({ good }) {
+function CartHandler({
+    good,
+    cartItems,
+    fetchCartItems,
+    addToCart,
+}: PropsFromRedux & { good: good }) {
     const [inCart, setInCart] = useState(false)
 
-    //! rewrite
     const isInCart = () => {
-        fetch('/api/cart')
-            .then((res) => res.json())
-            .then((cartContent) => {
-                // console.log('Cart content')
-                if (!cartContent?.length) {
-                    let isFound = false
-                    for (let cartItem of cartContent) {
-                        if (cartItem.good.id === good.id) {
-                            isFound = true
-                        }
-                    }
-                    setInCart(isFound)
-                }
-            })
+        if (cartItems && !isEmpty(cartItems)) {
+            setInCart(good.id in cartItems)
+        }
     }
 
-    useEffect(isInCart, [good.id])
+    useEffect(isInCart, [cartItems, good.id, fetchCartItems])
 
-    //! rewrite
     async function handleAddCart(event: MouseEvent<HTMLButtonElement>) {
-        console.log('Before post request')
-        const res = await fetch('/api/cart', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ goodId: good.id }),
-        })
-
-        if (res.ok) {
-            setInCart(true)
-            const cartRes = await res.json()
-            console.log('Good added to cart')
-        } else {
-            console.log('Problem while adding good to cart')
-        }
+        addToCart(good.id)
     }
     return (
         <div className="">
@@ -65,3 +55,17 @@ export default function CartHandler({ good }) {
         </div>
     )
 }
+
+const mapState = (state: RootState) => ({
+    cartItems: state.entities.cartItems,
+    goods: state.entities.goods,
+})
+
+const mapDispatch = {
+    fetchCartItems,
+    addToCart,
+}
+
+const connector = connect(mapState, mapDispatch)
+type PropsFromRedux = ConnectedProps<typeof connector>
+export default connector(CartHandler)

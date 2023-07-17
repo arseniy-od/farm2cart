@@ -44,13 +44,13 @@
 //     }
 // }
 
-export async function fetchApi(url) {
-    console.log('fetchApi url: ', url)
+// export async function fetchApi(url) {
+//     console.log('fetchApi url: ', url)
 
-    const res = await fetch(url)
-    const data = await res.json()
-    console.log('fetched data:', data)
-    if (data) {
-        return data
-    }
-}
+//     const res = await fetch(url)
+//     const data = await res.json()
+//     console.log('fetched data:', data)
+//     if (data) {
+//         return data
+//     }
+// }

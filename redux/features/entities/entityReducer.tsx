@@ -1,8 +1,10 @@
 import _ from 'lodash'
 
 import { isEmpty, jsonCopy } from '@/app/utils'
+import { STRATEGIES } from '@/app/constants'
+import { entities } from '@/app/types/entities'
 
-const initialState = {}
+const initialState: entities = {}
 
 export default function entitiesReducer(state = initialState, action) {
     switch (action.type) {
@@ -15,7 +17,11 @@ export default function entitiesReducer(state = initialState, action) {
                         Object.keys(entities).map((entityName) => {
                             let entityList = nextState[entityName]
                             // console.log('[previous state] entityList:', entityList)
-                            if (entityList && !isEmpty(entityList)) {
+                            if (
+                                entityList &&
+                                !isEmpty(entityList) &&
+                                !(action.payload.strategy === STRATEGIES.MERGE)
+                            ) {
                                 Object.keys(entities[entityName]).map((id) => {
                                     delete entityList[id]
                                 })
@@ -31,6 +37,7 @@ export default function entitiesReducer(state = initialState, action) {
                         return nextState
                     }
                 }
+                return state
             }
             break
         case 'entities/update_one':
@@ -87,7 +94,28 @@ export default function entitiesReducer(state = initialState, action) {
                 }
             }
             break
-
+        case 'entities/delete':
+            {
+                if (action.payload) {
+                    const { entityName, entityId } = action.payload
+                    const entityList = state[entityName]
+                    let { [entityId]: omit, ...res } = entityList
+                    return {
+                        ...state,
+                        [entityName]: res,
+                    }
+                }
+            }
+            break
+        case 'entities/clear':
+            {
+                if (action.payload && typeof action.payload === 'string') {
+                    const entityName: string = action.payload
+                    let { [entityName]: omit, ...nextState } = state
+                    return nextState
+                }
+            }
+            break
         default:
             return state
     }

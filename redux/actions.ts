@@ -1,3 +1,4 @@
+import { STRATEGIES } from '@/app/constants'
 import { entities, good, review } from '@/app/types/entities'
 import { order, user } from '@/app/types/interfaces'
 
@@ -35,6 +36,15 @@ export const decrementQuantity = (good, quantity: number) =>
         entityFields: { available: good.available - quantity },
     })
 
+export const changeGoodQuantity = (goodId, quantity) =>
+    action('entities/update_one', {
+        entityName: 'cartItems',
+        entityId: goodId,
+        entityFields: { quantity },
+    })
+
+export const updateGood = (good: good) => action('saga/update_good', good)
+
 // create entity
 
 export const createOrder = (cartData) => action('saga/create_order', cartData)
@@ -45,13 +55,18 @@ export const createReview = (review, goodId) =>
 export const createOrderFail = (message) =>
     action('saga/create_order_fail', message)
 
-export const addGood = (good: good) => action('entities/update', good)
+export const createGood = (good: good) => action('saga/create_good', good)
+
+// export const addGood = (good: good) => action('entities/update', good)
+
+export const addToCart = (goodId: number) => action('saga/add_to_cart', goodId)
 
 // delete entity
 
-//not implemented yet
-export const deleteCartItem = (id: number) =>
-    action('entities/delete', { entityName: 'cartItems', id })
+export const deleteCartItem = (index: number) =>
+    action('saga/delete_cart_item', { index })
+
+export const clearCart = () => action('entities/clear', 'cartItems')
 
 // auth
 
@@ -81,11 +96,13 @@ export const fetchCartItems = () => action('saga/fetch_cart')
 
 //entities
 
-export const updateEntities = (entities: entities) =>
-    action('entities/update', entities)
+export const updateEntities = (
+    normalizedData: { entities: entities },
+    strategy: string = STRATEGIES.REPLACE
+) => action('entities/update', { entities: normalizedData.entities, strategy })
 
-// not used
-export const deleteEntity = (id: number) => action('entities/delete', id)
+export const deleteEntity = (entityName: string, entityId: number) =>
+    action('entities/delete', { entityName, entityId })
 
 export const updateEntityArrayField = (data: {
     entityName: string

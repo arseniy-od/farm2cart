@@ -1,94 +1,38 @@
 import { useRouter } from 'next/navigation'
 import { Dispatch, SetStateAction, useRef } from 'react'
-import axios from 'axios'
+
 import { Formik, Field, Form, ErrorMessage, useField, FieldArray } from 'formik'
 import * as Yup from 'yup'
 
 import Layout from '@/app/layout'
-import { useAppDispatch } from '@/redux/hooks'
-import goods from '@/pages/api/goods/goods'
 import { TextArea, FormInput, FileUpload, Checkbox } from '../form'
 import { category, good } from '@/app/types/entities'
-import { addGood } from '@/redux/actions'
+import { createGood, updateGood } from '@/redux/actions'
 import { ConnectedProps, connect } from 'react-redux'
-import { normalize } from 'normalizr'
-import { goodSchema } from '@/redux/normalSchemas'
 
-function GoodForm({ good, categories, method, addGood }: Props) {
-    const { push } = useRouter()
+import { RootState } from '@/redux/store'
+
+function GoodForm({ good, categories, method, createGood, updateGood }: Props) {
     const fileRef = useRef({ files: [] })
-    const initialCategories = good.categories.map((id) => id.toString())
-
-    function toFormData(good, method) {
-        const formData = new FormData()
-        const file = fileRef.current?.files[0]
-        if (!file) {
-            console.log('[submit] File not found')
-        } else {
-            console.log('File found: ', file)
-            formData.append('file', file)
-        }
-
-        if (method === 'put' && good.id) {
-            formData.append('id', good.id)
-        }
-        formData.append('title', good.title)
-        formData.append('description', good.description)
-        formData.append('imageUrl', good.imageUrl)
-        formData.append('price', good.price)
-        formData.append('available', good.available)
-        formData.append('active', '1')
-
-        good.categories.forEach((category) => {
-            formData.append('categories', category)
-        })
-        console.log('formData:', formData)
-        return formData
-    }
-
-    async function apiPost(formData) {
-        const config = {
-            headers: { 'content-type': 'multipart/form-data' },
-        }
-        const response = await axios.post('/api/goods', formData, config)
-        if (response.status === 200) {
-            return response.data
-        } else {
-            console.error(response.statusText)
-        }
-    }
-
-    async function apiPut(formData) {
-        const config = {
-            headers: { 'content-type': 'multipart/form-data' },
-        }
-        const response = await axios.put('/api/goods', formData, config)
-        if (response.status === 200) {
-            return response.data
-        } else {
-            console.error(response.statusText)
-        }
+    let initialCategories: string[] = []
+    if (good.categories) {
+        initialCategories = good.categories.map((id) => id.toString())
     }
 
     const handleSubmit = async (values) => {
-        const formData = toFormData(values, method)
+        const file = fileRef.current?.files[0]
+        values.file = file
         values.categories = values.categories.map((id) => parseInt(id))
         let goodRes: good | null = null
         if (method === 'post') {
-            goodRes = await apiPost(formData)
-            const normGood = normalize(goodRes, goodSchema)
-            addGood(normGood)
+            console.log('Create good dispatch')
+            createGood(values)
         } else if (method === 'put') {
-            goodRes = await apiPut(formData)
-            const normGood = normalize(goodRes, goodSchema)
-            addGood(normGood)
+            updateGood(values)
         } else {
             throw new Error(
                 `Method ${method} is not implemented. Use 'post' or 'put'`
             )
-        }
-        if (goodRes?.id) {
-            push('/goods/' + goodRes.id)
         }
     }
 
@@ -186,11 +130,16 @@ function GoodForm({ good, categories, method, addGood }: Props) {
     )
 }
 
+const mapState = (state: RootState) => ({
+    categories: state.entities.categories,
+})
+
 const mapDispatch = {
-    addGood,
+    createGood,
+    updateGood,
 }
 
-const connector = connect(null, mapDispatch)
+const connector = connect(mapState, mapDispatch)
 type Props = ConnectedProps<typeof connector> & {
     good: good & {
         categories: number[] | string[]

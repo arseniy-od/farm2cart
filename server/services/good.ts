@@ -143,14 +143,14 @@ export default class GoodService extends BaseContext {
     }
 
     async updateGood(goodData: good) {
-        console.log('updateGood goodData:', goodData)
+        // console.log('updateGood goodData:', goodData)
         const good = await this.Good.findByPk(goodData.id)
-        console.log('[GoodService] good before:', good)
+        // console.log('[GoodService] good before:', good)
         if (!good) {
             return { error: true, message: 'Good not found' }
         }
         await good.update(goodData)
-        console.log('[GoodService] good after:', good)
+        // console.log('[GoodService] good after:', good)
         await good.setCategories([])
         await goodData.categories.forEach(async (catId) => {
             const categoryGood = await this.Category.findOne({

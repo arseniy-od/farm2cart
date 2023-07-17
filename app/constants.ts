@@ -5,3 +5,8 @@ export const METHODS = {
     PATCH: 'PATCH',
     DELETE: 'DELETE',
 }
+
+export const STRATEGIES = {
+    MERGE: 'MERGE',
+    REPLACE: 'REPLACE',
+}

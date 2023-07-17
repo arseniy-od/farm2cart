@@ -10,6 +10,8 @@ import {
     orderGoodsSchema,
 } from '../normalSchemas'
 import { activateGoodRedux, deactivateGoodRedux } from '../actions'
+import { toFormData } from '@/app/utils'
+import Router from 'next/router'
 
 class GoodEntity extends Entity {
     constructor() {
@@ -18,6 +20,8 @@ class GoodEntity extends Entity {
         this.fetchGoods = this.fetchGoods.bind(this)
         this.activateGood = this.activateGood.bind(this)
         this.deactivateGood = this.deactivateGood.bind(this)
+        this.createGood = this.createGood.bind(this)
+        this.updateGood = this.updateGood.bind(this)
         this.initSchema('goods', {
             seller: userSchema,
             categories: [categorySchema],
@@ -49,11 +53,43 @@ class GoodEntity extends Entity {
         }
     }
 
+    *createGood() {
+        while (true) {
+            const { payload } = yield take('saga/create_good')
+            console.log('VALUES:', payload)
+            const data = toFormData(payload, 'post')
+            const good = yield call(
+                this.saveData,
+                '/api/goods',
+                data,
+                'multipart/form-data'
+            )
+            Router.push('/goods/' + good.id)
+        }
+    }
+
+    *updateGood() {
+        while (true) {
+            const { payload } = yield take('saga/update_good')
+            console.log('VALUES:', payload)
+            const data = toFormData(payload, 'put')
+            const good = yield call(
+                this.updateData,
+                '/api/goods',
+                data,
+                'multipart/form-data'
+            )
+            Router.push('/goods/' + good.id)
+        }
+    }
+
     *goodSaga() {
         yield all([
             call(this.fetchGoods),
             call(this.activateGood),
             call(this.deactivateGood),
+            call(this.createGood),
+            call(this.updateGood),
         ])
     }
 }

@@ -23,7 +23,7 @@ class AuthEntity extends Entity {
     *saveUser(url, user) {
         try {
             const result = yield this.fetchApi(url, METHODS.POST, user)
-            yield put(addUser(result))
+            yield put(addUser(result.user))
             Router.push('/')
         } catch (error) {
             yield put(fetchFailed(error.message))
@@ -33,7 +33,7 @@ class AuthEntity extends Entity {
     *readUser(url) {
         try {
             const result = yield this.fetchApi(url, METHODS.GET)
-            if (result && !isEmpty(result)) {
+            if (result && !isEmpty(result) && !result.error) {
                 yield put(addUser(result))
             } else {
                 yield put(noUser())

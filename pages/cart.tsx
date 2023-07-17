@@ -1,13 +1,13 @@
 import { useRouter } from 'next/navigation'
 import { useState, useEffect, useCallback, MouseEvent } from 'react'
-import axios from 'axios'
 
 import { NextApiRequest, NextApiResponse } from 'next'
 import { good } from '@/app/types/interfaces'
 import { useAppDispatch } from '@/redux/hooks'
 import CartMain from '@/app/components/cart/cartMain'
-import { apiDelete, getTotal, isEmpty } from '@/app/utils'
+import { getTotal, isEmpty } from '@/app/utils'
 import {
+    clearCart,
     createOrder,
     decrementQuantity,
     deleteCartItem,
@@ -20,6 +20,7 @@ import { RootState } from '@/redux/store'
 import { ConnectedProps, connect } from 'react-redux'
 import CartGood from '@/app/components/cart/cartGood'
 import Layout from '@/app/layout'
+import { array } from 'yup'
 
 type cart = (good & { quantity: number })[]
 
@@ -29,36 +30,29 @@ function Cart({
     fetchCartItems,
     deleteCartItem,
     createOrder,
+    clearCart,
 }: PropsFromRedux) {
-    const [cartGoods, setCartGoods] = useState<(good & { quantity: number })[]>(
-        []
-    )
-    // const dispatch = useAppDispatch()
-
-    // function fetchCart() {
-    //     fetch('/api/cart')
-    //         .then((res) => res.json())
-    //         .then((cart: cart) => setCartGoods(cart))
-    // }
-
     useEffect(() => {
         fetchCartItems()
     }, [fetchCartItems])
 
     const handleDelete = async (index: number, id: number) => {
-        deleteCartItem(index) //! implement
-        // const res = await apiDelete(`/api/cart?index=${index}`)
-        // if (!res.error) {
-        //     setCartGoods(
-        //         cartGoods.filter((cartGood: good) => cartGood.id !== id)
-        //     )
-        // }
+        deleteCartItem(index)
     }
 
     async function handleSubmit(event: MouseEvent<HTMLButtonElement>) {
         event.preventDefault()
+        if (!cartItems) {
+            throw new Error('cartItems not found')
+        }
+        const cartGoods = Object.values(goods).reduce((acc: any, good) => {
+            if (good.id in cartItems) {
+                acc.push({ ...good, quantity: cartItems[good.id].quantity })
+            }
+            return acc
+        }, [])
         const cartData = { goods: cartGoods, total: getTotal(cartGoods) }
-        //! check is everything ok
+        clearCart()
         createOrder(cartData)
     }
 
@@ -86,10 +80,8 @@ function Cart({
                             <div key={i}>
                                 <CartGood
                                     cartItem={cartItem}
-                                    good={goods[cartItem.good]}
+                                    good={goods?.[cartItem?.good]}
                                     index={i}
-                                    cartItems={cartItems}
-                                    setCartGoods={setCartGoods}
                                     handleDelete={handleDelete}
                                 />
                             </div>
@@ -117,6 +109,7 @@ const mapDispatch = {
     fetchCartItems,
     deleteCartItem,
     createOrder,
+    clearCart,
 }
 
 const connector = connect(mapState, mapDispatch)

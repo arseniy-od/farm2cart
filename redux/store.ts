@@ -12,6 +12,7 @@ import goodInstance from './models/good'
 import authInstance from './models/auth'
 import reviewInstance from './models/review'
 import cartInstance from './models/cart'
+import { all, call } from 'redux-saga/effects'
 
 const sagaMiddleware = createSagaMiddleware()
 
@@ -21,12 +22,17 @@ export const setupStore = () => {
         middleware: (getDefaultMiddleware) =>
             getDefaultMiddleware().concat(sagaMiddleware),
     })
-    sagaMiddleware.run(categoryInstance.categorySaga)
-    sagaMiddleware.run(orderInstance.orderSaga)
-    sagaMiddleware.run(authInstance.authSaga)
-    sagaMiddleware.run(goodInstance.goodSaga)
-    sagaMiddleware.run(reviewInstance.reviewSaga)
-    sagaMiddleware.run(cartInstance.cartSaga)
+    function* rootSaga() {
+        yield all([
+            call(categoryInstance.categorySaga),
+            call(orderInstance.orderSaga),
+            call(authInstance.authSaga),
+            call(goodInstance.goodSaga),
+            call(reviewInstance.reviewSaga),
+            call(cartInstance.cartSaga),
+        ])
+    }
+    sagaMiddleware.run(rootSaga)
     return store
 }
 

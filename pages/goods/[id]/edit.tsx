@@ -12,7 +12,7 @@ import ErrorMessage from '@/app/components/errorMessage'
 
 import { ContextDynamicRoute } from '@/app/types/interfaces'
 
-function EditGood({ good, categories }: Props) {
+function EditGood({ good }: Props) {
     if (!good) {
         return (
             <Layout>
@@ -20,12 +20,11 @@ function EditGood({ good, categories }: Props) {
             </Layout>
         )
     }
-    return <GoodForm good={good} categories={categories} method="put" />
+    return <GoodForm good={good} method="put" />
 }
 
 const mapState = (state: RootState, ownProps) => ({
     good: state.entities.goods?.[ownProps.id],
-    categories: state.entities.categories,
 })
 
 const connector = connect(mapState, null)

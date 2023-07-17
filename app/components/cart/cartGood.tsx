@@ -8,15 +8,14 @@ import {
 } from 'react'
 import Image from 'next/image'
 import { good } from '@/app/types/entities'
+import { useAppDispatch } from '@/redux/hooks'
+import { changeGoodQuantity } from '@/redux/actions'
 
 type cartItem = { id: number; quantity: number; good: number }
 type cartGoodProps = {
     cartItem: cartItem
     good?: good
     index: number
-    cartItems: { [key: number]: cartItem }
-    cartGoods: (good & { quantity: number })[]
-    setCartGoods: Dispatch<SetStateAction<(good & { quantity: number })[]>>
     handleDelete: (index: number, id: number) => Promise<void>
 }
 
@@ -24,32 +23,23 @@ export default function CartGood({
     cartItem,
     good,
     index,
-    cartItems,
-    setCartGoods,
     handleDelete,
 }: cartGoodProps) {
-    //!rewrite
+    const dispatch = useAppDispatch()
+
     function increment() {
-        // incrementGoodQuantity(goodId, quantity)
-        if (cartItem.quantity < good.available) {
-            let items = [...Object.values(cartItems)]
-            let item = { ...items[index] }
-            item.quantity = item.quantity + 1
-            items[index] = item
-            setCartGoods(items)
+        if (good && cartItem.quantity < good.available) {
+            dispatch(changeGoodQuantity(good.id, cartItem.quantity + 1))
         }
     }
 
-    //!rewrite
     function decrement() {
-        // decrementGoodQuantity(goodId, quantity)
-        if (cartItem.quantity > 1) {
-            let items = [...cartItems]
-            let item = { ...items[index] }
-            item.quantity = item.quantity - 1
-            items[index] = item
-            setCartGoods(items)
+        if (good && cartItem.quantity > 1) {
+            dispatch(changeGoodQuantity(good.id, cartItem.quantity - 1))
         }
+    }
+    if (!good) {
+        return <div className="text-xl">Good not found</div>
     }
 
     return (

@@ -36,6 +36,9 @@ export default class CartController extends BaseController {
         let good = await this.GoodService.getGoodById(goodData.goodId)
         good = JSON.parse(JSON.stringify(good))
 
+        if (good.error) {
+            throw new Error('Error while fetching good: ', good.message)
+        }
         // good can be in only one cart item
         await session.cart.push({ id: good.id, quantity: 1, good })
         await session.commit()
@@ -46,15 +49,18 @@ export default class CartController extends BaseController {
     @DELETE('/api/cart')
     async deleteFromCart({ session, query }: NextApiRequestWithUser) {
         if (typeof query.index === 'string') {
-            const good = await session.cart.goods.splice(
-                parseInt(query.index),
-                1
-            )
+            const good = await session.cart.splice(parseInt(query.index), 1)[0]
+            if (!session.cart.length) {
+                session.cart = null
+            }
+            await session.commit()
+            return { res: 'Ok', goodId: good.id }
+        } else {
+            return {
+                error: true,
+                message:
+                    'index format is not supported. Use /api/cart?index=<int>',
+            }
         }
-        if (!session.cart.goods.length) {
-            session.cart = null
-        }
-        await session.commit()
-        return { res: `Good #${query.index} deleted` }
     }
 }

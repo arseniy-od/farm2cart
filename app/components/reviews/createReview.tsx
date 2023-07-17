@@ -33,29 +33,6 @@ function CreateReview({ good, createReview }: Props) {
             text: '',
             score: 5,
         })
-
-        // const res = await fetch('/api/reviews', {
-        //     method: 'POST',
-        //     headers: {
-        //         'Content-Type': 'application/json',
-        //     },
-        //     body: JSON.stringify(review),
-        // })
-
-        // if (res.ok) {
-        //     const newReview = await res.json()
-        //     const normReview = normalize(newReview, reviewSchema)
-        //     updateEntities(normReview)
-        //     // setReviews([...reviews, newReview])
-        //     setReview({
-        //         goodId: good.id,
-        //         text: '',
-        //         score: 5,
-        //     })
-        //     console.log('Review creation ok')
-        // } else {
-        //     console.log('Review creation not ok')
-        // }
     }
 
     function incrementScore() {

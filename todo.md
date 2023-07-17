@@ -27,6 +27,3 @@ Add api endpoint for user-specific goods:
 ? Refactor entities reducer to spread
 
 ## Grand entities refactor:
-
--   good/id/edit & create post form-data
--   create entity for cart

@@ -53,11 +53,11 @@ export default class GoodController extends BaseController {
             return { error: true, message: 'You are not logged in' }
         }
         const goodData = { ...body, seller_id: identity.id }
-        // console.log('[api/goods] goodData before: ', goodData)
+        console.log('[api/goods] goodData before: ', goodData)
         if (!(goodData.categories instanceof Array)) {
             goodData.categories = [goodData.categories]
         }
-        // console.log('[api/goods] goodData after:', goodData)
+        console.log('[api/goods] goodData after:', goodData)
 
         if (file) {
             goodData.imageUrl = file.path.replace('public', '')
@@ -65,7 +65,7 @@ export default class GoodController extends BaseController {
         // console.log('[api/goods] goodData: ', goodData)
 
         const good = await this.GoodService.createGood(goodData)
-        // console.log('[api/goods] Good: ', good)
+        console.log('[api/goods] Good: ', good)
         return good
     }
 
@@ -74,7 +74,7 @@ export default class GoodController extends BaseController {
     // @USE(validate(goodSchema)) // problems with form-data
     async updateGood({ body, identity, file }: NextApiRequestFile) {
         // console.log('==========[GoodController]==============')
-        // console.log('Body:', body)
+        console.log('Body:', body)
         if (!identity) {
             return { error: true, message: 'You are not logged in' }
         }

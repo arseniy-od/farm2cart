@@ -35,18 +35,25 @@ export default class Entity {
     protected async fetchApi(
         url: string,
         method: string,
-        data?: Record<string, any>,
+        data?: Record<string, any> | FormData,
         contentType: string = 'application/json'
     ) {
         const options: IOptions = {
             method: method,
         }
-        if (method === METHODS.POST) {
-            options.headers = {
-                'Content-Type': contentType,
+        console.log('Method is: ', method)
+        if ([METHODS.POST, METHODS.PUT, METHODS.PATCH].includes(method)) {
+            console.log('Options')
+            if (contentType === 'multipart/form-data' && data) {
+                options.body = data
+            } else {
+                options.headers = {
+                    'Content-Type': contentType,
+                }
+                options.body = JSON.stringify(data)
             }
-            options.body = JSON.stringify(data)
         }
+        console.log('content type: ', contentType)
         let res = await fetch(url, options)
         if (res.ok) {
             const result = await res.json()
@@ -69,19 +76,14 @@ export default class Entity {
     protected *actionRequest(
         url: string,
         method: string,
-        data?: Record<string, any>
+        data?: Record<string, any>,
+        contentType: string = 'application/json'
     ) {
         try {
-            if (method === METHODS.DELETE) {
-                yield this.fetchApi(url, method)
-                // yield put(deleteEntity(data?.id))
-                return
+            const result = yield this.fetchApi(url, method, data, contentType)
+            if (method === (METHODS.DELETE || METHODS.PATCH)) {
+                return result
             }
-            if (method == METHODS.PATCH) {
-                yield this.fetchApi(url, method)
-                return
-            }
-            const result = yield this.fetchApi(url, method, data)
             const normalizedResult = this.normalizeData(result)
             const id = normalizedResult.result
             yield put(updateEntities(normalizedResult))
@@ -95,13 +97,21 @@ export default class Entity {
         return this.actionRequest(url, METHODS.GET)
     }
 
-    protected saveData(url: string, data: Record<string, any>) {
+    protected saveData(
+        url: string,
+        data: Record<string, any>,
+        contentType: string = 'application/json'
+    ) {
         console.log('saveData, data: ', data)
-        return this.actionRequest(url, METHODS.POST, data)
+        return this.actionRequest(url, METHODS.POST, data, contentType)
     }
 
-    protected updateData(url: string, data: Record<string, any>) {
-        return this.actionRequest(url, METHODS.PUT, data)
+    protected updateData(
+        url: string,
+        data: Record<string, any>,
+        contentType: string = 'application/json'
+    ) {
+        return this.actionRequest(url, METHODS.PUT, data, contentType)
     }
 
     protected patchData(url: string, data: Record<string, any>) {

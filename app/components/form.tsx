@@ -104,6 +104,7 @@ export const Checkbox = ({ children, name, ...props }) => {
 
 export const FileUpload = ({ fileRef, name, ...props }) => {
     const [field, meta] = useField({ ...props, name })
+    const { value, ...rest } = field
     return (
         <div>
             <div>
@@ -114,7 +115,7 @@ export const FileUpload = ({ fileRef, name, ...props }) => {
                 ref={fileRef}
                 multiple={false}
                 type="file"
-                {...field}
+                {...rest}
             />
             {meta.touched && meta.error ? (
                 <div style={{ color: 'red' }}>{meta.error}</div>
