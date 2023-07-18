@@ -11,6 +11,7 @@ import Layout from '@/app/layout'
 import ErrorMessage from '@/app/components/errorMessage'
 
 import { ContextDynamicRoute } from '@/app/types/interfaces'
+import clientContainer from '@/redux/container'
 
 function EditGood({ good }: Props) {
     if (!good) {
@@ -31,8 +32,9 @@ const connector = connect(mapState, null)
 type PropsFromRedux = ConnectedProps<typeof connector>
 type Props = PropsFromRedux & { id: number; error?: boolean; message?: string }
 
-export const getServerSideProps = wrapper.getServerSideProps(
-    (store) => async (ctx: ContextDynamicRoute) => {
+export const getServerSideProps = clientContainer
+    .resolve('redux')
+    .wrapper.getServerSideProps((store) => async (ctx: ContextDynamicRoute) => {
         ctx.routeName = '/goods/:id'
         const res = await container.resolve('GoodController').run(ctx)
         const good = res.props?.data.good
@@ -45,7 +47,6 @@ export const getServerSideProps = wrapper.getServerSideProps(
         return {
             props: { id: good.id },
         }
-    }
-)
+    })
 
 export default connector(EditGood)

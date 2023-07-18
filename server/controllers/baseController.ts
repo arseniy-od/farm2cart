@@ -109,13 +109,10 @@ export default class BaseController extends BaseContext {
                             }
                             if (data.error || data.notFound) {
                                 console.error(data.message || data)
-                                return res
-                                    .status(500)
-                                    .json({
-                                        error: true,
-                                        message:
-                                            data.message || 'Data not found',
-                                    })
+                                return res.status(500).json({
+                                    error: true,
+                                    message: data.message || 'Data not found',
+                                })
                             }
                             return res.status(200).json(data)
                         } catch (err: any) {

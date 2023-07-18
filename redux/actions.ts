@@ -7,13 +7,14 @@ export const action = (type: string, payload?: any) => ({
     payload,
 })
 
-// update entity
+// good
+export const createGood = (good: good) => action('GoodEntity_createGood', good)
 
 export const deactivateGoodSaga = (good: good) =>
-    action('saga/deactivate_good', good)
+    action('GoodEntity_deactivateGood', good)
 
 export const activateGoodSaga = (good: good) =>
-    action('saga/activate_good', good)
+    action('GoodEntity_activateGood', good)
 
 export const deactivateGoodRedux = (good: good) =>
     action('entities/update_one', {
@@ -29,6 +30,12 @@ export const activateGoodRedux = (good: good) =>
         entityFields: { active: true },
     })
 
+export const updateGood = (good: good) => action('GoodEntity_updateGood', good)
+
+export const fetchMyGoods = () => action('GoodEntity_fetchGoods')
+
+// cart
+
 export const decrementQuantity = (good, quantity: number) =>
     action('entities/update_one', {
         entityName: 'goods',
@@ -43,56 +50,52 @@ export const changeGoodQuantity = (goodId, quantity) =>
         entityFields: { quantity },
     })
 
-export const updateGood = (good: good) => action('saga/update_good', good)
-
 // create entity
 
-export const createOrder = (cartData) => action('saga/create_order', cartData)
+export const createOrder = (cartData) =>
+    action('OrderEntity_addOrder', cartData)
 
 export const createReview = (review, goodId) =>
-    action('saga/create_review', { review, goodId })
+    action('ReviewEntity_addReview', { review, goodId })
 
 export const createOrderFail = (message) =>
     action('saga/create_order_fail', message)
 
-export const createGood = (good: good) => action('saga/create_good', good)
-
 // export const addGood = (good: good) => action('entities/update', good)
 
-export const addToCart = (goodId: number) => action('saga/add_to_cart', goodId)
+export const addToCart = (goodId: number) =>
+    action('CartEntity_addToCart', goodId)
 
 // delete entity
 
 export const deleteCartItem = (index: number) =>
-    action('saga/delete_cart_item', { index })
+    action('CartEntity_deleteCartItem', { index })
 
 export const clearCart = () => action('entities/clear', 'cartItems')
 
 // auth
 
-export const createUser = (user) => action('saga/create_user', user)
+export const createUser = (user) => action('AuthEntity_createUser', user)
 
 export const addUser = (user: user) => action('user/fetch_success', user)
 
 export const noUser = () => action('user/fetch_blank')
 
-export const loginUser = (user: user) => action('saga/login', user)
+export const loginUser = (user: user) => action('AuthEntity_loginUser', user)
 
-export const logoutSaga = () => action('saga/logout')
+export const logoutSaga = () => action('AuthEntity_logoutUser')
+
+export const fetchUser = () => action('AuthEntity_fetchUser')
 
 export const logoutRedux = () => action('user/logout')
 
 // fetching data
 
-export const fetchUser = () => action('saga/fetch_user')
+export const fetchCategories = () => action('CategoryEntity_fetchCategories')
 
-export const fetchCategories = () => action('saga/fetch_categories')
+export const fetchOrders = () => action('OrderEntity_fetchOrders')
 
-export const fetchOrders = () => action('saga/fetch_orders')
-
-export const fetchMyGoods = () => action('saga/fetch_goods')
-
-export const fetchCartItems = () => action('saga/fetch_cart')
+export const fetchCartItems = () => action('CartEntity_fetchCart')
 
 //entities
 

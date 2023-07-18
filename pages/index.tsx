@@ -5,10 +5,10 @@ import container from '@/server/container'
 import { ContextDynamicRoute } from '@/app/types/interfaces'
 import GoodsPage from '@/app/components/goods/goodsPage'
 import { RootState } from '@/redux/store'
-import { wrapper } from '@/redux/store'
 import { fetchCartItems, updateEntities } from '@/redux/actions'
 import { goodsSchema, categoriesSchema } from '@/redux/normalSchemas'
 import { useEffect } from 'react'
+import clientContainer from '@/redux/container'
 
 function Goods({ goods, categories, fetchCartItems }: PropsFromRedux) {
     useEffect(() => {
@@ -34,8 +34,9 @@ const mapDispatch = {
 const connector = connect(mapState, mapDispatch)
 type PropsFromRedux = ConnectedProps<typeof connector>
 
-export const getServerSideProps = wrapper.getServerSideProps(
-    (store) => async (ctx: ContextDynamicRoute) => {
+export const getServerSideProps = clientContainer
+    .resolve('redux')
+    .wrapper.getServerSideProps((store) => async (ctx: ContextDynamicRoute) => {
         ctx.routeName = '/'
         const res = await container.resolve('GoodController').run(ctx)
         const { goods, categories } = res.props?.data
@@ -45,7 +46,6 @@ export const getServerSideProps = wrapper.getServerSideProps(
         store.dispatch(updateEntities(normCategories))
 
         return { props: {} }
-    }
-)
+    })
 
 export default connector(Goods)

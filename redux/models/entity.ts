@@ -6,6 +6,8 @@ import { action, deleteEntity, fetchFailed, updateEntities } from '../actions'
 import 'reflect-metadata'
 import { ISagaMethods } from '@/app/types/common'
 import CategoryEntity from './category'
+import BaseClientContext from '../baseClientContext'
+import clientContainer from '../container'
 
 interface IOptions {
     method: string
@@ -13,8 +15,9 @@ interface IOptions {
     body?: string
 }
 
-export default class Entity {
-    constructor() {
+export default class Entity extends BaseClientContext {
+    constructor(opts) {
+        super(opts)
         this.fetchApi = this.fetchApi.bind(this)
         this.readData = this.readData.bind(this)
         this.saveData = this.saveData.bind(this)
@@ -81,7 +84,7 @@ export default class Entity {
     ) {
         try {
             const result = yield this.fetchApi(url, method, data, contentType)
-            if (method === (METHODS.DELETE || METHODS.PATCH)) {
+            if ([METHODS.DELETE, METHODS.PATCH].includes(method)) {
                 return result
             }
             const normalizedResult = this.normalizeData(result)
@@ -122,20 +125,17 @@ export default class Entity {
         return this.actionRequest(url, METHODS.DELETE)
     }
 
-    // not used now
-    // metadata is written is @action() at entity class
     public static sagas() {
         const objects: ISagaMethods[] = Reflect.getMetadata('sagas', Entity)
         return objects.map((obj) => {
-            const actionName = obj.className + '_' + obj.methodName // 'CategoryEntity_fetchCategories'
-
-            const classInstance = CategoryEntity //! replace
-
+            const actionName = obj.className + '_' + obj.methodName
+            console.log('Action name: ', actionName)
+            const classInstance = clientContainer.resolve(obj.className)
             const method = classInstance[obj.methodName].bind(classInstance)
             const saga = function* () {
                 while (true) {
-                    const data = yield take(actionName)
-                    yield call(method, data)
+                    const { payload } = yield take(actionName)
+                    yield call(method, payload)
                 }
             }
             Entity._actions = {

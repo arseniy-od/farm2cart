@@ -15,6 +15,8 @@ import { normalize } from 'normalizr'
 import { updateEntities } from '@/redux/actions'
 import { ConnectedProps, connect } from 'react-redux'
 import ErrorMessage from '@/app/components/errorMessage'
+import clientContainer from '@/redux/container'
+import { ContextDynamicRoute } from '@/app/types/interfaces'
 
 function Categories({ categories }: PropsFromRedux) {
     if (!categories) {
@@ -50,15 +52,17 @@ type PropsFromRedux = ConnectedProps<typeof connector>
 
 export default connector(Categories)
 
-export const getStaticProps: GetStaticProps = wrapper.getStaticProps(
-    (store) => async (ctx) => {
-        const categories = await container
-            .resolve('CategoryController')
-            .getCategories()
+export const getStaticProps: GetStaticProps = clientContainer
+    .resolve('redux')
+    .wrapper.getStaticProps((store) => async (ctx: ContextDynamicRoute) => {
+        ctx.routeName = '/categories'
+        const res = await container.resolve('CategoryController').run(ctx)
+        const categories = res.props?.data
+        console.log('Categories: ', categories)
+
         // const categories = props
         const normCategories = normalize(categories, categoriesSchema)
         store.dispatch(updateEntities(normCategories))
 
         return { props: {} }
-    }
-)
+    })

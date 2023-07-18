@@ -1,43 +1,59 @@
 import { configureStore, combineReducers } from '@reduxjs/toolkit'
 import { createWrapper } from 'next-redux-wrapper'
 import createSagaMiddleware from 'redux-saga'
+import { all } from 'redux-saga/effects'
+import { Dispatch, Store, applyMiddleware, compose } from 'redux'
 
-import mySaga from './sagas'
 import rootReducer from './reducer'
 import { entities, user } from '@/app/types/entities'
-import categoryInstance from './models/category'
-import orderInstance from './models/order'
-import userInstance from './models/user'
-import goodInstance from './models/good'
-import authInstance from './models/auth'
-import reviewInstance from './models/review'
-import cartInstance from './models/cart'
-import { all, call } from 'redux-saga/effects'
+import Entity from './models/entity'
+import BaseClientContext from './baseClientContext'
 
-const sagaMiddleware = createSagaMiddleware()
+export default class ReduxStore extends BaseClientContext {
+    public isDebug: boolean = false
+    public wrapper
 
-export const setupStore = () => {
-    const store = configureStore({
-        reducer: rootReducer,
-        middleware: (getDefaultMiddleware) =>
-            getDefaultMiddleware().concat(sagaMiddleware),
-    })
-    function* rootSaga() {
-        yield all([
-            call(categoryInstance.categorySaga),
-            call(orderInstance.orderSaga),
-            call(authInstance.authSaga),
-            call(goodInstance.goodSaga),
-            call(reviewInstance.reviewSaga),
-            call(cartInstance.cartSaga),
-        ])
+    constructor(opts) {
+        super(opts)
+        this.isDebug = process.env.NEXT_PUBLIC_NODE_ENV === 'development'
+        this.setupStore = this.setupStore.bind(this)
+        this.wrapper = createWrapper(this.setupStore)
     }
-    sagaMiddleware.run(rootSaga)
-    return store
+
+    // private _store: Store
+
+    // public get store(): Store<RootState> {
+    //     return this._store
+    // }
+
+    // public state = (): RootState => {
+    //     return this._store.getState()
+    // }
+
+    // public dispatch = (args: any): Dispatch => {
+    //     return this._store.dispatch(args)
+    // }
+
+    private rootSaga = function* () {
+        const sagas = Entity.sagas()
+        yield all(sagas)
+    }
+
+    private setupStore() {
+        const sagaMiddleware = createSagaMiddleware()
+        const store = configureStore({
+            reducer: rootReducer,
+            middleware: (getDefaultMiddleware) =>
+                getDefaultMiddleware().concat(sagaMiddleware),
+            devTools: this.isDebug,
+        })
+
+        sagaMiddleware.run(this.rootSaga)
+        return store
+    }
 }
-
-export const wrapper = createWrapper<AppStore>(setupStore)
 export type RootState = { user: user; entities: entities }
-export type AppStore = ReturnType<typeof setupStore>
 
-export type AppDispatch = AppStore['dispatch']
+// export type AppStore = ReturnType<typeof setupStore>
+
+// export type AppDispatch = AppStore['dispatch']

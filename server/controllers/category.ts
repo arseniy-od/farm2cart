@@ -30,6 +30,7 @@ export default class CategoryController extends BaseController {
     private GoodService = this.di.GoodService
 
     @GET('/api/categories')
+    @SSR('/categories')
     async getCategories() {
         return await this.CategoryService.getCategories()
     }

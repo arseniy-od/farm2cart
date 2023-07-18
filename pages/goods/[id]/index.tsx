@@ -6,7 +6,7 @@ import { normalize } from 'normalizr'
 
 import container from '@/server/container'
 
-import { RootState, wrapper } from '@/redux/store'
+import { RootState } from '@/redux/store'
 import {
     activateGoodSaga,
     deactivateGoodSaga,
@@ -22,6 +22,7 @@ import ReviewCard from '@/app/components/reviews/reviewCard'
 import { ContextDynamicRoute } from '@/app/types/interfaces'
 import GoodFull from '@/app/components/goods/goodFull'
 import ErrorMessage from '@/app/components/errorMessage'
+import clientContainer from '@/redux/container'
 
 function Good({
     good,
@@ -132,8 +133,9 @@ const connector = connect(mapState, mapDispatch)
 type PropsFromRedux = ConnectedProps<typeof connector>
 type Props = PropsFromRedux & { id: number }
 
-export const getServerSideProps = wrapper.getServerSideProps(
-    (store) => async (ctx: ContextDynamicRoute) => {
+export const getServerSideProps = clientContainer
+    .resolve('redux')
+    .wrapper.getServerSideProps((store) => async (ctx: ContextDynamicRoute) => {
         ctx.routeName = '/goods/:id'
         const res = await container.resolve('GoodController').run(ctx)
         const good = res.props?.data.good
@@ -147,7 +149,6 @@ export const getServerSideProps = wrapper.getServerSideProps(
         // store.dispatch(addInitialGood(good))
 
         return { props: { id: good.id } }
-    }
-)
+    })
 
 export default connector(Good)

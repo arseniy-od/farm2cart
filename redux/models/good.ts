@@ -13,10 +13,9 @@ import { activateGoodRedux, deactivateGoodRedux } from '../actions'
 import { toFormData } from '@/app/utils'
 import Router from 'next/router'
 
-class GoodEntity extends Entity {
-    constructor() {
-        super()
-        this.goodSaga = this.goodSaga.bind(this)
+export default class GoodEntity extends Entity {
+    constructor(opts) {
+        super(opts)
         this.fetchGoods = this.fetchGoods.bind(this)
         this.activateGood = this.activateGood.bind(this)
         this.deactivateGood = this.deactivateGood.bind(this)
@@ -30,70 +29,45 @@ class GoodEntity extends Entity {
         })
     }
 
-    *activateGood() {
-        while (true) {
-            const { payload } = yield take('saga/activate_good')
-            yield call(this.patchData, `/api/goods/?id=${payload.id}`, {})
-            yield put(activateGoodRedux(payload))
-        }
+    @action()
+    *activateGood(data) {
+        yield call(this.patchData, `/api/goods/?id=${data.id}`, {})
+        yield put(activateGoodRedux(data))
     }
 
-    *deactivateGood() {
-        while (true) {
-            const { payload } = yield take('saga/deactivate_good')
-            yield call(this.deleteData, `/api/goods/?id=${payload.id}`)
-            yield put(deactivateGoodRedux(payload))
-        }
+    @action()
+    *deactivateGood(data) {
+        yield call(this.deleteData, `/api/goods/?id=${data.id}`)
+        yield put(deactivateGoodRedux(data))
     }
 
+    @action()
     *fetchGoods() {
-        while (true) {
-            yield take('saga/fetch_goods')
-            yield call(this.readData, '/api/goods')
-        }
+        yield call(this.readData, '/api/goods')
     }
 
-    *createGood() {
-        while (true) {
-            const { payload } = yield take('saga/create_good')
-            console.log('VALUES:', payload)
-            const data = toFormData(payload, 'post')
-            const good = yield call(
-                this.saveData,
-                '/api/goods',
-                data,
-                'multipart/form-data'
-            )
-            Router.push('/goods/' + good.id)
-        }
+    @action()
+    *createGood(data) {
+        const formData = toFormData(data, 'post')
+        const good = yield call(
+            this.saveData,
+            '/api/goods',
+            formData,
+            'multipart/form-data'
+        )
+        Router.push('/goods/' + good.id)
     }
 
-    *updateGood() {
-        while (true) {
-            const { payload } = yield take('saga/update_good')
-            console.log('VALUES:', payload)
-            const data = toFormData(payload, 'put')
-            const good = yield call(
-                this.updateData,
-                '/api/goods',
-                data,
-                'multipart/form-data'
-            )
-            Router.push('/goods/' + good.id)
-        }
-    }
-
-    *goodSaga() {
-        yield all([
-            call(this.fetchGoods),
-            call(this.activateGood),
-            call(this.deactivateGood),
-            call(this.createGood),
-            call(this.updateGood),
-        ])
+    @action()
+    *updateGood(data) {
+        console.log('VALUES:', data)
+        const formData = toFormData(data, 'put')
+        const good = yield call(
+            this.updateData,
+            '/api/goods',
+            formData,
+            'multipart/form-data'
+        )
+        Router.push('/goods/' + good.id)
     }
 }
-
-const goodInstance = new GoodEntity()
-
-export default goodInstance

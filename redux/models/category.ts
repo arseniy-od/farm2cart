@@ -4,10 +4,9 @@ import { all, call, fork, put, take } from 'redux-saga/effects'
 import { categoryGoodSchema, goodSchema } from '../normalSchemas'
 import action from '../decorators/action'
 
-class CategoryEntity extends Entity {
-    constructor() {
-        super()
-        this.categorySaga = this.categorySaga.bind(this)
+export default class CategoryEntity extends Entity {
+    constructor(opts) {
+        super(opts)
         this.fetchCategories = this.fetchCategories.bind(this)
 
         this.initSchema('categories', {
@@ -16,20 +15,8 @@ class CategoryEntity extends Entity {
         })
     }
 
+    @action()
     *fetchCategories() {
-        console.log('fetchCategories')
-        while (true) {
-            yield take('saga/fetch_categories')
-            yield call(this.readData, '/api/categories')
-        }
-    }
-
-    *categorySaga() {
-        console.log('categorySaga')
-        yield all([call(this.fetchCategories)])
+        yield call(this.readData, '/api/categories')
     }
 }
-
-const categoryInstance = new CategoryEntity()
-
-export default categoryInstance

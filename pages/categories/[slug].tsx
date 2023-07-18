@@ -12,6 +12,7 @@ import { IGoodModel } from '@/app/types/interfaces'
 import { categorySchema, goodsSchema } from '@/redux/normalSchemas'
 import { updateEntities } from '@/redux/actions'
 import { ConnectedProps, connect } from 'react-redux'
+import clientContainer from '@/redux/container'
 
 function Category({ goods, category }: PropsFromRedux) {
     if (!category) {
@@ -66,8 +67,9 @@ export async function getStaticPaths() {
     return await container.resolve('CategoryController').getStaticPaths()
 }
 
-export const getStaticProps: GetStaticProps = wrapper.getStaticProps(
-    (store) => async (ctx) => {
+export const getStaticProps: GetStaticProps = clientContainer
+    .resolve('redux')
+    .wrapper.getStaticProps((store) => async (ctx) => {
         const { props } = await container
             .resolve('CategoryController')
             .getCategoryWithGoods(ctx)
@@ -81,7 +83,6 @@ export const getStaticProps: GetStaticProps = wrapper.getStaticProps(
         store.dispatch(updateEntities(normGoods))
 
         return { props: { id: category.id, goodIds } }
-    }
-)
+    })
 
 export default connector(Category)

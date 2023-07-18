@@ -63,7 +63,7 @@ function GoodCard({ good, seller }: Props) {
                             {seller.username}
                         </Link>
                         <Link href={'/goods/' + good.id}>
-                            <h3 className="text-xl font-semibold">
+                            <h3 className="text-xl font-semibold hover:underline">
                                 {good.title}
                             </h3>
 
@@ -79,9 +79,15 @@ function GoodCard({ good, seller }: Props) {
                                         {good.reviewsCount}
                                     </div>
                                 </div>
-                            ) : null}
+                            ) : (
+                                <div className="text-gray-600">
+                                    No reviews yet
+                                </div>
+                            )}
 
-                            <p>{good.description}</p>
+                            <p className="line-clamp-2 overflow-hidden leading-snug h-12 hover:underline">
+                                {good.description}
+                            </p>
 
                             <div className="text-gray-700">₴ {good.price}</div>
                             <div className="text-gray-700">

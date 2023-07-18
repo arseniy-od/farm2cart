@@ -7,9 +7,9 @@ import {
     useState,
     MouseEvent,
 } from 'react'
-import { category, user } from '../types/interfaces'
+import { category, user } from '../../types/interfaces'
 import { useAppDispatch, useAppSelector } from '@/redux/hooks'
-import { isEmpty } from '../utils'
+import { isEmpty } from '../../utils'
 import { logoutSaga } from '@/redux/actions'
 
 export default function Sidebar({
@@ -30,8 +30,8 @@ export default function Sidebar({
     }
 
     return (
-        <div className="">
-            <div className="fixed start-0 left-0 z-20 bg-gray-100 w-2/3 min-h-screen">
+        <div className="xl:hidden">
+            <div className="fixed start-0 left-0 z-20 bg-gray-100 w-2/3 md:w-1/3 min-h-screen">
                 <div className="py-2 flex flex-col border-b-2">
                     {Object.keys(user).length === 0 || user.error ? (
                         <div>

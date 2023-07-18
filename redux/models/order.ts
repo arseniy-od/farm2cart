@@ -6,10 +6,9 @@ import Router from 'next/router'
 import { createOrderFail, decrementQuantity } from '../actions'
 
 import action from '../decorators/action'
-class OrderEntity extends Entity {
-    constructor() {
-        super()
-        this.orderSaga = this.orderSaga.bind(this)
+export default class OrderEntity extends Entity {
+    constructor(opts) {
+        super(opts)
         this.fetchOrders = this.fetchOrders.bind(this)
         this.addOrder = this.addOrder.bind(this)
         this.initSchema('orders', {
@@ -18,37 +17,22 @@ class OrderEntity extends Entity {
         })
     }
 
-    *addOrder() {
-        console.log('addOrder called')
-        while (true) {
-            const { payload } = yield take('saga/create_order')
-            try {
-                const result = yield call(this.saveData, '/api/orders', payload)
-                payload.goods.forEach((good) =>
-                    put(decrementQuantity(good, good.quantity))
-                )
-                const id = result.id
-                Router.push('/orders/' + id)
-            } catch (error) {
-                yield put(createOrderFail(error.message))
-            }
+    @action()
+    *addOrder(data) {
+        try {
+            const result = yield call(this.saveData, '/api/orders', data)
+            data.goods.forEach((good) =>
+                put(decrementQuantity(good, good.quantity))
+            )
+            const id = result.id
+            Router.push('/orders/' + id)
+        } catch (error) {
+            yield put(createOrderFail(error.message))
         }
     }
 
+    @action()
     *fetchOrders() {
-        console.log('fetchOrders')
-        while (true) {
-            yield take('saga/fetch_orders')
-            yield call(this.readData, '/api/orders')
-        }
-    }
-
-    *orderSaga() {
-        console.log('orderSaga')
-        yield all([call(this.fetchOrders), call(this.addOrder)])
+        yield call(this.readData, '/api/orders')
     }
 }
-
-const orderInstance = new OrderEntity()
-
-export default orderInstance

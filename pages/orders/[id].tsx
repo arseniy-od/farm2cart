@@ -8,6 +8,7 @@ import { normalize } from 'normalizr'
 import { orderSchema } from '@/redux/normalSchemas'
 import { updateEntities } from '@/redux/actions'
 import ErrorMessage from '@/app/components/errorMessage'
+import clientContainer from '@/redux/container'
 
 function Order({ order, goods, orderGoods }: Props) {
     if (!order || order.notFound) {
@@ -36,13 +37,13 @@ const connector = connect(mapState, null)
 type Props = ConnectedProps<typeof connector>
 export default connector(Order)
 
-export const getServerSideProps = wrapper.getServerSideProps(
-    (store) => async (ctx: ContextDynamicRoute) => {
+export const getServerSideProps = clientContainer
+    .resolve('redux')
+    .wrapper.getServerSideProps((store) => async (ctx: ContextDynamicRoute) => {
         ctx.routeName = '/orders/:id'
         const res = await container.resolve('OrderController').run(ctx)
         const order = res?.props?.data
         const normOrder = normalize(order, orderSchema)
         store.dispatch(updateEntities(normOrder))
         return { props: { id: order.id } }
-    }
-)
+    })

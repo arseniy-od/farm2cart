@@ -10,6 +10,7 @@ import { ConnectedProps, connect } from 'react-redux'
 import { useEffect } from 'react'
 import { toTitle, formatDate } from '@/app/utils'
 import ErrorMessage from '@/app/components/errorMessage'
+import clientContainer from '@/redux/container'
 
 function User(props: Props) {
     const user = props.user
@@ -73,8 +74,9 @@ const connector = connect(mapState, null)
 type PropsFromRedux = ConnectedProps<typeof connector>
 type Props = PropsFromRedux & { id: number; error?: boolean; message?: string }
 
-export const getServerSideProps = wrapper.getServerSideProps(
-    (store) => async (ctx: ContextDynamicRoute) => {
+export const getServerSideProps = clientContainer
+    .resolve('redux')
+    .wrapper.getServerSideProps((store) => async (ctx: ContextDynamicRoute) => {
         ctx.routeName = '/users/:id'
         const res = await container.resolve('UserController').run(ctx)
         if (res.props?.error) {
@@ -90,7 +92,6 @@ export const getServerSideProps = wrapper.getServerSideProps(
         }
         store.dispatch(updateEntities(normUser))
         return { props: { error: false, message: '', id: user.id } }
-    }
-)
+    })
 
 export default connector(User)
