@@ -12,31 +12,19 @@ import BaseClientContext from './baseClientContext'
 export default class ReduxStore extends BaseClientContext {
     public isDebug: boolean = false
     public wrapper
+    private sagas
 
     constructor(opts) {
         super(opts)
         this.isDebug = process.env.NEXT_PUBLIC_NODE_ENV === 'development'
+        this.sagas = Entity.sagas()
+        this.rootSaga = this.rootSaga.bind(this)
         this.setupStore = this.setupStore.bind(this)
         this.wrapper = createWrapper(this.setupStore)
     }
 
-    // private _store: Store
-
-    // public get store(): Store<RootState> {
-    //     return this._store
-    // }
-
-    // public state = (): RootState => {
-    //     return this._store.getState()
-    // }
-
-    // public dispatch = (args: any): Dispatch => {
-    //     return this._store.dispatch(args)
-    // }
-
     private rootSaga = function* () {
-        const sagas = Entity.sagas()
-        yield all(sagas)
+        yield all(this.sagas)
     }
 
     private setupStore() {

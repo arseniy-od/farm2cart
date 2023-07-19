@@ -1,12 +1,27 @@
 import Layout from '@/app/layout'
 import CategoryIcon from '../categories/categoryIcon'
 import GoodCard from './goodCard'
-import Link from 'next/link'
-import { useMemo } from 'react'
+import { useState } from 'react'
+import { good } from '@/app/types/entities'
 
 export default function GoodsPage({ categories, goods }) {
+    const [query, setQuery] = useState('')
+
+    const filterGoods = (goods: good[]) => {
+        return goods.filter((good) =>
+            (good.title + ' ' + good.description || '')
+                .toLowerCase()
+                .includes(query.toLowerCase())
+        )
+    }
+    const filtered = filterGoods(Object.values(goods))
+
+    const handleChange = (e) => {
+        setQuery(e.target.value)
+    }
+
     return (
-        <Layout home={true}>
+        <Layout home={true} handleSearch={handleChange}>
             <div className="mx-4 flex flex-wrap justify-center">
                 {Object.values(categories)?.length ? (
                     <>
@@ -37,7 +52,7 @@ export default function GoodsPage({ categories, goods }) {
             </div>
             <div className="mx-auto flex flex-wrap justify-center">
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-                    {goods.map((good, i) => (
+                    {filtered.map((good, i) => (
                         <div key={i}>
                             <GoodCard good={good} />
                         </div>

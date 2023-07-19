@@ -1,16 +1,10 @@
-import { createRouter } from 'next-connect'
 import Link from 'next/link'
 
 import Layout from '@/app/layout'
 import container from '@/server/container'
-import {
-    NextApiRequest,
-    NextApiResponse,
-    GetServerSideProps,
-    GetStaticProps,
-} from 'next'
+import { GetStaticProps } from 'next'
 import { categoriesSchema } from '@/redux/normalSchemas'
-import { RootState, wrapper } from '@/redux/store'
+import { RootState } from '@/redux/store'
 import { normalize } from 'normalizr'
 import { updateEntities } from '@/redux/actions'
 import { ConnectedProps, connect } from 'react-redux'
@@ -32,7 +26,12 @@ function Categories({ categories }: PropsFromRedux) {
                 <div key={i}>
                     <div className="mt-4 ml-4 px-4 py-3 text-lg max-w-xs text-center bg-gray-100 shadow-lg">
                         <Link
-                            href={'/categories/' + category.text.toLowerCase()}
+                            href={
+                                category.text
+                                    ? '/categories/' +
+                                      category.text.toLowerCase()
+                                    : '/categories'
+                            }
                         >
                             <div className="">{category.text}</div>
                         </Link>

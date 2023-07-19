@@ -3,15 +3,17 @@ import container from '@/server/container'
 import { ContextDynamicRoute } from '@/app/types/interfaces'
 import OrderCard from '@/app/components/orders/orderCard'
 import { ConnectedProps, connect } from 'react-redux'
-import { RootState, wrapper } from '@/redux/store'
+import { RootState } from '@/redux/store'
 import { normalize } from 'normalizr'
 import { orderSchema } from '@/redux/normalSchemas'
 import { updateEntities } from '@/redux/actions'
 import ErrorMessage from '@/app/components/errorMessage'
 import clientContainer from '@/redux/container'
+import { isEmpty } from '@/app/utils'
+import { normalizeResponse } from '@/app/normalizeResponse'
 
 function Order({ order, goods, orderGoods }: Props) {
-    if (!order || order.notFound) {
+    if (!order || isEmpty(order)) {
         return (
             <Layout>
                 <ErrorMessage message="Order not found" />
@@ -43,7 +45,7 @@ export const getServerSideProps = clientContainer
         ctx.routeName = '/orders/:id'
         const res = await container.resolve('OrderController').run(ctx)
         const order = res?.props?.data
-        const normOrder = normalize(order, orderSchema)
+        const normOrder = normalizeResponse(order, orderSchema)
         store.dispatch(updateEntities(normOrder))
         return { props: { id: order.id } }
     })

@@ -2,13 +2,14 @@ import { connect, ConnectedProps } from 'react-redux'
 import { normalize } from 'normalizr'
 
 import container from '@/server/container'
-import { ContextDynamicRoute } from '@/app/types/interfaces'
+import { ContextDynamicRoute, good } from '@/app/types/interfaces'
 import GoodsPage from '@/app/components/goods/goodsPage'
 import { RootState } from '@/redux/store'
 import { fetchCartItems, updateEntities } from '@/redux/actions'
 import { goodsSchema, categoriesSchema } from '@/redux/normalSchemas'
 import { useEffect } from 'react'
 import clientContainer from '@/redux/container'
+import { normalizeResponse } from '@/app/normalizeResponse'
 
 function Goods({ goods, categories, fetchCartItems }: PropsFromRedux) {
     useEffect(() => {
@@ -40,11 +41,10 @@ export const getServerSideProps = clientContainer
         ctx.routeName = '/'
         const res = await container.resolve('GoodController').run(ctx)
         const { goods, categories } = res.props?.data
-        const normGoods = normalize(goods, goodsSchema)
-        const normCategories = normalize(categories, categoriesSchema)
+        const normGoods = normalizeResponse(goods, goodsSchema)
+        const normCategories = normalizeResponse(categories, categoriesSchema)
         store.dispatch(updateEntities(normGoods))
         store.dispatch(updateEntities(normCategories))
-
         return { props: {} }
     })
 

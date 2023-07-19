@@ -1,13 +1,7 @@
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
-import {
-    Dispatch,
-    SetStateAction,
-    useEffect,
-    useState,
-    MouseEvent,
-} from 'react'
-import { category, user } from '../../types/interfaces'
+
+import { Dispatch, SetStateAction, MouseEvent } from 'react'
+
 import { useAppDispatch, useAppSelector } from '@/redux/hooks'
 import { isEmpty } from '../../utils'
 import { logoutSaga } from '@/redux/actions'
@@ -33,7 +27,7 @@ export default function Sidebar({
         <div className="xl:hidden">
             <div className="fixed start-0 left-0 z-20 bg-gray-100 w-2/3 md:w-1/3 min-h-screen">
                 <div className="py-2 flex flex-col border-b-2">
-                    {Object.keys(user).length === 0 || user.error ? (
+                    {isEmpty(user) ? (
                         <div>
                             <Link
                                 className="block ml-4 w-2/3 hover:shadow-lg"
@@ -112,7 +106,11 @@ export default function Sidebar({
                                 <div key={i}>
                                     <div className="ml-4 mt-1 w-2/3 hover:shadow-lg">
                                         <Link
-                                            href={`/categories/${category.text.toLowerCase()}`}
+                                            href={
+                                                category.text
+                                                    ? `/categories/${category.text.toLowerCase()}`
+                                                    : '#'
+                                            }
                                             onClick={() => setIsMenuOpen(false)}
                                         >
                                             {category.text}

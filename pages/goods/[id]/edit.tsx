@@ -2,7 +2,7 @@ import { ConnectedProps, connect } from 'react-redux'
 import { normalize } from 'normalizr'
 
 import container from '@/server/container'
-import { RootState, wrapper } from '@/redux/store'
+import { RootState } from '@/redux/store'
 import { categoriesSchema, goodSchema } from '@/redux/normalSchemas'
 import { updateEntities } from '@/redux/actions'
 

@@ -28,10 +28,6 @@ export interface IGoodModel
     active: boolean
 }
 
-// export interface OrderWithGood extends IOrderModel{
-//     goods: IGoodModel
-// }
-
 type userMin = {
     notFound?: boolean
     id: number
@@ -74,10 +70,6 @@ export interface IUser {
     role: string
     companyId: number
     registrationDate: Date
-}
-
-type userWithCompany = user & {
-    company?: company
 }
 
 export type NextApiRequestWithUser = NextApiRequest & {

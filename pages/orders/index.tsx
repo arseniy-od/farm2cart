@@ -1,49 +1,71 @@
-import { GetServerSideProps, NextApiRequest, NextApiResponse } from 'next'
-import Link from 'next/link'
-
-import Layout from '@/app/layout'
-import container from '@/server/container'
-
 import { ConnectedProps, connect } from 'react-redux'
+import { useEffect, useState } from 'react'
+
 import { RootState } from '@/redux/store'
 import { fetchOrders } from '@/redux/actions'
-import { useEffect } from 'react'
-import OrderCard from '@/app/components/orders/orderCard'
 import { isEmpty } from '@/app/utils'
+
+import Layout from '@/app/layout'
+import OrderCard from '@/app/components/orders/orderCard'
+import ErrorMessage from '@/app/components/errorMessage'
+import { order } from '@/app/types/entities'
 
 function MyOrders({ user, orders, goods, orderGoods, fetchOrders }: Props) {
     useEffect(() => {
         fetchOrders()
-    }, [])
+    }, [fetchOrders])
+    const [query, setQuery] = useState('')
+
+    function goodsTitlesForOrder(order: order) {
+        if (order.goods && goods) {
+            return order.goods.map((goodId) => goods[goodId].title).join(' ')
+        }
+    }
+
+    const filterGoods = (orders: order[]) => {
+        return orders.filter((order) =>
+            (order.id + ' ' + goodsTitlesForOrder(order) || '')
+                .toLowerCase()
+                .includes(query.toLowerCase())
+        )
+    }
+    const filtered = filterGoods(Object.values(orders || {}))
+
+    const handleSearch = (e) => {
+        setQuery(e.target.value)
+    }
 
     if (!orders || isEmpty(orders)) {
         return (
             <Layout>
-                <h3>{orders ? 'You have no orders' : 'Loading...'}</h3>
+                <ErrorMessage
+                    message={orders ? 'You have no orders' : 'Loading...'}
+                />
             </Layout>
         )
     }
     return (
-        <Layout>
-            <div className="mt-4 ml-4 px-4 py-3 text-lg max-w-xs shadow-lg bg-gray-100 text-indigo-500">
-                @{user.username}
-            </div>
+        <Layout handleSearch={handleSearch}>
             <div>
                 {user.role === 'seller' || 'admin' ? (
                     <div>
-                        <h3 className="ml-5 mt-3 text-xl">Your orders:</h3>
+                        <h3 className="ml-6 mt-3 text-xl font-semibold xl:text-center xl:text-2xl">
+                            Your orders:
+                        </h3>
 
-                        {Object.values(orders).map((order, i) => (
-                            <div key={i}>
-                                <div key={i}>
-                                    <OrderCard
-                                        order={order}
-                                        goods={goods}
-                                        orderGoods={orderGoods}
-                                    />
-                                </div>
+                        <div className="mx-auto flex flex-wrap justify-center">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+                                {filtered.map((order, i) => (
+                                    <div key={i}>
+                                        <OrderCard
+                                            order={order}
+                                            goods={goods}
+                                            orderGoods={orderGoods}
+                                        />
+                                    </div>
+                                ))}
                             </div>
-                        ))}
+                        </div>
                     </div>
                 ) : null}
             </div>

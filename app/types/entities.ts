@@ -1,102 +1,98 @@
 export type user = {
-    error?: boolean
-    message?: boolean
-    id: number
-    firstName: string
-    lastName: string
-    username: string
+    id?: number
+    firstName?: string
+    lastName?: string
+    username?: string
     password?: string
-    email: string
+    email?: string
     phoneNumber?: string
-    role: string
+    role?: string
     companyId?: number
-    registrationDate: Date
+    registrationDate?: string
 }
 
 export type review = {
-    id: number
-    goodId: number
-    text: string
-    score: number
-    datepub: Date
-    author: number
+    id?: number
+    text?: string
+    score?: number
+    datepub?: string
+    author?: number
 }
 
 export type good = {
-    notFound?: boolean
     quantity?: number
-    id: number
-    title: string
-    imageUrl: string
-    description: string
-    price: number
-    available: number
-    active: boolean
+    id?: number
+    title?: string
+    imageUrl?: string
+    description?: string
+    price?: number
+    available?: number
+    active?: number | boolean
     reviews?: number[]
-    categories: number[]
-    seller: number
+    categories?: number[]
+    seller?: number
     averageScore?: number
     reviewsCount?: number
 }
 
 export type order = {
-    notFound?: boolean
-    id: number
-    customerId: number
-    total: number
-    paymentStatus: string
+    id?: number
+    customerId?: number
+    total?: number
+    paymentStatus?: string
     goods?: number[]
     OrderGoods?: number[]
 }
 
 export type category = {
-    id: number
-    text: string
+    id?: number
+    text?: string
     CategoryGood?: number
+    goods?: number[]
 }
 
 export type categoryGood = {
-    id: number
-    categoryId: number
-    goodId: number
+    id?: number
+    categoryId?: number
+    goodId?: number
 }
 
 export type orderGood = {
-    id: number
-    goodId: number
-    orderId: number
-    quantity: number
+    id?: number
+    goodId?: number
+    orderId?: number
+    quantity?: number
 }
 
 export type cartItem = {
-    id: number
-    quantity: number
-    good: number
+    id?: number
+    quantity?: number
+    good?: number
 }
 
 export type entities = {
     users?: {
-        [key: number | string]: user
+        [key: string]: user
     }
     reviews?: {
-        [key: number | string]: review
+        [key: string]: review
     }
     goods?: {
-        [key: number | string]: good
+        [key: string]: good
     }
     orders?: {
-        [key: number | string]: order
+        [key: string]: order
     }
     categories?: {
-        [key: number | string]: category
+        [key: string]: category
     }
     categoryGoods?: {
-        [key: number | string]: categoryGood
+        [key: string]: categoryGood
     }
     orderGoods?: {
-        [key: number | string]: orderGood
+        [key: string]: orderGood
     }
     cartItems?: {
-        [key: number | string]: cartItem
+        [key: string]: cartItem
     }
 }

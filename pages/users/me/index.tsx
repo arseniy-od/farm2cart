@@ -1,7 +1,8 @@
 import Layout from '@/app/layout'
 import Link from 'next/link'
-import { formatDate, toTitle } from '@/app/utils'
+import { formatDate, isEmpty, toTitle } from '@/app/utils'
 import { useAppSelector } from '@/redux/hooks'
+import ErrorMessage from '@/app/components/errorMessage'
 
 export default function User() {
     const user = useAppSelector((state) => state.user)
@@ -14,10 +15,10 @@ export default function User() {
         )
     }
 
-    if (user.error || user.message) {
+    if (!user || isEmpty(user)) {
         return (
             <Layout>
-                <h2 className="ml-5 mt-5 text-2xl">{user.message}</h2>
+                <ErrorMessage message="You are not logged in" />
             </Layout>
         )
     }
@@ -28,11 +29,13 @@ export default function User() {
                 <div className="mt-4 px-4 py-3 text-lg bg-gray-100 shadow-lg">
                     <div className="text-indigo-500">@{user.username}</div>
                     <p>
-                        {toTitle(user.firstName)} {toTitle(user.lastName)}
+                        {toTitle(user.firstName || '')}{' '}
+                        {toTitle(user.lastName || '')}
                     </p>
                     <p>{user.email}</p>
                     <p>
-                        Registration date: {formatDate(user.registrationDate)}
+                        Registration date:{' '}
+                        {formatDate(user.registrationDate || '')}
                     </p>
                 </div>
 

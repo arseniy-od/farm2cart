@@ -1,42 +1,60 @@
 import Layout from '@/app/layout'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 
 import GoodCard from '@/app/components/goods/goodCard'
 
 import { RootState } from '@/redux/store'
 import { ConnectedProps, connect } from 'react-redux'
 import { fetchMyGoods } from '@/redux/actions'
+import { isEmpty } from '@/app/utils'
+import ErrorMessage from '@/app/components/errorMessage'
+import { good } from '@/app/types/entities'
 
 function MyGoods({ user, goods, fetchMyGoods }: Props) {
     useEffect(() => {
         fetchMyGoods()
     }, [fetchMyGoods, user])
 
-    if (user.error) {
+    const [query, setQuery] = useState('')
+
+    const filterGoods = (goods: good[]) => {
+        return goods.filter((good) =>
+            (good.title + ' ' + good.description || '')
+                .toLowerCase()
+                .includes(query.toLowerCase())
+        )
+    }
+    const filtered = filterGoods(Object.values(goods))
+
+    const handleSearch = (e) => {
+        setQuery(e.target.value)
+    }
+
+    if (!user || isEmpty(user)) {
         return (
             <Layout>
-                <h2 className="ml-5 mt-5 text-2xl">{user.message}</h2>
+                <ErrorMessage message="You are not logged in" />
             </Layout>
         )
     }
 
     return (
-        <Layout>
-            <div className="mt-4 ml-4 px-4 py-3 text-lg border-2 max-w-xs text-center bg-gray-200 rounded-lg">
-                Username:{' '}
-                <span className="text-indigo-500">@{user.username}</span>
-            </div>
+        <Layout handleSearch={handleSearch}>
             <div>
                 {user.role === 'seller' || 'admin' ? (
                     <div>
-                        <h3 className="ml-5 mt-3 text-xl">Your products:</h3>
-                        {goods.map((good, i) => (
-                            <div key={i}>
-                                <div>
-                                    <GoodCard good={good} />
-                                </div>
+                        <h3 className="ml-6 mt-3 text-xl font-semibold xl:text-center xl:text-2xl">
+                            Your products:
+                        </h3>
+                        <div className="mx-auto flex flex-wrap justify-center">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+                                {filtered.map((good, i) => (
+                                    <div key={i}>
+                                        <GoodCard good={good} />
+                                    </div>
+                                ))}
                             </div>
-                        ))}
+                        </div>
                     </div>
                 ) : null}
             </div>
@@ -44,17 +62,19 @@ function MyGoods({ user, goods, fetchMyGoods }: Props) {
     )
 }
 
-function getGoodsForUser(state: RootState, userId: number) {
+function getGoodsForUser(state: RootState) {
     if (state.entities.goods) {
         const goods = Object.values(state.entities.goods)
-        return goods.filter((good) => good.seller === userId)
+        if (state.user.id) {
+            return goods.filter((good) => good.seller === state.user.id)
+        }
     }
     return []
 }
 
 const mapState = (state: RootState) => ({
     user: state.user,
-    goods: getGoodsForUser(state, state.user.id),
+    goods: getGoodsForUser(state),
 })
 
 const mapDispatch = {

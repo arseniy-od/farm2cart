@@ -23,13 +23,13 @@ export const goodSchema = new schema.Entity<good>('goods', {
     OrderGood: orderGoodsSchema,
 })
 
-export const goodsSchema = [goodSchema]
+export const goodsSchema = new schema.Array(goodSchema)
 
 export const orderSchema = new schema.Entity('orders', {
     OrderGoods: [orderGoodsSchema],
     goods: goodsSchema,
 })
 
-export const ordersSchema = [orderSchema]
+export const ordersSchema = new schema.Array(orderSchema)
 
-export const categoriesSchema = [categorySchema]
+export const categoriesSchema = new schema.Array(categorySchema)

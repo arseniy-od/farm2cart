@@ -56,7 +56,6 @@ export default class Entity extends BaseClientContext {
                 options.body = JSON.stringify(data)
             }
         }
-        console.log('content type: ', contentType)
         let res = await fetch(url, options)
         if (res.ok) {
             const result = await res.json()

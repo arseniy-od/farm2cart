@@ -36,6 +36,11 @@ export const fetchMyGoods = () => action('GoodEntity_fetchGoods')
 
 // cart
 
+export const fetchCartItems = () => action('CartEntity_fetchCart')
+
+export const addToCart = (goodId: number) =>
+    action('CartEntity_addToCart', goodId)
+
 export const decrementQuantity = (good, quantity: number) =>
     action('entities/update_one', {
         entityName: 'goods',
@@ -50,28 +55,25 @@ export const changeGoodQuantity = (goodId, quantity) =>
         entityFields: { quantity },
     })
 
-// create entity
-
-export const createOrder = (cartData) =>
-    action('OrderEntity_addOrder', cartData)
-
-export const createReview = (review, goodId) =>
-    action('ReviewEntity_addReview', { review, goodId })
-
-export const createOrderFail = (message) =>
-    action('saga/create_order_fail', message)
-
-// export const addGood = (good: good) => action('entities/update', good)
-
-export const addToCart = (goodId: number) =>
-    action('CartEntity_addToCart', goodId)
-
-// delete entity
-
 export const deleteCartItem = (index: number) =>
     action('CartEntity_deleteCartItem', { index })
 
 export const clearCart = () => action('entities/clear', 'cartItems')
+
+// order
+
+export const fetchOrders = () => action('OrderEntity_fetchOrders')
+
+export const createOrder = (cartData) =>
+    action('OrderEntity_addOrder', cartData)
+
+export const createOrderFail = (message) =>
+    action('saga/create_order_fail', message)
+
+// review
+
+export const createReview = (review, goodId) =>
+    action('ReviewEntity_addReview', { review, goodId })
 
 // auth
 
@@ -89,13 +91,9 @@ export const fetchUser = () => action('AuthEntity_fetchUser')
 
 export const logoutRedux = () => action('user/logout')
 
-// fetching data
+// categories
 
 export const fetchCategories = () => action('CategoryEntity_fetchCategories')
-
-export const fetchOrders = () => action('OrderEntity_fetchOrders')
-
-export const fetchCartItems = () => action('CartEntity_fetchCart')
 
 //entities
 

@@ -1,22 +1,14 @@
-import {
-    useState,
-    useEffect,
-    useCallback,
-    ChangeEvent,
-    Dispatch,
-    SetStateAction,
-} from 'react'
 import Image from 'next/image'
-import { good } from '@/app/types/entities'
+import { cartItem, good } from '@/app/types/entities'
 import { useAppDispatch } from '@/redux/hooks'
 import { changeGoodQuantity } from '@/redux/actions'
+import ErrorMessage from '../errorMessage'
 
-type cartItem = { id: number; quantity: number; good: number }
 type cartGoodProps = {
-    cartItem: cartItem
+    cartItem?: cartItem
     good?: good
     index: number
-    handleDelete: (index: number, id: number) => Promise<void>
+    handleDelete: (index: number) => Promise<void>
 }
 
 export default function CartGood({
@@ -27,19 +19,24 @@ export default function CartGood({
 }: cartGoodProps) {
     const dispatch = useAppDispatch()
 
+    if (!cartItem || !good) {
+        return <ErrorMessage message="Item not found" />
+    }
+
     function increment() {
-        if (good && cartItem.quantity < good.available) {
+        if (
+            cartItem?.quantity &&
+            good?.available &&
+            cartItem.quantity < good.available
+        ) {
             dispatch(changeGoodQuantity(good.id, cartItem.quantity + 1))
         }
     }
 
     function decrement() {
-        if (good && cartItem.quantity > 1) {
+        if (cartItem?.quantity && good && cartItem.quantity > 1) {
             dispatch(changeGoodQuantity(good.id, cartItem.quantity - 1))
         }
-    }
-    if (!good) {
-        return <div className="text-xl">Good not found</div>
     }
 
     return (
@@ -48,7 +45,9 @@ export default function CartGood({
                 <div className="ml-4">
                     <div className="font-semibold text-xl">{good.title}</div>
                     <div>Price: {good.price}</div>
-                    <div>Total: {good.price * cartItem.quantity}</div>
+                    <div>
+                        Total: {(good.price || 0) * (cartItem.quantity || 0)}
+                    </div>
                     <div className="flex w-24 items-center justify-left">
                         <button
                             type="button"
@@ -82,7 +81,7 @@ export default function CartGood({
                         <button
                             className="mt-2 px-4 py-2 block bg-red-500 hover:bg-red-700 rounded-lg text-white shadow-lg"
                             type="button"
-                            onClick={() => handleDelete(index, cartItem.id)}
+                            onClick={() => handleDelete(index)}
                         >
                             Delete
                         </button>

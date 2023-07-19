@@ -3,13 +3,13 @@ import { good, order, orderGood } from '@/app/types/entities'
 
 interface Props {
     order: order
-    goods: good
-    orderGoods: orderGood
+    goods?: { [key: number]: good }
+    orderGoods?: { [key: number]: orderGood }
 }
 
 export default function OrderCard({ order, goods, orderGoods }: Props) {
     return (
-        <div className="ml-4 mt-4 px-4 py-3 bg-gray-100 max-w-xs shadow-lg">
+        <div className="ml-4 mt-4 px-4 py-3 bg-gray-100 max-w-xs shadow-lg h-full">
             <Link href={`/orders/${order.id}`}>
                 <div className="text-center text-xl font-semibold hover:underline">
                     Order #{order.id}
@@ -21,14 +21,22 @@ export default function OrderCard({ order, goods, orderGoods }: Props) {
                 {Object.values(order.OrderGoods || {}).map((OrderGoodId, i) => (
                     <div key={i}>
                         <div>
-                            {orderGoods[OrderGoodId].quantity}x{' '}
+                            {orderGoods?.[OrderGoodId].quantity}x{' '}
                             <Link
-                                href={`/goods/${orderGoods[OrderGoodId].goodId}`}
+                                href={`/goods/${orderGoods?.[OrderGoodId].goodId}`}
                                 className="text-indigo-700"
                             >
-                                {goods[orderGoods[OrderGoodId].goodId].title}
+                                {
+                                    goods?.[
+                                        orderGoods?.[OrderGoodId].goodId || ''
+                                    ].title
+                                }
                             </Link>{' '}
-                            for ₴{goods[orderGoods[OrderGoodId].goodId].price}{' '}
+                            for ₴
+                            {
+                                goods?.[orderGoods?.[OrderGoodId].goodId || '']
+                                    .price
+                            }{' '}
                             each
                         </div>
                     </div>

@@ -1,6 +1,4 @@
-import Link from 'next/link'
-import Image from 'next/image'
-import { useState, MouseEvent, ReactElement } from 'react'
+import { MouseEvent, ReactElement } from 'react'
 import { ConnectedProps, connect } from 'react-redux'
 import { normalize } from 'normalizr'
 
@@ -23,6 +21,7 @@ import { ContextDynamicRoute } from '@/app/types/interfaces'
 import GoodFull from '@/app/components/goods/goodFull'
 import ErrorMessage from '@/app/components/errorMessage'
 import clientContainer from '@/redux/container'
+import { isEmpty } from '@/app/utils'
 
 function Good({
     good,
@@ -32,16 +31,16 @@ function Good({
     activateGoodSaga,
     deactivateGoodSaga,
 }: Props) {
-    // const [isActive, setIsActive] = useState(good.active && good.available)
-    function roundHalf(num: number) {
-        return Math.round(num * 2) / 2
-    }
-    if (!good || good.error) {
+    if (!good || isEmpty(good)) {
         return (
             <Layout>
-                <ErrorMessage message={good?.message || 'Good not found'} />
+                <ErrorMessage message="Good not found" />
             </Layout>
         )
+    }
+
+    function roundHalf(num: number) {
+        return Math.round(num * 2) / 2
     }
 
     let stars: ReactElement[] = []
@@ -60,7 +59,7 @@ function Good({
         }
     }
 
-    const handleDelete = async (event: MouseEvent<HTMLButtonElement>) => {
+    const handleDelete = async () => {
         if (!good?.active) {
             activateGoodSaga(good)
         } else {

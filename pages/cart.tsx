@@ -1,28 +1,18 @@
-import { useRouter } from 'next/navigation'
-import { useState, useEffect, useCallback, MouseEvent } from 'react'
+import { useEffect, MouseEvent } from 'react'
+import { ConnectedProps, connect } from 'react-redux'
 
-import { NextApiRequest, NextApiResponse } from 'next'
-import { good } from '@/app/types/interfaces'
-import { useAppDispatch } from '@/redux/hooks'
-import CartMain from '@/app/components/cart/cartMain'
 import { getTotal, isEmpty } from '@/app/utils'
 import {
     clearCart,
     createOrder,
-    decrementQuantity,
     deleteCartItem,
     fetchCartItems,
-    updateEntities,
 } from '@/redux/actions'
-import { normalize } from 'normalizr'
-import { orderSchema } from '@/redux/normalSchemas'
-import { RootState } from '@/redux/store'
-import { ConnectedProps, connect } from 'react-redux'
+
 import CartGood from '@/app/components/cart/cartGood'
 import Layout from '@/app/layout'
-import { array } from 'yup'
 
-type cart = (good & { quantity: number })[]
+import { RootState } from '@/redux/store'
 
 function Cart({
     cartItems,
@@ -36,7 +26,7 @@ function Cart({
         fetchCartItems()
     }, [fetchCartItems])
 
-    const handleDelete = async (index: number, id: number) => {
+    const handleDelete = async (index: number) => {
         deleteCartItem(index)
     }
 
@@ -45,12 +35,15 @@ function Cart({
         if (!cartItems) {
             throw new Error('cartItems not found')
         }
-        const cartGoods = Object.values(goods).reduce((acc: any, good) => {
-            if (good.id in cartItems) {
-                acc.push({ ...good, quantity: cartItems[good.id].quantity })
-            }
-            return acc
-        }, [])
+        const cartGoods = Object.values(goods || {}).reduce(
+            (acc: any, good) => {
+                if (good.id && good.id in cartItems) {
+                    acc.push({ ...good, quantity: cartItems[good.id].quantity })
+                }
+                return acc
+            },
+            []
+        )
         const cartData = { goods: cartGoods, total: getTotal(cartGoods) }
         clearCart()
         createOrder(cartData)
@@ -80,7 +73,7 @@ function Cart({
                             <div key={i}>
                                 <CartGood
                                     cartItem={cartItem}
-                                    good={goods?.[cartItem?.good]}
+                                    good={goods?.[cartItem?.good || '']}
                                     index={i}
                                     handleDelete={handleDelete}
                                 />

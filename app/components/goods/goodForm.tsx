@@ -108,7 +108,11 @@ function GoodForm({ good, categories, method, createGood, updateGood }: Props) {
                                                 <Field
                                                     type="checkbox"
                                                     name="categories"
-                                                    value={category.id.toString()}
+                                                    value={
+                                                        category.id
+                                                            ? category.id.toString()
+                                                            : ''
+                                                    }
                                                 />
                                                 {category.text}
                                             </label>
@@ -142,7 +146,7 @@ const mapDispatch = {
 const connector = connect(mapState, mapDispatch)
 type Props = ConnectedProps<typeof connector> & {
     good: good & {
-        categories: number[] | string[]
+        categories?: string[]
         file?: File | null
     }
     categories?: { [key: number]: category }

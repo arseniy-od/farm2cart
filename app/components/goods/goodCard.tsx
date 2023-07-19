@@ -2,11 +2,11 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { ReactElement } from 'react'
 
-import { category, good, user } from '../../types/interfaces'
 import { HalfStar, BlankStar, Star } from '../icons/star'
 import CartHandler from '../cart/cartHandler'
 import { ConnectedProps, connect } from 'react-redux'
 import { RootState } from '@/redux/store'
+import { good } from '@/app/types/entities'
 
 function GoodCard({ good, seller }: Props) {
     function roundHalf(num: number) {
@@ -57,10 +57,10 @@ function GoodCard({ good, seller }: Props) {
 
                     <div className="px-2 py-2 bg-gray-100">
                         <Link
-                            href={'/users/' + seller.id}
+                            href={seller?.id ? '/users/' + seller.id : '#'}
                             className="text-gray-700"
                         >
-                            {seller.username}
+                            {seller?.username || ''}
                         </Link>
                         <Link href={'/goods/' + good.id}>
                             <h3 className="text-xl font-semibold hover:underline">
@@ -102,7 +102,7 @@ function GoodCard({ good, seller }: Props) {
 }
 
 const mapState = (state: RootState, ownProps) => ({
-    seller: state.entities.users[ownProps.good.seller],
+    seller: state.entities.users?.[ownProps.good.seller],
 })
 
 const connector = connect(mapState, null)

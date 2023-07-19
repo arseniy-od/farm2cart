@@ -1,13 +1,10 @@
-import { createRouter } from 'next-connect'
 import Link from 'next/link'
 
 import Layout from '@/app/layout'
 import container from '@/server/container'
-import { GetServerSideProps, NextApiRequest, NextApiResponse } from 'next'
-import { UsersProps } from '@/app/types/interfaces'
 
 //! not used now
-export default function User(props: UsersProps) {
+export default function User(props) {
     const users = props.data
     return (
         <Layout>
@@ -27,6 +24,6 @@ export default function User(props: UsersProps) {
     )
 }
 
-export const getServerSideProps: GetServerSideProps = async function (ctx) {
+export const getServerSideProps = async function (ctx) {
     return await container.resolve('UserController').run(ctx)
 }

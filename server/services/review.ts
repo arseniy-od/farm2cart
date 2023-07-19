@@ -10,6 +10,7 @@ export default class ReviewService extends BaseContext {
 
     async getReviews() {
         return await this.Review.findAll({
+            attributes: { exclude: ['authorId'] },
             include: [
                 {
                     attributes: ['username', 'email'],

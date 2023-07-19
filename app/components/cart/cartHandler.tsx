@@ -1,16 +1,11 @@
-import { good } from '@/app/types/entities'
-import { isEmpty } from '@/app/utils'
-import {
-    addToCart,
-    createOrder,
-    deleteCartItem,
-    fetchCartItems,
-} from '@/redux/actions'
-import { useAppDispatch } from '@/redux/hooks'
-import { RootState } from '@/redux/store'
-import GoodController from '@/server/controllers/good'
-import { useState, MouseEvent, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import { connect, ConnectedProps } from 'react-redux'
+
+import { addToCart, fetchCartItems } from '@/redux/actions'
+import { isEmpty } from '@/app/utils'
+
+import { RootState } from '@/redux/store'
+import { good } from '@/app/types/entities'
 
 function CartHandler({
     good,
@@ -21,15 +16,17 @@ function CartHandler({
     const [inCart, setInCart] = useState(false)
 
     const isInCart = () => {
-        if (cartItems && !isEmpty(cartItems)) {
+        if (cartItems && !isEmpty(cartItems) && good.id) {
             setInCart(good.id in cartItems)
         }
     }
 
     useEffect(isInCart, [cartItems, good.id, fetchCartItems])
 
-    async function handleAddCart(event: MouseEvent<HTMLButtonElement>) {
-        addToCart(good.id)
+    async function handleAddCart() {
+        if (good.id) {
+            addToCart(good.id)
+        }
     }
     return (
         <div className="">

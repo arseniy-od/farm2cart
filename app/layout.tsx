@@ -10,19 +10,20 @@ import { RootState } from '@/redux/store'
 import { fetchUser, fetchCategories } from '@/redux/actions'
 import { isEmpty } from './utils'
 import OptionalHeader from './components/navigation/optionalHeader'
+import DropdownMenu from './components/navigation/dropDown'
 
 export const siteTitle = 'farm2cart'
 
 function Layout({
     children,
     home = false,
+    handleSearch = null,
     fetchUser,
     fetchCategories,
     user,
     categories,
 }: Props) {
     const [isMenuOpen, setIsMenuOpen] = useState(false)
-    const [isDropOpen, setIsDropOpen] = useState(false)
 
     function getUser() {
         if (isEmpty(user)) {
@@ -58,11 +59,11 @@ function Layout({
                     <title>{siteTitle}</title>
                 </Head>
 
-                <header className="sticky z-20 top-0 px-4 py-3 text-gray-900 bg-gray-100 border-2">
-                    <div className="flex justify-between items-center">
+                <header className="sticky z-20 top-0 text-gray-900 bg-gray-100">
+                    <div className="flex justify-between items-center py-3">
                         {/* Menu button */}
                         <button
-                            className="xl:hidden"
+                            className="ml-4 xl:hidden"
                             onClick={() => setIsMenuOpen(!isMenuOpen)}
                         >
                             {isMenuOpen ? (
@@ -100,9 +101,22 @@ function Layout({
                         {/* Cart icon */}
                         <div className="mx-2 flex items-center">
                             <OptionalHeader user={user} />
-                            <Link href="/cart" className="ml-3 inline-block">
+                            {handleSearch && (
+                                <div className="hidden lg:block">
+                                    <input
+                                        onChange={handleSearch}
+                                        type="text"
+                                        placeholder="Search..."
+                                        className="mx-4 border-none w-full focus:border-2 focus:border-gray-400"
+                                    />
+                                </div>
+                            )}
+                            <Link
+                                href="/cart"
+                                className=" inline-block hover:ml-1"
+                            >
                                 <svg
-                                    className="h-4 xl:h-5"
+                                    className="ml-8 h-4 xl:h-5 hover:h-7 hover:ml-6"
                                     xmlns="http://www.w3.org/2000/svg"
                                     height="1em"
                                     viewBox="0 0 576 512"
@@ -110,19 +124,8 @@ function Layout({
                                     <path d="M0 24C0 10.7 10.7 0 24 0H69.5c22 0 41.5 12.8 50.6 32h411c26.3 0 45.5 25 38.6 50.4l-41 152.3c-8.5 31.4-37 53.3-69.5 53.3H170.7l5.4 28.5c2.2 11.3 12.1 19.5 23.6 19.5H488c13.3 0 24 10.7 24 24s-10.7 24-24 24H199.7c-34.6 0-64.3-24.6-70.7-58.5L77.4 54.5c-.7-3.8-4-6.5-7.9-6.5H24C10.7 48 0 37.3 0 24zM128 464a48 48 0 1 1 96 0 48 48 0 1 1 -96 0zm336-48a48 48 0 1 1 0 96 48 48 0 1 1 0-96z" />
                                 </svg>
                             </Link>
-                            <button
-                                className="hidden xl:block"
-                                onClick={() => setIsDropOpen(!isDropOpen)}
-                            >
-                                <svg
-                                    className="ml-4 h-5"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    height="1em"
-                                    viewBox="0 0 448 512"
-                                >
-                                    <path d="M304 128a80 80 0 1 0 -160 0 80 80 0 1 0 160 0zM96 128a128 128 0 1 1 256 0A128 128 0 1 1 96 128zM49.3 464H398.7c-8.9-63.3-63.3-112-129-112H178.3c-65.7 0-120.1 48.7-129 112zM0 482.3C0 383.8 79.8 304 178.3 304h91.4C368.2 304 448 383.8 448 482.3c0 16.4-13.3 29.7-29.7 29.7H29.7C13.3 512 0 498.7 0 482.3z" />
-                                </svg>
-                            </button>
+
+                            <DropdownMenu user={user} />
                         </div>
                     </div>
                 </header>
@@ -130,8 +133,21 @@ function Layout({
                 {isMenuOpen && (
                     <Sidebar setIsMenuOpen={setIsMenuOpen} home={home} />
                 )}
+                {handleSearch && (
+                    <div className="py-2 flex justify-end bg-gray-100 w-full border-2 border-gray-200 lg:hidden">
+                        <input
+                            onChange={handleSearch}
+                            type="text"
+                            placeholder="Search..."
+                            className="mx-4 border-none rounded w-full sm:w-2/3 md:w-1/2 lg:w-1/3"
+                        />
+                    </div>
+                )}
 
                 <main className="">{children}</main>
+                <footer className="mt-4 py-6 bg-gray-300 text-center">
+                    All rights reserved, farm2cart 2023
+                </footer>
             </div>
         </div>
     )
