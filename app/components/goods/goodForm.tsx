@@ -123,7 +123,7 @@ function GoodForm({ good, categories, method, createGood, updateGood }: Props) {
                         </div>
                         <button
                             type="submit"
-                            className="mt-4 inline-block items-center bg-gray-400 hover:bg-gray-600 focus:outline-none focus:shadow-outline rounded-lg shadow px-8 py-2"
+                            className="mt-4 inline-block items-center bg-gray-100 hover:bg-gray-300 focus:outline-none focus:shadow-outline shadow-lg px-8 py-2"
                         >
                             Submit
                         </button>
@@ -146,7 +146,7 @@ const mapDispatch = {
 const connector = connect(mapState, mapDispatch)
 type Props = ConnectedProps<typeof connector> & {
     good: good & {
-        categories?: string[]
+        categories?: number[]
         file?: File | null
     }
     categories?: { [key: number]: category }

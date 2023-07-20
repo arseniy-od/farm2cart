@@ -22,6 +22,7 @@ import GoodFull from '@/app/components/goods/goodFull'
 import ErrorMessage from '@/app/components/errorMessage'
 import clientContainer from '@/redux/container'
 import { isEmpty } from '@/app/utils'
+import initServerStore from '@/server/initServerStore'
 
 function Good({
     good,
@@ -30,6 +31,7 @@ function Good({
     seller,
     activateGoodSaga,
     deactivateGoodSaga,
+    user,
 }: Props) {
     if (!good || isEmpty(good)) {
         return (
@@ -76,6 +78,7 @@ function Good({
                     stars={stars}
                     categories={goodCategories}
                     handleDelete={handleDelete}
+                    user={user}
                 />
 
                 <div className="flex flex-col items-center justify-center">
@@ -93,6 +96,7 @@ function Good({
 
 function getReviews(state, goodId) {
     const good = state.entities.goods[goodId]
+    console.log('getReviews good: ', goodId)
     if (good.reviews) {
         const reviews = good.reviews.reduce((acc, reviewId) => {
             acc.push(state.entities.reviews[reviewId])
@@ -115,11 +119,12 @@ function getCategories(state, goodId) {
 }
 
 const mapState = (state: RootState, ownProps) => ({
-    good: state.entities.goods?.[ownProps.id],
-    reviews: getReviews(state, ownProps.id),
-    goodCategories: getCategories(state, ownProps.id),
+    user: state.user,
+    good: state.entities.goods?.[ownProps.query.id],
+    reviews: getReviews(state, ownProps.query.id),
+    goodCategories: getCategories(state, ownProps.query.id),
     seller: state.entities.users?.[
-        state.entities.goods?.[ownProps.id]?.seller || ''
+        state.entities.goods?.[ownProps.query.id]?.seller || ''
     ],
 })
 
@@ -134,20 +139,14 @@ type Props = PropsFromRedux & { id: number }
 
 export const getServerSideProps = clientContainer
     .resolve('redux')
-    .wrapper.getServerSideProps((store) => async (ctx: ContextDynamicRoute) => {
-        ctx.routeName = '/goods/:id'
-        const res = await container.resolve('GoodController').run(ctx)
-        const good = res.props?.data.good
-        const categories = res.props?.data.categories
-        console.log('Good is: ', good)
-        const normGood = normalize(good, goodSchema)
-        const normCategories = normalize(categories, categoriesSchema)
-        console.log('Norm good:', normGood)
-        store.dispatch(updateEntities(normGood))
-        store.dispatch(updateEntities(normCategories))
-        // store.dispatch(addInitialGood(good))
-
-        return { props: { id: good.id } }
-    })
+    .wrapper.getServerSideProps(
+        initServerStore(
+            [
+                container.resolve('GoodController'),
+                container.resolve('CategoryController'),
+            ],
+            '/goods/:id'
+        )
+    )
 
 export default connector(Good)

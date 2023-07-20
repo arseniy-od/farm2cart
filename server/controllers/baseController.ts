@@ -12,9 +12,26 @@ import {
     ContextDynamicRoute,
     NextApiRequestWithUser,
 } from '@/app/types/interfaces'
-import { ParsedUrlQuery } from 'querystring'
+import { schema } from 'normalizr'
+import { normalizeResponse } from '@/app/normalizeResponse'
+import { updateEntities } from '@/redux/actions'
 
 export default class BaseController extends BaseContext {
+    protected schema: any
+
+    protected initSchema(entityName = '', attributes: any = {}) {
+        this.schema = entityName
+            ? new schema.Entity(entityName, attributes)
+            : null
+    }
+
+    protected normalizeData(data) {
+        return normalizeResponse(
+            data,
+            Array.isArray(data) ? [this.schema] : this.schema
+        )
+    }
+
     private useClassMiddleware(router) {
         const classMiddleware = Reflect.getMetadata(
             this.constructor.name,
@@ -41,14 +58,14 @@ export default class BaseController extends BaseContext {
         return methodArgs
     }
 
-    public run = async (context: ContextDynamicRoute) => {
+    public run = async (context: ContextDynamicRoute, store, routeName) => {
         try {
-            const routeName = context.routeName || context.req.url
+            // const routeName = context.routeName || context.req.url
             const method = 'SSR'
-            console.log('[BaseController] route', routeName)
+            // console.log('[BaseController] route', routeName)
 
             const members: any = Reflect.getMetadata(routeName, this)
-            console.log('Members: ', members)
+            // console.log('Members: ', members)
 
             const [firstMethod] = members[method]
             // for (let i = 0; i < members[method].length; i++) {
@@ -61,9 +78,18 @@ export default class BaseController extends BaseContext {
                 console.log('[BaseController] Data not found')
                 return { notFound: true }
             }
-
+            console.log('[BaseController] data before normalization:\n', data)
+            const normalizedResult = this.normalizeData(data)
+            // console.log(
+            //     '[BaseController] data after normalization:\n',
+            //     normalizedResult
+            // )
+            store.dispatch(updateEntities(normalizedResult))
             return {
-                props: { data },
+                props: {
+                    query: context?.query || {},
+                    params: context?.params || {},
+                },
             }
         } catch (error: any) {
             console.error('[BaseController] error:', error)

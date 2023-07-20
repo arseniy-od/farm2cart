@@ -11,6 +11,7 @@ import { ConnectedProps, connect } from 'react-redux'
 import ErrorMessage from '@/app/components/errorMessage'
 import clientContainer from '@/redux/container'
 import { ContextDynamicRoute } from '@/app/types/interfaces'
+import initServerStore from '@/server/initServerStore'
 
 function Categories({ categories }: PropsFromRedux) {
     if (!categories) {
@@ -53,15 +54,6 @@ export default connector(Categories)
 
 export const getStaticProps: GetStaticProps = clientContainer
     .resolve('redux')
-    .wrapper.getStaticProps((store) => async (ctx: ContextDynamicRoute) => {
-        ctx.routeName = '/categories'
-        const res = await container.resolve('CategoryController').run(ctx)
-        const categories = res.props?.data
-        console.log('Categories: ', categories)
-
-        // const categories = props
-        const normCategories = normalize(categories, categoriesSchema)
-        store.dispatch(updateEntities(normCategories))
-
-        return { props: {} }
-    })
+    .wrapper.getStaticProps(
+        initServerStore(container.resolve('CategoryController'), '/categories')
+    )

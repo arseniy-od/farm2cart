@@ -23,14 +23,26 @@ import BaseController from './baseController'
 
 import validate from '../validation/validator'
 import { categorySchema } from '../validation/schemas'
+import { categoryGoodSchema, goodSchema } from '@/redux/normalSchemas'
+import { jsonCopy } from '@/app/utils'
 
 @USE([session, passportInit, passportSession])
 export default class CategoryController extends BaseController {
     private CategoryService = this.di.CategoryService
     private GoodService = this.di.GoodService
 
+    constructor(opts) {
+        super(opts)
+        this.initSchema('categories', {
+            CategoryGood: categoryGoodSchema,
+            goods: [goodSchema],
+        })
+    }
+
     @GET('/api/categories')
     @SSR('/categories')
+    @SSR('/goods/:id')
+    @SSR('/')
     async getCategories() {
         return await this.CategoryService.getCategories()
     }
@@ -81,28 +93,31 @@ export default class CategoryController extends BaseController {
         }
     }
 
+    @SSR('/categories/:slug')
     async getCategoryWithGoods({
         params,
     }: GetStaticPropsContext<ParsedUrlQuery, PreviewData>) {
         // const params = ctx.params
-        if (!params) {
-            console.error('No params at request')
-            return { props: { category: { notFound: true } } }
-        }
-        const slug = params.slug
+
+        const slug = params?.slug
         if (!slug || slug instanceof Array) {
             console.error('No slug or slug is array')
-            return { props: { category: { notFound: true } } }
+            return { notFound: true }
         }
 
-        const categoryData = await this.CategoryService.getCategoryByText(slug)
-        const category = JSON.parse(JSON.stringify(categoryData))
+        let category = await this.CategoryService.getCategoryByText(slug)
         const goods: good[] = []
 
         // to avoid including a lot of models with functions and filtered attributes inside categories
-        for (let good of category.goods) {
-            goods.push(await this.GoodService.getGoodByIdExtended(good.id))
+        category = jsonCopy(category)
+        if (category) {
+            for (let good of category.goods) {
+                goods.push(await this.GoodService.getGoodByIdExtended(good.id))
+            }
         }
-        return { props: { data: { category, goods } } }
+        category.goods = goods
+        console.log('==================================================')
+        // console.log('category: ', category)
+        return category
     }
 }

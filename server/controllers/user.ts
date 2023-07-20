@@ -26,6 +26,11 @@ export default class UserController extends BaseController {
     private GoodService = this.di.GoodService
     private OrderService = this.di.OrderService
 
+    constructor(opts) {
+        super(opts)
+        this.initSchema('users')
+    }
+
     @SSR('/users')
     @GET('/api/users')
     async getUsers() {
@@ -72,15 +77,7 @@ export default class UserController extends BaseController {
                 props: { user: { error: true, message: 'User not found' } },
             }
         }
-
-        let user = await this.UserService.getUserById(id)
-        let goods = await this.GoodService.getGoodsBySellerId(id)
-        user = JSON.parse(JSON.stringify(user))
-        goods = JSON.parse(JSON.stringify(goods))
-        return {
-            user,
-            goods,
-        }
+        return await this.UserService.getUserById(id)
     }
 
     @GET('/api/users/me')
@@ -90,63 +87,50 @@ export default class UserController extends BaseController {
         return req.identity
     }
 
-    //! Client router with middleware is incompatible with controller with middleware
     @SSR('/users/me')
-    async getUserByReq(req: NextApiRequestWithUser) {
-        if (!req.user) {
-            return {
-                props: {
-                    user: { error: true, message: 'You are not logged in' },
-                },
-            }
-        }
-        const user = JSON.parse(JSON.stringify(req.user))
-        return {
-            props: {
-                user,
-            },
-        }
+    async getUserByReq({ identity }) {
+        return identity
     }
 
-    @SSR('users/me/goods')
-    async getGoodsForUser(req: NextApiRequestWithUser) {
-        if (!req.user) {
-            return {
-                props: {
-                    user: { error: true, message: 'You are not logged in' },
-                },
-            }
-        }
-        const goods = await this.GoodService.getGoodsBySellerId(req.user.id)
-        const parsedUser = JSON.parse(JSON.stringify(req.user))
-        const parsedGoods = JSON.parse(JSON.stringify(goods))
-        return {
-            props: {
-                user: parsedUser,
-                goods: parsedGoods,
-            },
-        }
-    }
+    // @SSR('users/me/goods')
+    // async getGoodsForUser(req: NextApiRequestWithUser) {
+    //     if (!req.user) {
+    //         return {
+    //             props: {
+    //                 user: { error: true, message: 'You are not logged in' },
+    //             },
+    //         }
+    //     }
+    //     const goods = await this.GoodService.getGoodsBySellerId(req.user.id)
+    //     const parsedUser = JSON.parse(JSON.stringify(req.user))
+    //     const parsedGoods = JSON.parse(JSON.stringify(goods))
+    //     return {
+    //         props: {
+    //             user: parsedUser,
+    //             goods: parsedGoods,
+    //         },
+    //     }
+    // }
 
-    @SSR('/users/me/orders')
-    async getOrdersForUser(req: NextApiRequestWithUser) {
-        if (!req.user) {
-            return {
-                props: {
-                    user: { error: true, message: 'You are not logged in' },
-                },
-            }
-        }
-        const orders = await this.OrderService.getOrdersByCustomerId(
-            req.user.id
-        )
-        const parsedUser = JSON.parse(JSON.stringify(req.user))
-        const parsedOrders = JSON.parse(JSON.stringify(orders))
-        return {
-            props: {
-                user: parsedUser,
-                orders: parsedOrders,
-            },
-        }
-    }
+    // @SSR('/users/me/orders')
+    // async getOrdersForUser(req: NextApiRequestWithUser) {
+    //     if (!req.user) {
+    //         return {
+    //             props: {
+    //                 user: { error: true, message: 'You are not logged in' },
+    //             },
+    //         }
+    //     }
+    //     const orders = await this.OrderService.getOrdersByCustomerId(
+    //         req.user.id
+    //     )
+    //     const parsedUser = JSON.parse(JSON.stringify(req.user))
+    //     const parsedOrders = JSON.parse(JSON.stringify(orders))
+    //     return {
+    //         props: {
+    //             user: parsedUser,
+    //             orders: parsedOrders,
+    //         },
+    //     }
+    // }
 }

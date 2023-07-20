@@ -118,9 +118,6 @@ export default class GoodService extends BaseContext {
         const good = await this.Good.findOne({
             where: { id },
         })
-        if (!good) {
-            return { error: true, notFound: true, message: 'Good not found' }
-        }
         return good
     }
 
@@ -129,7 +126,7 @@ export default class GoodService extends BaseContext {
         return goods.map((good) => ({ params: { id: good.id.toString() } }))
     }
 
-    async createGood(goodData: good) {
+    async createGood(goodData) {
         const newGood = await this.Good.create(goodData)
         await goodData.categories.forEach(async (catId) => {
             const categoryGood = await this.Category.findOne({

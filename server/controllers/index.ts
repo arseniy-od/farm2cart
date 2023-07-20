@@ -1,5 +1,4 @@
 import { asClass } from 'awilix'
-import CompanyController from './company'
 import UserController from './user'
 import GoodController from './good'
 import OrderController from './order'
@@ -9,7 +8,6 @@ import AuthController from './auth'
 import CartController from './cart'
 
 export interface IControllerContainer {
-    CompanyController: CompanyController
     AuthController: AuthController
     UserController: UserController
     GoodController: GoodController
@@ -20,7 +18,6 @@ export interface IControllerContainer {
 }
 
 const controllers = {
-    CompanyController: asClass(CompanyController).singleton(),
     AuthController: asClass(AuthController).singleton(),
     UserController: asClass(UserController).singleton(),
     GoodController: asClass(GoodController).singleton(),

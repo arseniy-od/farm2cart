@@ -12,7 +12,7 @@ import clientContainer from '../container'
 interface IOptions {
     method: string
     headers?: Record<string, string>
-    body?: string
+    body?: string | FormData
 }
 
 export default class Entity extends BaseClientContext {
@@ -26,8 +26,8 @@ export default class Entity extends BaseClientContext {
         this.deleteData = this.deleteData.bind(this)
     }
 
-    protected schema: any
     private static _actions = []
+    protected schema: any
 
     protected initSchema(entityName = '', attributes: any = {}) {
         this.schema = entityName
@@ -46,7 +46,6 @@ export default class Entity extends BaseClientContext {
         }
         console.log('Method is: ', method)
         if ([METHODS.POST, METHODS.PUT, METHODS.PATCH].includes(method)) {
-            console.log('Options')
             if (contentType === 'multipart/form-data' && data) {
                 options.body = data
             } else {
@@ -128,7 +127,7 @@ export default class Entity extends BaseClientContext {
         const objects: ISagaMethods[] = Reflect.getMetadata('sagas', Entity)
         return objects.map((obj) => {
             const actionName = obj.className + '_' + obj.methodName
-            console.log('Action name: ', actionName)
+            // console.log('Action name: ', actionName)
             const classInstance = clientContainer.resolve(obj.className)
             const method = classInstance[obj.methodName].bind(classInstance)
             const saga = function* () {

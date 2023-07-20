@@ -8,6 +8,7 @@ export default function GoodFull({
     stars,
     categories,
     handleDelete,
+    user,
 }) {
     return (
         <div className="mx-auto">
@@ -82,20 +83,22 @@ export default function GoodFull({
                         </div>
                     </div>
                 </div>
-                <div className="mt-2 mx-auto flex justify-between">
-                    <Link
-                        href={`/goods/${good.id}/edit/`}
-                        className="block px-6 py-2 border-2 font-semibold border-green-600 hover:bg-gray-200 shadow-lg"
-                    >
-                        Edit
-                    </Link>
-                    <button
-                        onClick={handleDelete}
-                        className="ml-6 block px-6 py-2 border-2 font-semibold border-red-600 hover:bg-gray-200 shadow-lg"
-                    >
-                        {good.active ? 'Delete' : 'Activate'}
-                    </button>
-                </div>
+                {user.id === seller.id && (
+                    <div className="mt-2 mx-auto flex justify-between">
+                        <Link
+                            href={`/goods/${good.id}/edit/`}
+                            className="block px-6 py-2 border-2 font-semibold border-green-600 hover:bg-gray-200 shadow-lg"
+                        >
+                            Edit
+                        </Link>
+                        <button
+                            onClick={handleDelete}
+                            className="ml-6 block px-6 py-2 border-2 font-semibold border-red-600 hover:bg-gray-200 shadow-lg"
+                        >
+                            {good.active ? 'Delete' : 'Activate'}
+                        </button>
+                    </div>
+                )}
             </div>
         </div>
     )

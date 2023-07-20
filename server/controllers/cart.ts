@@ -11,6 +11,7 @@ import session, { passportInit, passportSession } from '@/middleware/session'
 import { NextApiRequestWithUser } from '@/app/types/interfaces'
 import validate from '../validation/validator'
 import { cartSchema } from '../validation/schemas'
+import { goodSchema } from '@/redux/normalSchemas'
 // import passport from '@/middleware/passport'
 
 @USE([session, passportInit, passportSession])

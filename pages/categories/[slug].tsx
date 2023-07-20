@@ -15,6 +15,7 @@ import clientContainer from '@/redux/container'
 import { normalizeResponse } from '@/app/normalizeResponse'
 import { useState } from 'react'
 import { good } from '@/app/types/entities'
+import initServerStore from '@/server/initServerStore'
 
 function Category({ goods, category }: PropsFromRedux) {
     const [query, setQuery] = useState('')
@@ -68,18 +69,28 @@ function Category({ goods, category }: PropsFromRedux) {
     )
 }
 
-function getGoodsByIds(state: RootState, goodIds: number[]) {
+function getGoodsByCategory(state: RootState, category) {
     if (state.entities.goods) {
+        console.log('front category: ', category)
         return Object.values(state.entities.goods).filter((good) =>
-            goodIds.includes(good.id || 0)
+            category.goods.includes(good.id || 0)
         )
     }
     return []
 }
 
+function getCategory(state: RootState, slug: string) {
+    const category = Object.values(state.entities.categories || {}).find(
+        (category) => category.text?.toLowerCase() === slug
+    )
+    console.log('getCategory slug: ', slug)
+    console.log('getCategory: ', category)
+    return category
+}
+
 const mapState = (state: RootState, ownProps) => ({
-    category: state.entities.categories?.[ownProps.id],
-    goods: getGoodsByIds(state, ownProps.goodIds),
+    category: getCategory(state, ownProps.params.slug),
+    goods: getGoodsByCategory(state, getCategory(state, ownProps.params.slug)),
 })
 
 const connector = connect(mapState, null)
@@ -91,20 +102,11 @@ export async function getStaticPaths() {
 
 export const getStaticProps: GetStaticProps = clientContainer
     .resolve('redux')
-    .wrapper.getStaticProps((store) => async (ctx) => {
-        const { props } = await container
-            .resolve('CategoryController')
-            .getCategoryWithGoods(ctx)
-
-        const category = props.data?.category
-        const goods = props.data?.goods
-        const normCategory = normalizeResponse(category, categorySchema)
-        const normGoods = normalizeResponse(goods, goodsSchema)
-        const goodIds = normCategory.entities.categories?.[category.id].goods
-
-        store.dispatch(updateEntities(normGoods))
-
-        return { props: { id: category.id, goodIds } }
-    })
+    .wrapper.getStaticProps(
+        initServerStore(
+            container.resolve('CategoryController'),
+            '/categories/:slug'
+        )
+    )
 
 export default connector(Category)

@@ -26,11 +26,27 @@ import session, { passportInit, passportSession } from '@/middleware/session'
 import uploadMiddleware from '@/middleware/upload'
 import validate from '../validation/validator'
 import { goodSchema } from '../validation/schemas'
+import {
+    categorySchema,
+    orderGoodsSchema,
+    reviewSchema,
+    userSchema,
+} from '@/redux/normalSchemas'
+import { IGoodModel } from '../database/models/good'
 
 @USE([session, passportInit, passportSession])
 export default class GoodController extends BaseController {
     private GoodService = this.di.GoodService
-    private CategoryService = this.di.CategoryService
+
+    constructor(opts) {
+        super(opts)
+        this.initSchema('goods', {
+            seller: userSchema,
+            categories: [categorySchema],
+            reviews: [reviewSchema],
+            OrderGood: orderGoodsSchema,
+        })
+    }
 
     @GET('/api/goods')
     async getGoodsApi() {
@@ -40,9 +56,7 @@ export default class GoodController extends BaseController {
 
     @SSR('/')
     async getGoods() {
-        const goods = await this.GoodService.getGoods()
-        const categories = await this.CategoryService.getCategories()
-        return { goods, categories }
+        return await this.GoodService.getGoods()
     }
 
     @POST('/api/goods')
@@ -78,7 +92,12 @@ export default class GoodController extends BaseController {
         if (!identity) {
             return { error: true, message: 'You are not logged in' }
         }
-        const goodData = { ...body, seller_id: identity.id }
+
+        const goodData = { ...body }
+        const currentGood = await this.GoodService.getGoodById(goodData.id)
+        if (currentGood?.seller_id !== identity.id) {
+            return { error: true, message: 'You are not owner of this good' }
+        }
         // console.log('[api/goods] goodData before: ', goodData)
         if (!(goodData.categories instanceof Array)) {
             goodData.categories = [goodData.categories]
@@ -102,6 +121,10 @@ export default class GoodController extends BaseController {
             return { error: true, message: 'You are not logged in' }
         }
         const goodData = { ...body, id: query.id, active: true }
+        const currentGood = await this.GoodService.getGoodById(goodData.id)
+        if (currentGood?.seller_id !== identity.id) {
+            return { error: true, message: 'You are not owner of this good' }
+        }
         // console.log('[api/goods] goodData before: ', goodData)
         if (!(goodData.categories instanceof Array) && goodData.categories) {
             goodData.categories = [goodData.categories]
@@ -127,31 +150,22 @@ export default class GoodController extends BaseController {
     }
 
     @SSR('/goods/:id')
-    async getGood({
-        params,
-    }: GetServerSidePropsContext<ParsedUrlQuery, PreviewData>) {
+    async getGood({ params }) {
         const { id } = params
         if (!id || id instanceof Array) {
             return { notFound: true }
         }
-        const good: good = await this.GoodService.getGoodByIdExtended(id)
-        const categories: category[] =
-            await this.CategoryService.getCategories()
-        if (good.reviews) {
-            good.reviews.sort(
-                (a, b) =>
-                    new Date(a.datepub).getTime() -
-                    new Date(b.datepub).getTime()
-            )
-        }
-        return { good, categories }
+        return await this.GoodService.getGoodByIdExtended(id)
     }
 
-    async getStaticPaths() {
-        const paths = await this.GoodService.getAllGoodIds()
-        return {
-            paths,
-            fallback: false,
+    @SSR('/users/:id')
+    async getGoodsForUser(ctx) {
+        const { id } = ctx.params
+        if (!id || id instanceof Array) {
+            return {
+                props: { error: true, message: 'User not found' },
+            }
         }
+        return await this.GoodService.getGoodsBySellerId(id)
     }
 }

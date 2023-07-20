@@ -20,10 +20,19 @@ import session, { passportInit, passportSession } from '@/middleware/session'
 import BaseController from './baseController'
 import { OrderSchema } from '../validation/schemas'
 import validate from '../validation/validator'
+import { goodsSchema, orderGoodsSchema } from '@/redux/normalSchemas'
 
 @USE([session, passportInit, passportSession])
 export default class OrderController extends BaseController {
     private OrderService = this.di.OrderService
+
+    constructor(opts) {
+        super(opts)
+        this.initSchema('orders', {
+            OrderGoods: [orderGoodsSchema],
+            goods: goodsSchema,
+        })
+    }
 
     @SSR('/orders')
     @GET('/api/orders')

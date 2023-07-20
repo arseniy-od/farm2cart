@@ -80,7 +80,7 @@ export type NextApiRequestWithUser = NextApiRequest & {
 }
 
 export type NextApiRequestFile = NextApiRequestWithUser & {
-    file?: File
+    file?: Express.Multer.File
 }
 
 export type review = {

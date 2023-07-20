@@ -2,7 +2,6 @@ import { useState, MouseEvent } from 'react'
 import axios from 'axios'
 
 import Layout from '@/app/layout'
-import { category } from '@/app/types/interfaces'
 
 // categories are static, so without redux
 export default function CategoryCreate() {

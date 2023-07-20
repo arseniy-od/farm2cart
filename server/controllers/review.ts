@@ -13,10 +13,16 @@ import session, { passportInit, passportSession } from '@/middleware/session'
 import BaseController from './baseController'
 import { reviewSchema } from '../validation/schemas'
 import validate from '../validation/validator'
+import { userSchema } from '@/redux/normalSchemas'
 
 @USE([session, passportInit, passportSession])
 export default class ReviewController extends BaseController {
     private ReviewService = this.di.ReviewService
+
+    constructor(opts) {
+        super(opts)
+        this.initSchema('reviews', { author: userSchema })
+    }
 
     @GET('/api/reviews')
     async getReviews() {
@@ -34,7 +40,6 @@ export default class ReviewController extends BaseController {
             authorId: identity.id,
             score: parseInt(body.score),
         }
-        const review = await this.ReviewService.createReview(reviewData)
-        return review
+        return await this.ReviewService.createReview(reviewData)
     }
 }

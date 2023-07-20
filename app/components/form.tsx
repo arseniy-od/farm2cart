@@ -4,9 +4,11 @@ export const FormInput = ({ label, name, ...props }) => {
     const [field, meta] = useField({ ...props, name })
 
     return (
-        <div className="">
+        <div className="mt-2">
             <div>
-                <label htmlFor={props.id || props.name}>{label}</label>
+                <label className="" htmlFor={props.id || props.name}>
+                    {label}
+                </label>
             </div>
 
             <input
@@ -28,7 +30,7 @@ export const TextArea = ({ label, name, ...props }) => {
     const [field, meta] = useField({ ...props, name })
 
     return (
-        <div className="">
+        <div className="mt-2">
             <div>
                 <label htmlFor={props.id || name}>{label}</label>
             </div>
@@ -106,7 +108,7 @@ export const FileUpload = ({ fileRef, name, ...props }) => {
     const [field, meta] = useField({ ...props, name })
     const { value, ...rest } = field
     return (
-        <div>
+        <div className="mt-2">
             <div>
                 <label htmlFor="file">Choose image:</label>{' '}
             </div>

@@ -89,8 +89,8 @@ function getGoodsForUser(state: RootState, userId) {
 }
 
 const mapState = (state: RootState, ownProps) => ({
-    user: state.entities.users?.[ownProps.id],
-    goods: getGoodsForUser(state, ownProps.id),
+    user: state.entities.users?.[ownProps.query.id],
+    goods: getGoodsForUser(state, ownProps.query.id),
 })
 
 const connector = connect(mapState, null)
@@ -100,21 +100,10 @@ type Props = PropsFromRedux & { id: number; error?: boolean; message?: string }
 export const getServerSideProps = clientContainer
     .resolve('redux')
     .wrapper.getServerSideProps((store) => async (ctx: ContextDynamicRoute) => {
-        ctx.routeName = '/users/:id'
-        const res = await container.resolve('UserController').run(ctx)
-        if (res.props?.error) {
-            return { props: res.props }
-        }
-        const user = res.props?.data.user
-        const goods = res.props?.data.goods
-        console.log('\n\nGoods:', goods)
-        const normUser = normalizeResponse(user, userSchema)
-        if (goods.length) {
-            const normGoods = normalizeResponse(goods, goodsSchema)
-            store.dispatch(updateEntities(normGoods))
-        }
-        store.dispatch(updateEntities(normUser))
-        return { props: { id: user.id } }
+        await container.resolve('UserController').run(ctx, store, '/users/:id')
+        return await container
+            .resolve('GoodController')
+            .run(ctx, store, '/users/:id')
     })
 
 export default connector(User)
