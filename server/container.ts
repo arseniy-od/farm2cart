@@ -36,8 +36,10 @@ container.register({
     db: awilix.asFunction(createDB).singleton(),
 })
 
-// export function di(dependency: string) {
-//     return container.resolve(dependency)
-// }
+export function di<K extends keyof IContextContainer>(
+    dependency: K
+): IContextContainer[K] {
+    return container.resolve(dependency)
+}
 
 export default container

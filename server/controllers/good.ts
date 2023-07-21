@@ -48,15 +48,22 @@ export default class GoodController extends BaseController {
         })
     }
 
-    @GET('/api/goods')
-    async getGoodsApi() {
-        const goods = await this.GoodService.getGoods()
+    async getGoodsApi({ query }) {
+        const page = query?.page || 1
+        console.log('\n\n\n===================[api/goods]==================')
+        console.log('page: ', page)
+
+        const goods = await this.GoodService.getGoods(page)
         return goods
     }
 
     @SSR('/')
-    async getGoods() {
-        return await this.GoodService.getGoods()
+    @GET('/api/goods')
+    async getGoods({ query, params }) {
+        const page = query?.page || 1
+        const goods = await this.GoodService.getGoods(page)
+        goods.pageName = 'GoodsTable'
+        return goods
     }
 
     @POST('/api/goods')

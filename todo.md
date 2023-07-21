@@ -13,3 +13,6 @@ Remove companies
 Add api endpoint for user-specific goods:
 
 -   use service get goods by seller id
+
+Remove non-active goods from /categories/slug
+show non-active banner on user/[id]

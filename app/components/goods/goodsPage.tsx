@@ -3,6 +3,8 @@ import CategoryIcon from '../categories/categoryIcon'
 import GoodCard from './goodCard'
 import { useState } from 'react'
 import { good } from '@/app/types/entities'
+import Paginator from '../paginator'
+import { useAppSelector } from '@/redux/hooks'
 
 export default function GoodsPage({ categories, goods }) {
     const [query, setQuery] = useState('')
@@ -59,6 +61,7 @@ export default function GoodsPage({ categories, goods }) {
                     ))}
                 </div>
             </div>
+            <Paginator pageName="GoodsTable" />
         </Layout>
     )
 }

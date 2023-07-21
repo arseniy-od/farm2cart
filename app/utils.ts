@@ -52,6 +52,9 @@ export function isEmpty(obj) {
 }
 
 export function jsonCopy(obj) {
+    if (obj.toJson) {
+        return obj.toJson()
+    }
     return JSON.parse(JSON.stringify(obj))
 }
 

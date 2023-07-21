@@ -1,14 +1,14 @@
 import { connect, ConnectedProps } from 'react-redux'
 import { normalize } from 'normalizr'
 
-import container from '@/server/container'
+import container, { di } from '@/server/container'
 import { ContextDynamicRoute, good } from '@/app/types/interfaces'
 import GoodsPage from '@/app/components/goods/goodsPage'
 import { RootState } from '@/redux/store'
 import { fetchCartItems, updateEntities } from '@/redux/actions'
 import { goodsSchema, categoriesSchema } from '@/redux/normalSchemas'
 import { useEffect } from 'react'
-import clientContainer from '@/redux/container'
+import clientContainer, { clientDi } from '@/redux/container'
 import { normalizeResponse } from '@/app/normalizeResponse'
 import initServerStore from '@/server/initServerStore'
 
@@ -36,16 +36,8 @@ const mapDispatch = {
 const connector = connect(mapState, mapDispatch)
 type PropsFromRedux = ConnectedProps<typeof connector>
 
-export const getServerSideProps = clientContainer
-    .resolve('redux')
-    .wrapper.getServerSideProps(
-        initServerStore(
-            [
-                container.resolve('GoodController'),
-                container.resolve('CategoryController'),
-            ],
-            '/'
-        )
-    )
+export const getServerSideProps = clientDi('redux').wrapper.getServerSideProps(
+    initServerStore([di('GoodController'), di('CategoryController')], '/')
+)
 
 export default connector(Goods)

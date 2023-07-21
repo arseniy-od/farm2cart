@@ -14,7 +14,8 @@ import {
 } from '@/app/types/interfaces'
 import { schema } from 'normalizr'
 import { normalizeResponse } from '@/app/normalizeResponse'
-import { updateEntities } from '@/redux/actions'
+import { pageFetching, pageInit, updateEntities } from '@/redux/actions'
+import { jsonCopy } from '@/app/utils'
 
 export default class BaseController extends BaseContext {
     protected schema: any
@@ -73,13 +74,20 @@ export default class BaseController extends BaseContext {
             let data = await callback({
                 params: context?.params,
             } as any)
-            data = JSON.parse(JSON.stringify(data))
+            data = jsonCopy(data)
             if (data.notFound || !data) {
-                console.log('[BaseController] Data not found')
+                console.error('[BaseController] Data not found')
                 return { notFound: true }
             }
-            console.log('[BaseController] data before normalization:\n', data)
-            const normalizedResult = this.normalizeData(data)
+            // console.log('[BaseController] data before normalization:\n', data)
+
+            const normalizedResult = this.normalizeData(data.result || data)
+            if (data.pageName) {
+                console.log('[BaseController] pageName:', data.pageName)
+                store.dispatch(
+                    pageInit(data.pageName, normalizedResult.result, data.count)
+                )
+            }
             // console.log(
             //     '[BaseController] data after normalization:\n',
             //     normalizedResult

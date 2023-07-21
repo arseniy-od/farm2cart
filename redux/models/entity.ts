@@ -85,7 +85,9 @@ export default class Entity extends BaseClientContext {
             if ([METHODS.DELETE, METHODS.PATCH].includes(method)) {
                 return result
             }
-            const normalizedResult = this.normalizeData(result)
+            console.log('actionRequest result: ', result)
+            const normalizedResult = this.normalizeData(result.result || result)
+            console.log('normalized: ', normalizedResult)
             const id = normalizedResult.result
             yield put(updateEntities(normalizedResult))
             return { data: normalizedResult.entities, id: id }
@@ -127,7 +129,7 @@ export default class Entity extends BaseClientContext {
         const objects: ISagaMethods[] = Reflect.getMetadata('sagas', Entity)
         return objects.map((obj) => {
             const actionName = obj.className + '_' + obj.methodName
-            // console.log('Action name: ', actionName)
+            console.log('Action name: ', actionName)
             const classInstance = clientContainer.resolve(obj.className)
             const method = classInstance[obj.methodName].bind(classInstance)
             const saga = function* () {

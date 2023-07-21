@@ -13,6 +13,7 @@ export default class CategoryService extends BaseContext {
                     model: this.Good,
                     attributes: ['id'],
                     through: { attributes: ['id', 'goodId', 'categoryId'] },
+                    where: { active: 1 },
                     // include : [
                     //     {model: this.User, as: "seller"},
                     //     {model: this.Category, as: "categories"}

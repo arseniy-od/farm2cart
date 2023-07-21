@@ -16,4 +16,10 @@ clientContainer.register({
     redux: awilix.asClass(ReduxStore).singleton(),
 })
 
+export function clientDi<K extends keyof IClientContextContainer>(
+    dependency: K
+): IClientContextContainer[K] {
+    return clientContainer.resolve(dependency)
+}
+
 export default clientContainer

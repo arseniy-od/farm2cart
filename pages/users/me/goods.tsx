@@ -9,9 +9,6 @@ import { fetchMyGoods } from '@/redux/actions'
 import { isEmpty } from '@/app/utils'
 import ErrorMessage from '@/app/components/errorMessage'
 import { good } from '@/app/types/entities'
-import clientContainer from '@/redux/container'
-import container from '@/server/container'
-import initServerStore from '@/server/initServerStore'
 
 function MyGoods({ user, goods, fetchMyGoods }: Props) {
     useEffect(() => {

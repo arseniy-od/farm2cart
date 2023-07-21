@@ -95,6 +95,14 @@ export const logoutRedux = () => action('user/logout')
 
 export const fetchCategories = () => action('CategoryEntity_fetchCategories')
 
+// pagination
+
+export const pageInit = (pageName: string, pageIds: string[], count: number) =>
+    action('paginator/page_init', { pageName, pageIds, count })
+
+export const fetchPage = (pageName: string, page: number) =>
+    action('PageEntity_fetchPage', { pageName, page })
+
 //entities
 
 export const updateEntities = (

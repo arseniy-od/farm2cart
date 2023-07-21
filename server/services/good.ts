@@ -3,6 +3,7 @@ import { Sequelize, Op } from 'sequelize'
 import BaseContext from '../baseContext'
 import { category, good } from '@/app/types/interfaces'
 import { jsonCopy } from '@/app/utils'
+import { GOODS_PER_PAGE } from '@/app/constants'
 
 export default class GoodService extends BaseContext {
     private Good = this.di.Good
@@ -12,8 +13,8 @@ export default class GoodService extends BaseContext {
     private Order = this.di.Order
     private CategoryGood = this.di.CategoryGood
 
-    async getGoods() {
-        const goods = await this.Good.findAll({
+    async getGoods(page: number) {
+        const goods = await this.Good.findAndCountAll({
             where: {
                 active: 1,
                 available: { [Op.ne]: 0 },
@@ -35,32 +36,39 @@ export default class GoodService extends BaseContext {
                     'reviewsCount',
                 ],
             ],
-            group: [
-                'good.id',
-                'title',
-                'categories.text',
-                'categories.id',
-                'categories.CategoryGood.id',
-            ],
+            group: ['good.id', 'title'],
             include: [
                 {
                     model: this.User,
                     attributes: ['id', 'username', 'email'],
                     as: 'seller',
                 },
-                {
-                    model: this.Category,
-                    attributes: ['id', 'text'],
-                    through: { attributes: ['id', 'categoryId', 'goodId'] },
-                },
+
                 {
                     model: this.Review,
                     as: 'reviews',
                     attributes: [],
                 },
             ],
+            order: [['id', 'ASC']],
+            offset: (page - 1) * 3,
+            limit: 3,
+            subQuery: false,
         })
-        return goods
+        // const goodsWithCategories = await Promise.all(
+        //     goods.rows.map(async (good) => {
+        //         const categories = await good.getCategories({
+        //             attributes: ['id', 'text'],
+        //         })
+        //         return {
+        //             ...good.toJSON(),
+        //             categories,
+        //         }
+        //     })
+        // )
+
+        return { count: goods.count.length, result: goods.rows }
+        // return goods
     }
 
     async getGoodByIdExtended(id: string) {
