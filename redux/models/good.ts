@@ -1,6 +1,5 @@
 import Entity from './entity'
 import { all, call, fork, put, take } from 'redux-saga/effects'
-import { normalize, schema } from 'normalizr'
 
 import action from '../decorators/action'
 import {
@@ -9,7 +8,7 @@ import {
     reviewSchema,
     orderGoodsSchema,
 } from '../normalSchemas'
-import { activateGoodRedux, deactivateGoodRedux } from '../actions'
+import { activateGoodRedux, deactivateGoodRedux, pageUpdate } from '../actions'
 import { toFormData } from '@/app/utils'
 import Router from 'next/router'
 
@@ -42,8 +41,14 @@ export default class GoodEntity extends Entity {
     }
 
     @action()
-    *fetchGoods() {
-        yield call(this.readData, '/api/goods')
+    *fetchGoods({ pageName, pageNumber, query }) {
+        yield call(
+            this.readPaginated,
+            pageName,
+            '/api/goods',
+            pageNumber,
+            query
+        )
     }
 
     @action()

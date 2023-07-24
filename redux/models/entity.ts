@@ -1,13 +1,24 @@
-import { call, fork, put, take } from 'redux-saga/effects'
+import { call, fork, put, select, take } from 'redux-saga/effects'
 import { schema, normalize } from 'normalizr'
 
 import { METHODS } from '@/app/constants'
-import { action, deleteEntity, fetchFailed, updateEntities } from '../actions'
+import {
+    action,
+    changeCurrentPage,
+    deleteEntity,
+    fetchFailed,
+    pageUpdate,
+    updateEntities,
+} from '../actions'
 import 'reflect-metadata'
 import { ISagaMethods } from '@/app/types/common'
-import CategoryEntity from './category'
 import BaseClientContext from '../baseClientContext'
 import clientContainer from '../container'
+import { RootState } from '../store'
+import {
+    IPagerState,
+    pagination,
+} from '../features/pagination/paginationReducer'
 
 interface IOptions {
     method: string
@@ -20,6 +31,7 @@ export default class Entity extends BaseClientContext {
         super(opts)
         this.fetchApi = this.fetchApi.bind(this)
         this.readData = this.readData.bind(this)
+        this.readPaginated = this.readPaginated.bind(this)
         this.saveData = this.saveData.bind(this)
         this.updateData = this.updateData.bind(this)
         this.patchData = this.patchData.bind(this)
@@ -67,6 +79,8 @@ export default class Entity extends BaseClientContext {
         }
     }
 
+    protected async fetchPaginated() {}
+
     protected normalizeData(data) {
         return normalize(
             data,
@@ -85,14 +99,57 @@ export default class Entity extends BaseClientContext {
             if ([METHODS.DELETE, METHODS.PATCH].includes(method)) {
                 return result
             }
-            console.log('actionRequest result: ', result)
+            // console.log('actionRequest result: ', result)
             const normalizedResult = this.normalizeData(result.result || result)
-            console.log('normalized: ', normalizedResult)
+            // console.log('normalized: ', normalizedResult)
+            const entities = normalizedResult.entities
             const id = normalizedResult.result
             yield put(updateEntities(normalizedResult))
-            return { data: normalizedResult.entities, id: id }
+            return { data: entities, id, count: result?.count }
         } catch (error) {
             yield put(fetchFailed(error.message))
+        }
+    }
+    protected *isPageFetched(data: {
+        pageName: string
+        page: number
+        query?: string
+    }) {
+        const { pageName, page } = data
+        const pagination: pagination = yield select(
+            (state: RootState) => state.pagination[pageName]
+        )
+
+        if (
+            !(page in (pagination.pages || [])) ||
+            query !== pagination.filter
+        ) {
+            //! rewrite
+            return false
+        } else {
+            return true
+        }
+    }
+
+    protected *readPaginated(
+        pageName: string,
+        url: string,
+        page: number,
+        query?: string
+    ) {
+        const isFetched = yield call(this.isPageFetched, {
+            pageName,
+            page,
+            query,
+        })
+        if (isFetched) {
+            yield put(changeCurrentPage(pageName, page)) // we have all data, so only changing current page
+        } else {
+            const { id: ids, count } = yield call(
+                this.readData,
+                url + '?page=' + page
+            )
+            yield put(pageUpdate(pageName, ids, count, page))
         }
     }
 
@@ -129,7 +186,7 @@ export default class Entity extends BaseClientContext {
         const objects: ISagaMethods[] = Reflect.getMetadata('sagas', Entity)
         return objects.map((obj) => {
             const actionName = obj.className + '_' + obj.methodName
-            console.log('Action name: ', actionName)
+            // console.log('Action name: ', actionName)
             const classInstance = clientContainer.resolve(obj.className)
             const method = classInstance[obj.methodName].bind(classInstance)
             const saga = function* () {

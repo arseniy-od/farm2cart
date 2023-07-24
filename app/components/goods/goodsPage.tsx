@@ -2,28 +2,26 @@ import Layout from '@/app/layout'
 import CategoryIcon from '../categories/categoryIcon'
 import GoodCard from './goodCard'
 import { useState } from 'react'
-import { good } from '@/app/types/entities'
-import Paginator from '../paginator'
-import { useAppSelector } from '@/redux/hooks'
+import { category, good } from '@/app/types/entities'
+import Paginator from '../navigation/paginator'
+import { fetchPaginatedGoods } from '@/redux/actions'
+import { GOODS_TABLE } from '@/app/constants'
 
-export default function GoodsPage({ categories, goods }) {
+export default function GoodsPage({
+    goods,
+    categories,
+}: {
+    goods: good[]
+    categories: { [key: string]: category }
+}) {
     const [query, setQuery] = useState('')
-
-    const filterGoods = (goods: good[]) => {
-        return goods.filter((good) =>
-            (good.title + ' ' + good.description || '')
-                .toLowerCase()
-                .includes(query.toLowerCase())
-        )
-    }
-    const filtered = filterGoods(Object.values(goods))
-
-    const handleChange = (e) => {
-        setQuery(e.target.value)
+    const handleSubmit = (e) => {
+        e.preventDefault()
+        setQuery(e.target.search.value)
     }
 
     return (
-        <Layout home={true} handleSearch={handleChange}>
+        <Layout home={true} handleSearch={handleSubmit}>
             <div className="mx-4 flex flex-wrap justify-center">
                 {Object.values(categories)?.length ? (
                     <>
@@ -54,14 +52,18 @@ export default function GoodsPage({ categories, goods }) {
             </div>
             <div className="mx-auto flex flex-wrap justify-center">
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-                    {filtered.map((good, i) => (
+                    {goods.map((good, i) => (
                         <div key={i}>
                             <GoodCard good={good} />
                         </div>
                     ))}
                 </div>
             </div>
-            <Paginator pageName="GoodsTable" />
+            <Paginator
+                pageName={GOODS_TABLE}
+                fetchAction={fetchPaginatedGoods}
+                searchQuery={query}
+            />
         </Layout>
     )
 }

@@ -8,6 +8,7 @@ import rootReducer from './reducer'
 import { entities, user } from '@/app/types/entities'
 import Entity from './models/entity'
 import BaseClientContext from './baseClientContext'
+import { IPagerState } from './features/pagination/paginationReducer'
 
 export default class ReduxStore extends BaseClientContext {
     public isDebug: boolean = false
@@ -40,7 +41,11 @@ export default class ReduxStore extends BaseClientContext {
         return store
     }
 }
-export type RootState = { user: user; entities: entities }
+export type RootState = {
+    user: user
+    entities: entities
+    pagination: IPagerState
+}
 
 // export type AppStore = ReturnType<typeof setupStore>
 

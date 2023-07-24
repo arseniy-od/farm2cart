@@ -147,12 +147,15 @@ function Layout({
                 )}
                 {handleSearch && (
                     <div className="py-2 flex justify-end bg-gray-100 w-full border-2 border-gray-200 lg:hidden">
-                        <input
-                            onChange={handleSearch}
-                            type="text"
-                            placeholder="Search..."
-                            className="mx-4 border-none rounded w-full sm:w-2/3 md:w-1/2 lg:w-1/3"
-                        />
+                        <form onSubmit={handleSearch}>
+                            <input
+                                name="search"
+                                type="text"
+                                placeholder="Search..."
+                                className="mx-4 border-none rounded w-full sm:w-2/3 md:w-1/2 lg:w-1/3"
+                            />
+                            <button type="submit">Submit</button>
+                        </form>
                     </div>
                 )}
 

@@ -1,6 +1,22 @@
-const initialPagerState: any = {}
+import { isEmpty, jsonCopy } from '@/app/utils'
 
-export default function pagination(state = initialPagerState, action: any) {
+export type pagination = {
+    pages?: { [id: string]: { ids: number[] } }
+    fetching?: boolean
+    currentPage?: number
+    perPage?: number
+    count?: number
+    pageName?: string
+}
+export interface IPagerState {
+    [pageName: string]: pagination
+}
+const initialPagerState: IPagerState = {}
+
+export default function paginationReducer(
+    state = initialPagerState,
+    action: any
+) {
     // get result for the paginator, disable fetching
     // if (action.response && action.response.pager) {
     //     const {
@@ -47,40 +63,63 @@ export default function pagination(state = initialPagerState, action: any) {
         // case MODEL_CLEAR:
         //     state = initialPagerState
         //     break
-        case 'paginator/page_init':
-            {
-                const { pageName, pageIds, count } = action.payload
-                let pagination = {
-                    pages: { 1: { ids: pageIds } },
+        case 'paginator/update': {
+            const { pageName, pageIds, count, pageNumber } = action.payload
+            let pagination: pagination = {}
+            if (state[pageName]) {
+                pagination = jsonCopy(state[pageName])
+            }
+            if (isEmpty(pagination)) {
+                console.log('pagination is empty')
+                console.log('paginator: ', pagination)
+
+                pagination = {
+                    pages: { [pageNumber]: { ids: pageIds } },
                     fetching: false,
-                    currentPage: 1,
+                    currentPage: pageNumber,
                     perPage: pageIds.length,
                     count,
                     pageName,
                 }
-                state = { [pageName]: { ...pagination } }
-            }
-            break
-        case 'paginator/page_fetching':
-            console.log('PAGINATION')
-            {
-                const { pageName, page, isFetching, force } = action.payload
-                let pagination = { fetching: false, pages: {}, currentPage: 1 }
-                pagination.fetching = isFetching
-
-                if (page in pagination.pages) {
-                    //to avoid empty page before loading new page data
-                    pagination.currentPage = page
-
-                    // if (force) {
-                    //     const pages = pagination.get('pages')?.filter((v, k) => Number.parseInt(k) < page);
-                    //     pagination = pagination.set('pages', pages);
-                    // }
+            } else {
+                pagination.currentPage = pageNumber
+                pagination.pages = {
+                    ...pagination.pages,
+                    [pageNumber]: { ids: pageIds },
                 }
-
-                state = { [pageName]: { ...pagination } }
             }
-            break
+            return { ...state, [pageName]: { ...pagination } }
+        }
+
+        case 'paginator/change_page': {
+            const { pageName, page } = action.payload
+            const pagination = jsonCopy(state[pageName])
+            return {
+                ...state,
+                [pageName]: { ...pagination, currentPage: page },
+            }
+        }
+
+        // case 'paginator/page_fetching':
+        //     console.log('PAGINATION')
+        //     {
+        //         const { pageName, page, isFetching, force } = action.payload
+        //         let pagination = { fetching: false, pages: {}, currentPage: 1 }
+        //         pagination.fetching = isFetching
+
+        //         if (page in pagination.pages) {
+        //             //to avoid empty page before loading new page data
+        //             pagination.currentPage = page
+
+        //             // if (force) {
+        //             //     const pages = pagination.get('pages')?.filter((v, k) => Number.parseInt(k) < page);
+        //             //     pagination = pagination.set('pages', pages);
+        //             // }
+        //         }
+
+        //         state = { [pageName]: { ...pagination } }
+        //     }
+        //     break
 
         //     case PAGE_SELECT_ITEM:
         //         {

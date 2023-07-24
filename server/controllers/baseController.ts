@@ -14,7 +14,7 @@ import {
 } from '@/app/types/interfaces'
 import { schema } from 'normalizr'
 import { normalizeResponse } from '@/app/normalizeResponse'
-import { pageFetching, pageInit, updateEntities } from '@/redux/actions'
+import { pageUpdate, updateEntities } from '@/redux/actions'
 import { jsonCopy } from '@/app/utils'
 
 export default class BaseController extends BaseContext {
@@ -39,10 +39,8 @@ export default class BaseController extends BaseContext {
             this.constructor
         )
         const classArgs = Array.isArray(classMiddleware) ? classMiddleware : []
-        // console.log('class args: ', classArgs)
 
         for (let i = 0; i < classArgs.length; i++) {
-            // console.log('use: ', classArgs[i])
             router.use(classArgs[i])
         }
         return classArgs
@@ -50,8 +48,6 @@ export default class BaseController extends BaseContext {
 
     private useMethodMiddleware(methodName: string) {
         const key = this.constructor.name + '_' + methodName
-        // console.log('key: ', key)
-
         const methodMiddleware = Reflect.getMetadata(key, this.constructor)
         const methodArgs = Array.isArray(methodMiddleware)
             ? methodMiddleware
@@ -61,44 +57,39 @@ export default class BaseController extends BaseContext {
 
     public run = async (context: ContextDynamicRoute, store, routeName) => {
         try {
-            // const routeName = context.routeName || context.req.url
             const method = 'SSR'
-            // console.log('[BaseController] route', routeName)
-
             const members: any = Reflect.getMetadata(routeName, this)
-            // console.log('Members: ', members)
-
             const [firstMethod] = members[method]
-            // for (let i = 0; i < members[method].length; i++) {
             const callback = this[firstMethod].bind(this)
             let data = await callback({
                 params: context?.params,
             } as any)
-            data = jsonCopy(data)
+
             if (data.notFound || !data) {
                 console.error('[BaseController] Data not found')
                 return { notFound: true }
             }
-            // console.log('[BaseController] data before normalization:\n', data)
 
+            data = jsonCopy(data)
             const normalizedResult = this.normalizeData(data.result || data)
+
             if (data.pageName) {
-                console.log('[BaseController] pageName:', data.pageName)
                 store.dispatch(
-                    pageInit(data.pageName, normalizedResult.result, data.count)
+                    pageUpdate(
+                        data.pageName,
+                        normalizedResult.result,
+                        data.count
+                    )
                 )
             }
-            // console.log(
-            //     '[BaseController] data after normalization:\n',
-            //     normalizedResult
-            // )
+
             store.dispatch(updateEntities(normalizedResult))
-            return {
-                props: {
-                    query: context?.query || {},
-                    params: context?.params || {},
-                },
-            }
+            // return {
+            //     props: {
+            //         query: context?.query || {},
+            //         params: context?.params || {},
+            //     },
+            // }
         } catch (error: any) {
             console.error('[BaseController] error:', error)
             return {
@@ -109,8 +100,6 @@ export default class BaseController extends BaseContext {
             }
         }
     }
-    // })
-    // .run(context.req, context.res)
 
     public handler(routeName: string) {
         const router = createRouter<NextApiRequest, NextApiResponse>()

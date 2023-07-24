@@ -3,7 +3,7 @@ import { Sequelize, Op } from 'sequelize'
 import BaseContext from '../baseContext'
 import { category, good } from '@/app/types/interfaces'
 import { jsonCopy } from '@/app/utils'
-import { GOODS_PER_PAGE } from '@/app/constants'
+import { GOODS_PER_PAGE, GOODS_TABLE } from '@/app/constants'
 
 export default class GoodService extends BaseContext {
     private Good = this.di.Good
@@ -13,11 +13,12 @@ export default class GoodService extends BaseContext {
     private Order = this.di.Order
     private CategoryGood = this.di.CategoryGood
 
-    async getGoods(page: number) {
+    async getPaginatedGoods(page: number, searchQuery: string) {
         const goods = await this.Good.findAndCountAll({
             where: {
                 active: 1,
                 available: { [Op.ne]: 0 },
+                title: { [Op.like]: `%${searchQuery}%` },
             },
             attributes: [
                 'id',
@@ -51,8 +52,8 @@ export default class GoodService extends BaseContext {
                 },
             ],
             order: [['id', 'ASC']],
-            offset: (page - 1) * 3,
-            limit: 3,
+            offset: (page - 1) * GOODS_PER_PAGE,
+            limit: GOODS_PER_PAGE,
             subQuery: false,
         })
         // const goodsWithCategories = await Promise.all(
@@ -67,7 +68,7 @@ export default class GoodService extends BaseContext {
         //     })
         // )
 
-        return { count: goods.count.length, result: goods.rows }
+        return { count: goods.count.length, result: goods.rows, pageName: '' }
         // return goods
     }
 

@@ -51,9 +51,9 @@ export function isEmpty(obj) {
     }
 }
 
-export function jsonCopy(obj) {
-    if (obj.toJson) {
-        return obj.toJson()
+export function jsonCopy<T extends object>(obj: T): T {
+    if ('toJson' in obj) {
+        return (obj as any).toJson()
     }
     return JSON.parse(JSON.stringify(obj))
 }

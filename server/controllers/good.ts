@@ -33,6 +33,7 @@ import {
     userSchema,
 } from '@/redux/normalSchemas'
 import { IGoodModel } from '../database/models/good'
+import { GOODS_TABLE } from '@/app/constants'
 
 @USE([session, passportInit, passportSession])
 export default class GoodController extends BaseController {
@@ -48,21 +49,18 @@ export default class GoodController extends BaseController {
         })
     }
 
-    async getGoodsApi({ query }) {
-        const page = query?.page || 1
-        console.log('\n\n\n===================[api/goods]==================')
-        console.log('page: ', page)
-
-        const goods = await this.GoodService.getGoods(page)
-        return goods
-    }
-
     @SSR('/')
     @GET('/api/goods')
-    async getGoods({ query, params }) {
+    async getPaginatedGoods({ query }) {
         const page = query?.page || 1
-        const goods = await this.GoodService.getGoods(page)
-        goods.pageName = 'GoodsTable'
+        const searchQuery = query?.search || ''
+        const escapedSearchQuery = searchQuery.replace(/['"]+/g, '')
+        console.log('\n\nsearch:', searchQuery)
+        const goods = await this.GoodService.getPaginatedGoods(
+            page,
+            escapedSearchQuery
+        )
+        goods.pageName = GOODS_TABLE
         return goods
     }
 

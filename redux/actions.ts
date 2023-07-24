@@ -1,4 +1,4 @@
-import { STRATEGIES } from '@/app/constants'
+import { ACTIONS, STRATEGIES } from '@/app/constants'
 import { entities, good, review } from '@/app/types/entities'
 import { order, user } from '@/app/types/interfaces'
 
@@ -8,57 +8,62 @@ export const action = (type: string, payload?: any) => ({
 })
 
 // good
-export const createGood = (good: good) => action('GoodEntity_createGood', good)
+export const createGood = (good: good) => action(ACTIONS.CREATE_GOOD, good)
 
 export const deactivateGoodSaga = (good: good) =>
-    action('GoodEntity_deactivateGood', good)
+    action(ACTIONS.DEACTIVATE_GOOD, good)
 
 export const activateGoodSaga = (good: good) =>
-    action('GoodEntity_activateGood', good)
+    action(ACTIONS.ACTIVATE_GOOD, good)
 
 export const deactivateGoodRedux = (good: good) =>
-    action('entities/update_one', {
+    action(ACTIONS.UPDATE_ENTITY, {
         entityName: 'goods',
         entityId: good.id,
         entityFields: { active: false },
     })
 
 export const activateGoodRedux = (good: good) =>
-    action('entities/update_one', {
+    action(ACTIONS.UPDATE_ENTITY, {
         entityName: 'goods',
         entityId: good.id,
         entityFields: { active: true },
     })
 
-export const updateGood = (good: good) => action('GoodEntity_updateGood', good)
+export const updateGood = (good: good) => action(ACTIONS.UPDATE_GOOD, good)
+export const fetchPaginatedGoods = (
+    pageName: string,
+    pageNumber: number,
+    query: string = ''
+) => action(ACTIONS.FETCH_GOODS, { pageName, pageNumber, query })
 
-export const fetchMyGoods = () => action('GoodEntity_fetchGoods')
+export const fetchMyGoods = (pageNumber: number = 1) =>
+    action(ACTIONS.FETCH_GOODS, { number: pageNumber })
 
 // cart
 
-export const fetchCartItems = () => action('CartEntity_fetchCart')
+export const fetchCartItems = () => action(ACTIONS.FETCH_CART)
 
-export const addToCart = (goodId: number) =>
-    action('CartEntity_addToCart', goodId)
+export const addToCart = (goodId: number) => action(ACTIONS.ADD_TO_CART, goodId)
 
 export const decrementQuantity = (good, quantity: number) =>
-    action('entities/update_one', {
+    action(ACTIONS.UPDATE_ENTITY, {
         entityName: 'goods',
         entityId: good.id,
         entityFields: { available: good.available - quantity },
     })
 
 export const changeGoodQuantity = (goodId, quantity) =>
-    action('entities/update_one', {
+    action(ACTIONS.UPDATE_ENTITY, {
         entityName: 'cartItems',
         entityId: goodId,
         entityFields: { quantity },
     })
 
 export const deleteCartItem = (index: number) =>
-    action('CartEntity_deleteCartItem', { index })
+    action(ACTIONS.DELETE_CART_ITEM, { index })
 
-export const clearCart = () => action('entities/clear', 'cartItems')
+export const clearCart = () => action(ACTIONS.CLEAR_ENTITY, 'cartItems')
 
 // order
 
@@ -97,12 +102,18 @@ export const fetchCategories = () => action('CategoryEntity_fetchCategories')
 
 // pagination
 
-export const pageInit = (pageName: string, pageIds: string[], count: number) =>
-    action('paginator/page_init', { pageName, pageIds, count })
+export const pageUpdate = (
+    pageName: string,
+    pageIds: number[] | string[],
+    count: number,
+    pageNumber: number = 1
+) => action('paginator/update', { pageName, pageIds, count, pageNumber })
 
 export const fetchPage = (pageName: string, page: number) =>
     action('PageEntity_fetchPage', { pageName, page })
 
+export const changeCurrentPage = (pageName: string, page: number) =>
+    action('paginator/change_page', { pageName, page })
 //entities
 
 export const updateEntities = (

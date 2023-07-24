@@ -6,12 +6,12 @@ import { isEmpty, jsonCopy } from '@/app/utils'
 import _ from 'lodash'
 import { user } from '@/app/types/interfaces'
 import { entities } from '@/app/types/entities'
-import pagination from './features/pagination/paginationReducer'
+import paginationReducer from './features/pagination/paginationReducer'
 
 const combinedReducer = combineReducers({
     user: userReducer,
     entities: entitiesReducer,
-    pagination: pagination,
+    pagination: paginationReducer,
 })
 
 const rootReducer = (

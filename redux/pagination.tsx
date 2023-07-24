@@ -46,7 +46,7 @@
 //         yield put(pageFetching(pageName, params.page, false));
 //     }
 
-// //! action
+// //! action for spinner
 
 // export const pageFetching = (
 //   pageName: string,

@@ -16,3 +16,7 @@ Add api endpoint for user-specific goods:
 
 Remove non-active goods from /categories/slug
 show non-active banner on user/[id]
+
+## Libraries
+
+Read about immutable.js

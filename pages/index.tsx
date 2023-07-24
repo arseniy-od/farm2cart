@@ -1,15 +1,13 @@
 import { connect, ConnectedProps } from 'react-redux'
-import { normalize } from 'normalizr'
 
-import container, { di } from '@/server/container'
-import { ContextDynamicRoute, good } from '@/app/types/interfaces'
+import { di } from '@/server/container'
+
 import GoodsPage from '@/app/components/goods/goodsPage'
 import { RootState } from '@/redux/store'
-import { fetchCartItems, updateEntities } from '@/redux/actions'
-import { goodsSchema, categoriesSchema } from '@/redux/normalSchemas'
+import { fetchCartItems } from '@/redux/actions'
 import { useEffect } from 'react'
-import clientContainer, { clientDi } from '@/redux/container'
-import { normalizeResponse } from '@/app/normalizeResponse'
+import { clientDi } from '@/redux/container'
+
 import initServerStore from '@/server/initServerStore'
 
 function Goods({ goods, categories, fetchCartItems }: PropsFromRedux) {
@@ -21,7 +19,15 @@ function Goods({ goods, categories, fetchCartItems }: PropsFromRedux) {
 
 function getActiveGoods(state: RootState) {
     const goods = Object.values(state.entities.goods || {})
-    return goods.filter((good) => good.active && good.available)
+    const page = state.pagination.GoodsTable
+    return goods.filter(
+        (good) =>
+            good.id &&
+            good.active &&
+            good.available &&
+            page.pages &&
+            page.pages[page.currentPage || 0].ids.includes(good.id)
+    )
 }
 
 const mapState = (state: RootState) => ({
