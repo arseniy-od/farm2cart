@@ -104,12 +104,14 @@ function Layout({
                             <OptionalHeader user={user} />
                             {handleSearch && (
                                 <div className="hidden lg:block">
-                                    <input
-                                        onChange={handleSearch}
-                                        type="text"
-                                        placeholder="Search..."
-                                        className="mx-4 border-none w-full focus:border-2 focus:border-gray-400"
-                                    />
+                                    <form onSubmit={handleSearch}>
+                                        <input
+                                            name="search"
+                                            type="text"
+                                            placeholder="Search..."
+                                            className="mx-4 border-none rounded w-full"
+                                        />
+                                    </form>
                                 </div>
                             )}
                             <Link
@@ -146,17 +148,17 @@ function Layout({
                     <Sidebar setIsMenuOpen={setIsMenuOpen} home={home} />
                 )}
                 {handleSearch && (
-                    <div className="py-2 flex justify-end bg-gray-100 w-full border-2 border-gray-200 lg:hidden">
-                        <form onSubmit={handleSearch}>
-                            <input
-                                name="search"
-                                type="text"
-                                placeholder="Search..."
-                                className="mx-4 border-none rounded w-full sm:w-2/3 md:w-1/2 lg:w-1/3"
-                            />
-                            <button type="submit">Submit</button>
-                        </form>
-                    </div>
+                    <form
+                        onSubmit={handleSearch}
+                        className="py-2 flex justify-end bg-gray-100 w-full border-2 border-gray-200 lg:hidden"
+                    >
+                        <input
+                            name="search"
+                            type="text"
+                            placeholder="Search..."
+                            className="mx-4 border-none rounded w-full sm:w-2/3 md:w-1/2 lg:w-1/3"
+                        />
+                    </form>
                 )}
 
                 <main className="">{children}</main>

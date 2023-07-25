@@ -188,9 +188,13 @@ export default class GoodService extends BaseContext {
         return good
     }
 
-    async getGoodsBySellerId(id: number | string) {
-        const goods = await this.Good.findAll({
-            where: { seller_id: id },
+    async getGoodsBySellerId(
+        page: number,
+        id: number | string,
+        searchQuery: string
+    ) {
+        const goods = await this.Good.findAndCountAll({
+            where: { seller_id: id, title: { [Op.like]: `%${searchQuery}%` } },
             attributes: [
                 'id',
                 'title',
@@ -208,13 +212,7 @@ export default class GoodService extends BaseContext {
                     'reviewsCount',
                 ],
             ],
-            group: [
-                'good.id',
-                'title',
-                'categories.text',
-                'categories.id',
-                'categories.CategoryGood.id',
-            ],
+            group: ['good.id', 'title'],
             include: [
                 {
                     model: this.User,
@@ -222,18 +220,18 @@ export default class GoodService extends BaseContext {
                     as: 'seller',
                 },
                 {
-                    model: this.Category,
-                    attributes: ['id', 'text'],
-                    through: { attributes: ['id', 'categoryId', 'goodId'] },
-                },
-                {
                     model: this.Review,
                     as: 'reviews',
                     attributes: [],
                 },
             ],
+            order: [['id', 'ASC']],
+            offset: (page - 1) * GOODS_PER_PAGE,
+            limit: GOODS_PER_PAGE,
+            subQuery: false,
         })
-        return goods
+        return { count: goods.count.length, result: goods.rows, pageName: '' }
+        // return goods
     }
 
     async deleteGood(id: string) {

@@ -32,7 +32,8 @@ function MyOrders({ user, orders, goods, orderGoods, fetchOrders }: Props) {
     const filtered = filterGoods(Object.values(orders || {}))
 
     const handleSearch = (e) => {
-        setQuery(e.target.value)
+        e.preventDefault()
+        setQuery(e.target.search.value)
     }
 
     if (!orders || isEmpty(orders)) {
@@ -54,8 +55,8 @@ function MyOrders({ user, orders, goods, orderGoods, fetchOrders }: Props) {
                         </h3>
 
                         <div className="mx-auto flex flex-wrap justify-center">
-                            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-                                {filtered.map((order, i) => (
+                            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                                {Object.values(orders).map((order, i) => (
                                     <div key={i}>
                                         <OrderCard
                                             order={order}

@@ -5,9 +5,12 @@ import { METHODS } from '@/app/constants'
 import {
     action,
     changeCurrentPage,
+    clearPage,
     deleteEntity,
     fetchFailed,
+    initPage,
     pageUpdate,
+    setPageFilter,
     updateEntities,
 } from '../actions'
 import 'reflect-metadata'
@@ -58,7 +61,10 @@ export default class Entity extends BaseClientContext {
         }
         console.log('Method is: ', method)
         if ([METHODS.POST, METHODS.PUT, METHODS.PATCH].includes(method)) {
-            if (contentType === 'multipart/form-data' && data) {
+            if (
+                contentType === 'multipart/form-data' &&
+                data instanceof FormData
+            ) {
                 options.body = data
             } else {
                 options.headers = {
@@ -110,24 +116,31 @@ export default class Entity extends BaseClientContext {
             yield put(fetchFailed(error.message))
         }
     }
-    protected *isPageFetched(data: {
-        pageName: string
-        page: number
-        query?: string
-    }) {
+    protected *isPageFetched(data: { pageName: string; page: number }) {
         const { pageName, page } = data
         const pagination: pagination = yield select(
             (state: RootState) => state.pagination[pageName]
         )
 
-        if (
-            !(page in (pagination.pages || [])) ||
-            query !== pagination.filter
-        ) {
-            //! rewrite
+        if (!(page in (pagination.pages || []))) {
             return false
         } else {
             return true
+        }
+    }
+    private *getFilters(pageName: string) {
+        const filter = yield select(
+            (state: RootState) => state.pagination[pageName].filter
+        )
+        const entries = Object.entries(filter)
+        let filtersArr: string[] = []
+        if (entries.length) {
+            entries.forEach((entry) =>
+                filtersArr.push(`&${entry[0]}=${entry[1]}`)
+            )
+            return filtersArr.join('')
+        } else {
+            return ''
         }
     }
 
@@ -135,19 +148,37 @@ export default class Entity extends BaseClientContext {
         pageName: string,
         url: string,
         page: number,
-        query?: string
+        filter?: Record<string, string>,
+        force?: boolean
     ) {
-        const isFetched = yield call(this.isPageFetched, {
-            pageName,
-            page,
-            query,
-        })
+        const pagination: pagination = yield select(
+            (state: RootState) => state.pagination[pageName]
+        )
+        if (!pagination) {
+            yield put(initPage(pageName))
+        }
+        let pageFilter = filter || {}
+
+        let isFetched = false
+        if (filter) {
+            yield put(setPageFilter(pageName, pageFilter))
+        }
+        if (force) {
+            // new filters apply if force is true to refresh pages
+            yield put(clearPage(pageName))
+        } else {
+            isFetched = yield call(this.isPageFetched, {
+                pageName,
+                page,
+            })
+        }
+        const filterString = yield call(this.getFilters, pageName)
         if (isFetched) {
             yield put(changeCurrentPage(pageName, page)) // we have all data, so only changing current page
         } else {
             const { id: ids, count } = yield call(
                 this.readData,
-                url + '?page=' + page
+                url + '?page=' + page + filterString
             )
             yield put(pageUpdate(pageName, ids, count, page))
         }

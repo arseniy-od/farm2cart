@@ -4,8 +4,10 @@ import GoodCard from './goodCard'
 import { useState } from 'react'
 import { category, good } from '@/app/types/entities'
 import Paginator from '../navigation/paginator'
-import { fetchPaginatedGoods } from '@/redux/actions'
+import { fetchPaginatedGoods, setPageFilter } from '@/redux/actions'
 import { GOODS_TABLE } from '@/app/constants'
+import { useAppDispatch } from '@/redux/hooks'
+import GoodTable from './goodTable'
 
 export default function GoodsPage({
     goods,
@@ -14,14 +16,15 @@ export default function GoodsPage({
     goods: good[]
     categories: { [key: string]: category }
 }) {
-    const [query, setQuery] = useState('')
-    const handleSubmit = (e) => {
+    const dispatch = useAppDispatch()
+    const handleSearch = (e) => {
         e.preventDefault()
-        setQuery(e.target.search.value)
+        const query = e.target.search.value
+        dispatch(fetchPaginatedGoods(GOODS_TABLE, 1, query))
     }
 
     return (
-        <Layout home={true} handleSearch={handleSubmit}>
+        <Layout home={true} handleSearch={handleSearch}>
             <div className="mx-4 flex flex-wrap justify-center">
                 {Object.values(categories)?.length ? (
                     <>
@@ -50,19 +53,10 @@ export default function GoodsPage({
                     <div>Loading...</div>
                 )}
             </div>
-            <div className="mx-auto flex flex-wrap justify-center">
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-                    {goods.map((good, i) => (
-                        <div key={i}>
-                            <GoodCard good={good} />
-                        </div>
-                    ))}
-                </div>
-            </div>
-            <Paginator
+            <GoodTable
+                goods={goods}
                 pageName={GOODS_TABLE}
                 fetchAction={fetchPaginatedGoods}
-                searchQuery={query}
             />
         </Layout>
     )

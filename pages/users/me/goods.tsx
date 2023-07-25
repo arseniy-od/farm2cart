@@ -5,29 +5,28 @@ import GoodCard from '@/app/components/goods/goodCard'
 
 import { RootState } from '@/redux/store'
 import { ConnectedProps, connect } from 'react-redux'
-import { fetchMyGoods } from '@/redux/actions'
+import {
+    fetchMyGoods,
+    fetchMyPaginatedGoods,
+    fetchPaginatedGoods,
+} from '@/redux/actions'
 import { isEmpty } from '@/app/utils'
 import ErrorMessage from '@/app/components/errorMessage'
 import { good } from '@/app/types/entities'
+import GoodTable from '@/app/components/goods/goodTable'
+import { MY_GOODS_TABLE } from '@/app/constants'
+import { useAppDispatch } from '@/redux/hooks'
 
 function MyGoods({ user, goods, fetchMyGoods }: Props) {
-    useEffect(() => {
-        fetchMyGoods()
-    }, [fetchMyGoods, user])
-
-    const [query, setQuery] = useState('')
-
-    const filterGoods = (goods: good[]) => {
-        return goods.filter((good) =>
-            (good.title + ' ' + good.description || '')
-                .toLowerCase()
-                .includes(query.toLowerCase())
-        )
-    }
-    const filtered = filterGoods(Object.values(goods))
+    // useEffect(() => {
+    //     fetchMyGoods()
+    // }, [fetchMyGoods, user])
+    const dispatch = useAppDispatch()
 
     const handleSearch = (e) => {
-        setQuery(e.target.value)
+        e.preventDefault()
+        const query = e.target.search.value
+        dispatch(fetchPaginatedGoods(MY_GOODS_TABLE, 1, query))
     }
 
     if (!user || isEmpty(user)) {
@@ -46,15 +45,11 @@ function MyGoods({ user, goods, fetchMyGoods }: Props) {
                         <h3 className="ml-6 mt-3 text-xl font-semibold xl:text-center xl:text-2xl">
                             Your products:
                         </h3>
-                        <div className="mx-auto flex flex-wrap justify-center">
-                            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-                                {filtered.map((good, i) => (
-                                    <div key={i}>
-                                        <GoodCard good={good} />
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
+                        <GoodTable
+                            goods={goods}
+                            pageName={MY_GOODS_TABLE}
+                            fetchAction={fetchMyPaginatedGoods}
+                        />
                     </div>
                 ) : null}
             </div>
@@ -64,9 +59,14 @@ function MyGoods({ user, goods, fetchMyGoods }: Props) {
 
 function getGoodsForUser(state: RootState) {
     if (state.entities.goods) {
+        const page = state.pagination[MY_GOODS_TABLE]
         const goods = Object.values(state.entities.goods)
         if (state.user.id) {
-            return goods.filter((good) => good.seller === state.user.id)
+            return goods.filter(
+                (good) =>
+                    good.id &&
+                    page?.pages?.[page?.currentPage || 0].ids.includes(good.id)
+            )
         }
     }
     return []

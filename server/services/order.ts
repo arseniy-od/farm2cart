@@ -1,5 +1,7 @@
+import { Op } from 'sequelize'
 import BaseContext from '../baseContext'
 import { orderWithGoodsCreate } from '@/app/types/interfaces'
+import { ORDERS_PER_PAGE } from '@/app/constants'
 export default class OrderService extends BaseContext {
     private Good = this.di.Good
     private User = this.di.User
@@ -62,22 +64,40 @@ export default class OrderService extends BaseContext {
         })
     }
 
-    async getOrdersByCustomerId(id: string | number) {
-        return await this.Order.findAll({
+    async getOrdersByCustomerId(
+        page: number,
+        searchQuery: string,
+        id: string | number
+    ) {
+        const orders = await this.Order.findAndCountAll({
             where: { customerId: id },
-            include: [
-                {
-                    model: this.Good,
-                    as: 'goods',
-                    through: {
-                        attributes: [],
-                    },
-                },
-                {
-                    model: this.OrderGood,
-                    attributes: ['id', 'goodId', 'orderId', 'quantity'],
-                },
-            ],
+            // include: [
+            //     {
+            //         model: this.Good,
+            //         as: 'goods',
+            //         through: {
+            //             attributes: [],
+            //         },
+            //     },
+            //     {
+            //         model: this.OrderGood,
+            //         attributes: ['id', 'goodId', 'orderId', 'quantity'],
+            //     },
+            // ],
+            order: [['id', 'ASC']],
+            offset: (page - 1) * ORDERS_PER_PAGE,
+            limit: ORDERS_PER_PAGE,
+            subQuery: false,
         })
+        const ordersWithGoods = await Promise.all(
+            orders.rows.map(async (order) => {
+                const goods = await order.getGoods({})
+                return {
+                    ...order.toJSON(),
+                    goods,
+                }
+            })
+        )
+        return { count: orders.count, result: ordersWithGoods, pageName: '' }
     }
 }

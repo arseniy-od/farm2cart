@@ -1,18 +1,31 @@
 import { fetchPage, fetchPaginatedGoods } from '@/redux/actions'
 import { useAppDispatch, useAppSelector } from '@/redux/hooks'
-import { ReactElement } from 'react'
+import { ReactElement, useEffect } from 'react'
 
-export default function Paginator({ pageName, fetchAction, searchQuery }) {
+export default function Paginator({ pageName, fetchAction, userId }) {
     const pagination = useAppSelector((state) => state.pagination[pageName])
     const dispatch = useAppDispatch()
-    const currentPage = pagination.currentPage || 1
+    useEffect(() => {
+        if (!pagination?.count) {
+            if (userId) {
+                dispatch(fetchAction(userId, pageName, 1))
+            } else {
+                dispatch(fetchAction(pageName, 1))
+            }
+        }
+    }, [dispatch, fetchAction, pagination, pageName, userId])
+    const currentPage = pagination?.currentPage || 1
     const amount = Math.ceil(
-        (pagination.count || 0) / (pagination.perPage || 1)
+        (pagination?.count || 0) / (pagination?.perPage || 1)
     )
     const pageNums: ReactElement[] = []
 
     function handlePage(index) {
-        dispatch(fetchAction(pageName, index, searchQuery))
+        if (userId) {
+            dispatch(fetchAction(userId, pageName, index))
+        } else {
+            dispatch(fetchAction(pageName, index))
+        }
     }
 
     for (let index = 1; index <= amount; index++) {

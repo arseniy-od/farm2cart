@@ -9,6 +9,7 @@ import { useEffect } from 'react'
 import { clientDi } from '@/redux/container'
 
 import initServerStore from '@/server/initServerStore'
+import { GOODS_TABLE } from '@/app/constants'
 
 function Goods({ goods, categories, fetchCartItems }: PropsFromRedux) {
     useEffect(() => {
@@ -19,14 +20,11 @@ function Goods({ goods, categories, fetchCartItems }: PropsFromRedux) {
 
 function getActiveGoods(state: RootState) {
     const goods = Object.values(state.entities.goods || {})
-    const page = state.pagination.GoodsTable
+    const page = state.pagination[GOODS_TABLE]
     return goods.filter(
         (good) =>
             good.id &&
-            good.active &&
-            good.available &&
-            page.pages &&
-            page.pages[page.currentPage || 0].ids.includes(good.id)
+            page?.pages?.[page?.currentPage || 0].ids.includes(good.id)
     )
 }
 

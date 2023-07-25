@@ -31,11 +31,6 @@ export const activateGoodRedux = (good: good) =>
     })
 
 export const updateGood = (good: good) => action(ACTIONS.UPDATE_GOOD, good)
-export const fetchPaginatedGoods = (
-    pageName: string,
-    pageNumber: number,
-    query: string = ''
-) => action(ACTIONS.FETCH_GOODS, { pageName, pageNumber, query })
 
 export const fetchMyGoods = (pageNumber: number = 1) =>
     action(ACTIONS.FETCH_GOODS, { number: pageNumber })
@@ -102,6 +97,46 @@ export const fetchCategories = () => action('CategoryEntity_fetchCategories')
 
 // pagination
 
+export const fetchPaginatedGoods = (
+    pageName: string,
+    pageNumber?: number,
+    query?: string,
+    force?: boolean
+) =>
+    action(ACTIONS.FETCH_GOODS, {
+        pageName,
+        pageNumber,
+        filter: { search: query },
+        force,
+    })
+
+export const fetchMyPaginatedGoods = (
+    pageName: string,
+    pageNumber?: number,
+    query?: string,
+    force?: boolean
+) =>
+    action(ACTIONS.FETCH_GOODS, {
+        pageName,
+        pageNumber,
+        filter: { search: query, currentUser: true },
+        force,
+    })
+
+export const fetchPaginatedGoodsForUser = (
+    userId: number,
+    pageName: string,
+    pageNumber?: number,
+    query?: string,
+    force?: boolean
+) =>
+    action(ACTIONS.FETCH_GOODS, {
+        pageName,
+        pageNumber,
+        filter: { search: query, userId },
+        force,
+    })
+
 export const pageUpdate = (
     pageName: string,
     pageIds: number[] | string[],
@@ -109,11 +144,22 @@ export const pageUpdate = (
     pageNumber: number = 1
 ) => action('paginator/update', { pageName, pageIds, count, pageNumber })
 
+export const initPage = (pageName: string) =>
+    action('paginator/init', { pageName })
+
 export const fetchPage = (pageName: string, page: number) =>
     action('PageEntity_fetchPage', { pageName, page })
 
 export const changeCurrentPage = (pageName: string, page: number) =>
     action('paginator/change_page', { pageName, page })
+
+export const clearPage = (pageName: string) =>
+    action('paginator/clear_page', { pageName })
+
+export const setPageFilter = (
+    pageName: string,
+    filter: Record<string, string>
+) => action('paginator/set_filter', { pageName, filter })
 //entities
 
 export const updateEntities = (

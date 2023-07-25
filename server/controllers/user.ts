@@ -4,7 +4,6 @@ import {
     NextApiResponse,
     PreviewData,
 } from 'next'
-import BaseContext from '../baseContext'
 import { ParsedUrlQuery } from 'querystring'
 import { NextApiRequestWithUser, user } from '@/app/types/interfaces'
 
@@ -68,16 +67,16 @@ export default class UserController extends BaseController {
     }
 
     @SSR('/users/:id')
-    async getUserWithGoods(
-        ctx: GetServerSidePropsContext<ParsedUrlQuery, PreviewData>
-    ) {
+    async getUserWithGoods(ctx) {
         const { id } = ctx.params
         if (!id || id instanceof Array) {
             return {
                 props: { user: { error: true, message: 'User not found' } },
             }
         }
-        return await this.UserService.getUserById(id)
+        const user = await this.UserService.getUserById(id)
+        console.log('\n\n\nUSER: ', user.toJSON())
+        return user
     }
 
     @GET('/api/users/me')

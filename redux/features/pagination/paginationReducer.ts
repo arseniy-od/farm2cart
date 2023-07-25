@@ -7,6 +7,7 @@ export type pagination = {
     perPage?: number
     count?: number
     pageName?: string
+    filter?: Record<any, any>
 }
 export interface IPagerState {
     [pageName: string]: pagination
@@ -17,59 +18,28 @@ export default function paginationReducer(
     state = initialPagerState,
     action: any
 ) {
-    // get result for the paginator, disable fetching
-    // if (action.response && action.response.pager) {
-    //     const {
-    //         response: { pager, result },
-    //     } = action
-    //     if ('glob' in action && 'pageName' in action.data) {
-    //         const pageName = action.data.pageName
-
-    //         let pagination = state.has(pageName) // state associated with this reducer
-    //             ? state.get(pageName)
-    //             : Map<string, IPagination>()
-    //         let pages = pagination.has('pages')
-    //             ? pagination.get('pages')
-    //             : Map<number, IPaginationPage>()
-
-    //         if (result?.length === 0) {
-    //             pager.page = pages.size
-    //         } else {
-    //             const item = fromJS({
-    //                 ids: action.response.result,
-    //             })
-
-    //             pages = pages.set(pager.page, item)
-    //         }
-    //         const oldTouched = pagination?.get('touched')
-    //         const touched = oldTouched ? oldTouched : List([])
-
-    //         pagination = pagination
-    //             .set('entityName', action.glob.entity.entityName)
-    //             .set('pageName', pageName)
-    //             .set('currentPage', pager.page)
-    //             .set('count', pager.count)
-    //             .set('perPage', action.data.perPage)
-    //             .set('touched', touched)
-    //             .set('pages', pages)
-
-    //         state = state.set(pageName, pagination)
-    //     }
-    // }
-
-    // prepare item for the paginator, enable fetching
     const { type } = action
     switch (type) {
-        // case MODEL_CLEAR:
-        //     state = initialPagerState
-        //     break
+        case 'paginator/init': {
+            const { pageName } = action.payload
+            return { ...state, [pageName]: {} }
+        }
+
+        case 'paginator/clear_page': {
+            const { pageName } = action.payload
+            const pagination = jsonCopy(state[pageName])
+            pagination.pages = {}
+            pagination.currentPage = 1
+            pagination.count = 0
+            return { ...state, [pageName]: pagination }
+        }
         case 'paginator/update': {
             const { pageName, pageIds, count, pageNumber } = action.payload
             let pagination: pagination = {}
             if (state[pageName]) {
                 pagination = jsonCopy(state[pageName])
             }
-            if (isEmpty(pagination)) {
+            if (isEmpty(pagination) || !pagination.count) {
                 console.log('pagination is empty')
                 console.log('paginator: ', pagination)
 
@@ -78,10 +48,12 @@ export default function paginationReducer(
                     fetching: false,
                     currentPage: pageNumber,
                     perPage: pageIds.length,
+                    filter: pagination.filter || {},
                     count,
                     pageName,
                 }
             } else {
+                pagination.count = count
                 pagination.currentPage = pageNumber
                 pagination.pages = {
                     ...pagination.pages,
@@ -98,6 +70,14 @@ export default function paginationReducer(
                 ...state,
                 [pageName]: { ...pagination, currentPage: page },
             }
+        }
+
+        case 'paginator/set_filter': {
+            const { pageName, filter } = action.payload
+            const pagination = jsonCopy(state[pageName])
+            // we have to recalculate all pages with filters
+            pagination.filter = { ...pagination.filter, ...filter }
+            return { ...state, [pageName]: pagination }
         }
 
         // case 'paginator/page_fetching':

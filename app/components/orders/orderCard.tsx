@@ -18,26 +18,17 @@ export default function OrderCard({ order, goods, orderGoods }: Props) {
             <div>total: ₴{order.total}</div>
             <div className="mt-4">
                 <div>Goods: </div>
-                {Object.values(order.OrderGoods || {}).map((OrderGoodId, i) => (
+                {order.goods.map((goodId, i) => (
                     <div key={i}>
                         <div>
-                            {orderGoods?.[OrderGoodId].quantity}x{' '}
+                            {goods?.[goodId].quantity}x{' '}
                             <Link
-                                href={`/goods/${orderGoods?.[OrderGoodId].goodId}`}
+                                href={`/goods/${goodId}`}
                                 className="text-indigo-700"
                             >
-                                {
-                                    goods?.[
-                                        orderGoods?.[OrderGoodId].goodId || ''
-                                    ].title
-                                }
+                                {goods?.[goodId || ''].title}
                             </Link>{' '}
-                            for ₴
-                            {
-                                goods?.[orderGoods?.[OrderGoodId].goodId || '']
-                                    .price
-                            }{' '}
-                            each
+                            for ₴{goods?.[goodId || ''].price} each
                         </div>
                     </div>
                 ))}

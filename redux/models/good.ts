@@ -41,13 +41,32 @@ export default class GoodEntity extends Entity {
     }
 
     @action()
-    *fetchGoods({ pageName, pageNumber, query }) {
+    *fetchGoods({
+        pageName,
+        pageNumber,
+        filter,
+        force,
+    }: {
+        pageName: string
+        pageNumber: number
+        filter: Record<string, string>
+        force?: boolean
+    }) {
+        console.log('[fetchGoods]Filter: ', filter)
+        let forced = force
+        if (typeof filter.search === 'string') {
+            forced = true
+        } else {
+            delete filter.search
+        }
+
         yield call(
             this.readPaginated,
             pageName,
             '/api/goods',
             pageNumber,
-            query
+            filter,
+            forced
         )
     }
 

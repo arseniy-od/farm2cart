@@ -20,3 +20,7 @@ show non-active banner on user/[id]
 ## Libraries
 
 Read about immutable.js
+
+## Fix
+
+search filter is not added on users/me/goods

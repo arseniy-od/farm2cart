@@ -33,7 +33,7 @@ import {
     userSchema,
 } from '@/redux/normalSchemas'
 import { IGoodModel } from '../database/models/good'
-import { GOODS_TABLE } from '@/app/constants'
+import { GOODS_TABLE, MY_GOODS_TABLE, USER_GOODS_TABLE } from '@/app/constants'
 
 @USE([session, passportInit, passportSession])
 export default class GoodController extends BaseController {
@@ -51,11 +51,24 @@ export default class GoodController extends BaseController {
 
     @SSR('/')
     @GET('/api/goods')
-    async getPaginatedGoods({ query }) {
+    async getPaginatedGoods({ query, identity }) {
         const page = query?.page || 1
         const searchQuery = query?.search || ''
+        const currentUser = query?.currentUser
+        const userId = query?.userId
         const escapedSearchQuery = searchQuery.replace(/['"]+/g, '')
         console.log('\n\nsearch:', searchQuery)
+
+        if (userId || currentUser) {
+            const goods = await this.GoodService.getGoodsBySellerId(
+                page,
+                userId || identity.id,
+                escapedSearchQuery
+            )
+
+            return goods
+        }
+
         const goods = await this.GoodService.getPaginatedGoods(
             page,
             escapedSearchQuery
@@ -164,13 +177,23 @@ export default class GoodController extends BaseController {
     }
 
     @SSR('/users/:id')
-    async getGoodsForUser(ctx) {
-        const { id } = ctx.params
+    async getGoodsForUser({ query, params }) {
+        const { id } = params
         if (!id || id instanceof Array) {
             return {
                 props: { error: true, message: 'User not found' },
             }
         }
-        return await this.GoodService.getGoodsBySellerId(id)
+        const page = query?.page || 1
+        const searchQuery = query?.search || ''
+        const escapedSearchQuery = searchQuery.replace(/['"]+/g, '')
+
+        const goods = await this.GoodService.getGoodsBySellerId(
+            page,
+            id,
+            escapedSearchQuery
+        )
+        goods.pageName = USER_GOODS_TABLE
+        return goods
     }
 }

@@ -1,11 +1,10 @@
 import { ConnectedProps, connect } from 'react-redux'
 
-import { normalizeResponse } from '@/app/normalizeResponse'
-import container from '@/server/container'
+import container, { di } from '@/server/container'
 import clientContainer from '@/redux/container'
 import { RootState } from '@/redux/store'
 import { goodsSchema, userSchema } from '@/redux/normalSchemas'
-import { updateEntities } from '@/redux/actions'
+import { fetchPaginatedGoodsForUser, updateEntities } from '@/redux/actions'
 import { toTitle, formatDate } from '@/app/utils'
 
 import ErrorMessage from '@/app/components/errorMessage'
@@ -15,24 +14,33 @@ import GoodCard from '@/app/components/goods/goodCard'
 import { ContextDynamicRoute } from '@/app/types/interfaces'
 import { useState } from 'react'
 import { good } from '@/app/types/entities'
+import { USER_GOODS_TABLE } from '@/app/constants'
+import initServerStore from '@/server/initServerStore'
+import GoodTable from '@/app/components/goods/goodTable'
+import { useAppDispatch } from '@/redux/hooks'
 
 function User(props: Props) {
     const user = props.user
     const goods = props.goods
-
-    const [query, setQuery] = useState('')
-
-    const filterGoods = (goods: good[]) => {
-        return goods.filter((good) =>
-            (good.title + ' ' + good.description || '')
-                .toLowerCase()
-                .includes(query.toLowerCase())
-        )
-    }
-    const filtered = filterGoods(Object.values(goods))
+    const dispatch = useAppDispatch()
 
     const handleSearch = (e) => {
-        setQuery(e.target.value)
+        e.preventDefault()
+        const query = e.target.search.value
+        if (user?.id) {
+            dispatch(
+                fetchPaginatedGoodsForUser(user.id, USER_GOODS_TABLE, 1, query)
+            )
+        } else {
+            throw new Error('User not found')
+        }
+    }
+    if (!user) {
+        return (
+            <Layout>
+                <div>Loading...</div>
+            </Layout>
+        )
     }
 
     if (!user || props.error) {
@@ -59,38 +67,37 @@ function User(props: Props) {
                         </p>
                     </div>
                 </div>
-                {user.role === ('seller' || 'admin') ? (
+                {goods.length && (
                     <div>
                         <h3 className="ml-6 mt-3 text-xl font-semibold">
                             {user.username}&apos;s products:
                         </h3>
-                        <div className="mx-auto flex flex-wrap justify-center">
-                            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-                                {filtered.map((good, i) => (
-                                    <div key={i}>
-                                        <GoodCard good={good} />
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
+                        <GoodTable
+                            goods={goods}
+                            pageName={USER_GOODS_TABLE}
+                            fetchAction={fetchPaginatedGoodsForUser}
+                            userId={user.id}
+                        />
                     </div>
-                ) : null}
+                )}
             </div>
         </Layout>
     )
 }
 
-function getGoodsForUser(state: RootState, userId) {
-    if (state.entities.goods) {
-        const goods = Object.values(state.entities.goods)
-        return goods.filter((good) => good.seller === userId)
-    }
-    return []
+function getGoodsPage(state: RootState) {
+    const goods = Object.values(state.entities.goods || {})
+    const page = state.pagination[USER_GOODS_TABLE]
+    return goods.filter(
+        (good) =>
+            good.id &&
+            page?.pages?.[page?.currentPage || 0].ids.includes(good.id)
+    )
 }
 
 const mapState = (state: RootState, ownProps) => ({
     user: state.entities.users?.[ownProps.query.id],
-    goods: getGoodsForUser(state, ownProps.query.id),
+    goods: getGoodsPage(state),
 })
 
 const connector = connect(mapState, null)
@@ -99,11 +106,18 @@ type Props = PropsFromRedux & { id: number; error?: boolean; message?: string }
 
 export const getServerSideProps = clientContainer
     .resolve('redux')
-    .wrapper.getServerSideProps((store) => async (ctx: ContextDynamicRoute) => {
-        await container.resolve('UserController').run(ctx, store, '/users/:id')
-        return await container
-            .resolve('GoodController')
-            .run(ctx, store, '/users/:id')
-    })
+    .wrapper.getServerSideProps(
+        initServerStore(
+            [di('GoodController'), di('UserController')],
+            '/users/:id'
+        )
+    )
 
 export default connector(User)
+
+// (store) => async (ctx: ContextDynamicRoute) => {
+//         await container.resolve('UserController').run(ctx, store, '/users/:id')
+//         return await container
+//             .resolve('GoodController')
+//             .run(ctx, store, '/users/:id')
+//     }

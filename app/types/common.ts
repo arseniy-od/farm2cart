@@ -1,4 +1,6 @@
+import { IEntityContainer } from '@/redux/models'
+
 export interface ISagaMethods {
-    className: string
+    className: keyof IEntityContainer
     methodName: string
 }

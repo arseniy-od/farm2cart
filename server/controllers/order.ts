@@ -36,18 +36,17 @@ export default class OrderController extends BaseController {
 
     @SSR('/orders')
     @GET('/api/orders')
-    async getOrdersForUser({ identity }) {
+    async getOrdersForUser({ identity, query }) {
+        const page = query?.page || 1
+        const searchQuery = query?.search || ''
         if (!identity) {
             return { error: true, message: 'You are not logged in' }
         }
-        const result = await this.OrderService.getOrdersByCustomerId(
+        return await this.OrderService.getOrdersByCustomerId(
+            page,
+            searchQuery,
             identity.id
         )
-        const orders = JSON.parse(JSON.stringify(result))
-        if (!orders || !orders.length) {
-            return { notFound: true }
-        }
-        return orders
     }
 
     @POST('/api/orders')
