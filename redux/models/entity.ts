@@ -42,7 +42,7 @@ export default class Entity extends BaseClientContext {
     }
 
     private static _actions = []
-    protected schema: any
+    public schema: any
 
     protected initSchema(entityName = '', attributes: any = {}) {
         this.schema = entityName
@@ -87,7 +87,7 @@ export default class Entity extends BaseClientContext {
 
     protected async fetchPaginated() {}
 
-    protected normalizeData(data) {
+    public normalizeData(data) {
         return normalize(
             data,
             Array.isArray(data) ? [this.schema] : this.schema
@@ -116,23 +116,16 @@ export default class Entity extends BaseClientContext {
             yield put(fetchFailed(error.message))
         }
     }
-    protected *isPageFetched(data: { pageName: string; page: number }) {
-        const { pageName, page } = data
-        const pagination: pagination = yield select(
-            (state: RootState) => state.pagination[pageName]
-        )
-
+    protected isPageFetched(pagination: pagination, page: number) {
         if (!(page in (pagination.pages || []))) {
             return false
         } else {
             return true
         }
     }
-    private *getFilters(pageName: string) {
-        const filter = yield select(
-            (state: RootState) => state.pagination[pageName].filter
-        )
-        const entries = Object.entries(filter)
+    private getFilters(pagination: pagination) {
+        const filter = pagination.filter
+        const entries = Object.entries(filter || {})
         let filtersArr: string[] = []
         if (entries.length) {
             entries.forEach((entry) =>
@@ -151,28 +144,25 @@ export default class Entity extends BaseClientContext {
         filter?: Record<string, string>,
         force?: boolean
     ) {
-        const pagination: pagination = yield select(
-            (state: RootState) => state.pagination[pageName]
-        )
-        if (!pagination) {
-            yield put(initPage(pageName))
-        }
         let pageFilter = filter || {}
 
         let isFetched = false
+
         if (filter) {
             yield put(setPageFilter(pageName, pageFilter))
         }
+
+        const pagination: pagination = yield select(
+            (state: RootState) => state.pagination[pageName]
+        )
+
         if (force) {
             // new filters apply if force is true to refresh pages
             yield put(clearPage(pageName))
         } else {
-            isFetched = yield call(this.isPageFetched, {
-                pageName,
-                page,
-            })
+            isFetched = this.isPageFetched(pagination, page)
         }
-        const filterString = yield call(this.getFilters, pageName)
+        const filterString = this.getFilters(pagination)
         if (isFetched) {
             yield put(changeCurrentPage(pageName, page)) // we have all data, so only changing current page
         } else {

@@ -1,8 +1,7 @@
-import { configureStore, combineReducers } from '@reduxjs/toolkit'
+import { configureStore } from '@reduxjs/toolkit'
 import { createWrapper } from 'next-redux-wrapper'
 import createSagaMiddleware from 'redux-saga'
 import { all } from 'redux-saga/effects'
-import { Dispatch, Store, applyMiddleware, compose } from 'redux'
 
 import rootReducer from './reducer'
 import { entities, user } from '@/app/types/entities'

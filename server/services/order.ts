@@ -69,32 +69,40 @@ export default class OrderService extends BaseContext {
         searchQuery: string,
         id: string | number
     ) {
+        console.log('[order service] query: ', searchQuery)
         const orders = await this.Order.findAndCountAll({
-            where: { customerId: id },
+            where: { customerId: id, id: { [Op.like]: `%${searchQuery}%` } },
             // include: [
             //     {
             //         model: this.Good,
             //         as: 'goods',
+            //         where: { title: { [Op.like]: `%${searchQuery}%` } },
             //         through: {
             //             attributes: [],
             //         },
             //     },
-            //     {
-            //         model: this.OrderGood,
-            //         attributes: ['id', 'goodId', 'orderId', 'quantity'],
-            //     },
+            //     // {
+            //     //     model: this.OrderGood,
+            //     //     attributes: ['id', 'goodId', 'orderId', 'quantity'],
+            //     // },
             // ],
             order: [['id', 'ASC']],
             offset: (page - 1) * ORDERS_PER_PAGE,
             limit: ORDERS_PER_PAGE,
             subQuery: false,
         })
+
         const ordersWithGoods = await Promise.all(
             orders.rows.map(async (order) => {
-                const goods = await order.getGoods({})
+                const goods = await order.getGoods()
+                const OrderGoods = await order.getOrderGoods({
+                    attributes: ['id', 'goodId', 'orderId', 'quantity'],
+                })
+                // console.log('\n\n\nARE SEARCHED: ', areSearched)
                 return {
                     ...order.toJSON(),
                     goods,
+                    OrderGoods,
                 }
             })
         )

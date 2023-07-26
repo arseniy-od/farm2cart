@@ -33,31 +33,42 @@ import {
     userSchema,
 } from '@/redux/normalSchemas'
 import { IGoodModel } from '../database/models/good'
-import { GOODS_TABLE, MY_GOODS_TABLE, USER_GOODS_TABLE } from '@/app/constants'
+import {
+    CATEGORY_GOODS_TABLE,
+    GOODS_TABLE,
+    MY_GOODS_TABLE,
+    USER_GOODS_TABLE,
+} from '@/app/constants'
+import { clientDi } from '@/redux/container'
 
 @USE([session, passportInit, passportSession])
 export default class GoodController extends BaseController {
     private GoodService = this.di.GoodService
+    private CategoryService = this.di.CategoryService
 
     constructor(opts) {
         super(opts)
-        this.initSchema('goods', {
-            seller: userSchema,
-            categories: [categorySchema],
-            reviews: [reviewSchema],
-            OrderGood: orderGoodsSchema,
-        })
+        this.schema = clientDi('GoodEntity').schema
+        // this.initSchema('goods', {
+        //     seller: userSchema,
+        //     categories: [categorySchema],
+        //     reviews: [reviewSchema],
+        //     OrderGood: orderGoodsSchema,
+        // })
     }
 
     @SSR('/')
+    @SSR('/categories/:slug')
+    @SSR('/users/:id')
     @GET('/api/goods')
-    async getPaginatedGoods({ query, identity }) {
+    async getPaginatedGoods({ query, identity, params }) {
+        const categorySlug = params?.slug || query?.categorySlug
         const page = query?.page || 1
         const searchQuery = query?.search || ''
         const currentUser = query?.currentUser
-        const userId = query?.userId
+        const userId = params?.id || query?.userId
         const escapedSearchQuery = searchQuery.replace(/['"]+/g, '')
-        console.log('\n\nsearch:', searchQuery)
+        // console.log('\n\nsearch:', searchQuery)
 
         if (userId || currentUser) {
             const goods = await this.GoodService.getGoodsBySellerId(
@@ -65,7 +76,21 @@ export default class GoodController extends BaseController {
                 userId || identity.id,
                 escapedSearchQuery
             )
+            goods.pageName = USER_GOODS_TABLE
+            return goods
+        }
 
+        if (categorySlug) {
+            const category = await this.CategoryService.getCategoryByText(
+                categorySlug
+            )
+
+            const goods = await this.GoodService.getGoodsByCategoryId(
+                page,
+                category?.id || 0,
+                escapedSearchQuery
+            )
+            goods.pageName = CATEGORY_GOODS_TABLE
             return goods
         }
 
@@ -76,6 +101,27 @@ export default class GoodController extends BaseController {
         goods.pageName = GOODS_TABLE
         return goods
     }
+
+    // @SSR('/users/:id')
+    // async getGoodsForUser({ query, params }) {
+    //     const { id } = params
+    //     if (!id || id instanceof Array) {
+    //         return {
+    //             props: { error: true, message: 'User not found' },
+    //         }
+    //     }
+    //     const page = query?.page || 1
+    //     const searchQuery = query?.search || ''
+    //     const escapedSearchQuery = searchQuery.replace(/['"]+/g, '')
+
+    //     const goods = await this.GoodService.getGoodsBySellerId(
+    //         page,
+    //         id,
+    //         escapedSearchQuery
+    //     )
+    //     goods.pageName = USER_GOODS_TABLE
+    //     return goods
+    // }
 
     @POST('/api/goods')
     // @USE(validate(goodSchema)) // problems with form-data
@@ -174,26 +220,5 @@ export default class GoodController extends BaseController {
             return { notFound: true }
         }
         return await this.GoodService.getGoodByIdExtended(id)
-    }
-
-    @SSR('/users/:id')
-    async getGoodsForUser({ query, params }) {
-        const { id } = params
-        if (!id || id instanceof Array) {
-            return {
-                props: { error: true, message: 'User not found' },
-            }
-        }
-        const page = query?.page || 1
-        const searchQuery = query?.search || ''
-        const escapedSearchQuery = searchQuery.replace(/['"]+/g, '')
-
-        const goods = await this.GoodService.getGoodsBySellerId(
-            page,
-            id,
-            escapedSearchQuery
-        )
-        goods.pageName = USER_GOODS_TABLE
-        return goods
     }
 }

@@ -74,7 +74,9 @@ export default function paginationReducer(
 
         case 'paginator/set_filter': {
             const { pageName, filter } = action.payload
-            const pagination = jsonCopy(state[pageName])
+            const pagination = jsonCopy(state[pageName] || {})
+            console.log('Pagination is: ', pagination)
+            pagination.filter = pagination.filter || {}
             // we have to recalculate all pages with filters
             pagination.filter = { ...pagination.filter, ...filter }
             return { ...state, [pageName]: pagination }

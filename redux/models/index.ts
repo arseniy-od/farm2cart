@@ -5,6 +5,7 @@ import OrderEntity from './order'
 import AuthEntity from './auth'
 import CartEntity from './cart'
 import GoodEntity from './good'
+import UserEntity from './user'
 export interface IEntityContainer {
     CategoryEntity: CategoryEntity
     ReviewEntity: ReviewEntity
@@ -12,6 +13,7 @@ export interface IEntityContainer {
     AuthEntity: AuthEntity
     CartEntity: CartEntity
     GoodEntity: GoodEntity
+    UserEntity: UserEntity
 }
 
 const entities = {
@@ -21,6 +23,7 @@ const entities = {
     AuthEntity: asClass(AuthEntity).singleton(),
     CartEntity: asClass(CartEntity).singleton(),
     GoodEntity: asClass(GoodEntity).singleton(),
+    UserEntity: asClass(UserEntity).singleton(),
 }
 
 export default entities

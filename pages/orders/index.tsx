@@ -2,49 +2,36 @@ import { ConnectedProps, connect } from 'react-redux'
 import { useEffect, useState } from 'react'
 
 import { RootState } from '@/redux/store'
-import { fetchOrders } from '@/redux/actions'
+import { fetchOrders, fetchPaginatedOrders } from '@/redux/actions'
 import { isEmpty } from '@/app/utils'
 
 import Layout from '@/app/layout'
 import OrderCard from '@/app/components/orders/orderCard'
 import ErrorMessage from '@/app/components/errorMessage'
 import { order } from '@/app/types/entities'
+import Paginator from '@/app/components/navigation/paginator'
+import { ORDERS_TABLE } from '@/app/constants'
+import { useAppDispatch } from '@/redux/hooks'
 
 function MyOrders({ user, orders, goods, orderGoods, fetchOrders }: Props) {
-    useEffect(() => {
-        fetchOrders()
-    }, [fetchOrders])
-    const [query, setQuery] = useState('')
-
-    function goodsTitlesForOrder(order: order) {
-        if (order.goods && goods) {
-            return order.goods.map((goodId) => goods[goodId].title).join(' ')
-        }
-    }
-
-    const filterGoods = (orders: order[]) => {
-        return orders.filter((order) =>
-            (order.id + ' ' + goodsTitlesForOrder(order) || '')
-                .toLowerCase()
-                .includes(query.toLowerCase())
-        )
-    }
-    const filtered = filterGoods(Object.values(orders || {}))
+    const dispatch = useAppDispatch()
 
     const handleSearch = (e) => {
         e.preventDefault()
-        setQuery(e.target.search.value)
+        const query = e.target.search.value
+        dispatch(fetchPaginatedOrders(ORDERS_TABLE, 1, query))
+        // setQuery(e.target.search.value)
     }
 
-    if (!orders || isEmpty(orders)) {
-        return (
-            <Layout>
-                <ErrorMessage
-                    message={orders ? 'You have no orders' : 'Loading...'}
-                />
-            </Layout>
-        )
-    }
+    // if (!orders || isEmpty(orders)) {
+    //     return (
+    //         <Layout>
+    //             <ErrorMessage
+    //                 message={orders ? 'You have no orders' : 'Loading...'}
+    //             />
+    //         </Layout>
+    //     )
+    // }
     return (
         <Layout handleSearch={handleSearch}>
             <div>
@@ -55,8 +42,8 @@ function MyOrders({ user, orders, goods, orderGoods, fetchOrders }: Props) {
                         </h3>
 
                         <div className="mx-auto flex flex-wrap justify-center">
-                            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-                                {Object.values(orders).map((order, i) => (
+                            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                                {Object.values(orders || {}).map((order, i) => (
                                     <div key={i}>
                                         <OrderCard
                                             order={order}
@@ -67,6 +54,10 @@ function MyOrders({ user, orders, goods, orderGoods, fetchOrders }: Props) {
                                 ))}
                             </div>
                         </div>
+                        <Paginator
+                            pageName={ORDERS_TABLE}
+                            fetchAction={fetchPaginatedOrders}
+                        />
                     </div>
                 ) : null}
             </div>
@@ -74,9 +65,24 @@ function MyOrders({ user, orders, goods, orderGoods, fetchOrders }: Props) {
     )
 }
 
+function getOrdersForUser(state: RootState) {
+    if (state.entities.orders) {
+        const page = state.pagination[ORDERS_TABLE]
+        const orders = Object.values(state.entities.orders)
+        if (state.user.id) {
+            return orders.filter(
+                (order) =>
+                    order.id &&
+                    page?.pages?.[page?.currentPage || 0].ids.includes(order.id)
+            )
+        }
+    }
+    return []
+}
+
 const mapState = (state: RootState) => ({
     user: state.user,
-    orders: state.entities.orders,
+    orders: getOrdersForUser(state),
     goods: state.entities.goods,
     orderGoods: state.entities.orderGoods,
 })

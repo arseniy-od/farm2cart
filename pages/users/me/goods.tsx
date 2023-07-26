@@ -10,18 +10,19 @@ import {
     fetchMyPaginatedGoods,
     fetchPaginatedGoods,
 } from '@/redux/actions'
-import { isEmpty } from '@/app/utils'
+import { getGoodsPage, isEmpty } from '@/app/utils'
 import ErrorMessage from '@/app/components/errorMessage'
 import { good } from '@/app/types/entities'
 import GoodTable from '@/app/components/goods/goodTable'
 import { MY_GOODS_TABLE } from '@/app/constants'
-import { useAppDispatch } from '@/redux/hooks'
+import { useAppDispatch, useAppSelector } from '@/redux/hooks'
 
 function MyGoods({ user, goods, fetchMyGoods }: Props) {
-    // useEffect(() => {
-    //     fetchMyGoods()
-    // }, [fetchMyGoods, user])
     const dispatch = useAppDispatch()
+
+    useEffect(() => {
+        dispatch(fetchPaginatedGoods(MY_GOODS_TABLE, 1, ''))
+    }, [dispatch])
 
     const handleSearch = (e) => {
         e.preventDefault()
@@ -57,24 +58,9 @@ function MyGoods({ user, goods, fetchMyGoods }: Props) {
     )
 }
 
-function getGoodsForUser(state: RootState) {
-    if (state.entities.goods) {
-        const page = state.pagination[MY_GOODS_TABLE]
-        const goods = Object.values(state.entities.goods)
-        if (state.user.id) {
-            return goods.filter(
-                (good) =>
-                    good.id &&
-                    page?.pages?.[page?.currentPage || 0].ids.includes(good.id)
-            )
-        }
-    }
-    return []
-}
-
 const mapState = (state: RootState) => ({
     user: state.user,
-    goods: getGoodsForUser(state),
+    goods: getGoodsPage(state, MY_GOODS_TABLE),
 })
 
 const mapDispatch = {

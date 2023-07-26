@@ -6,7 +6,7 @@ import { category, good } from '@/app/types/entities'
 import Paginator from '../navigation/paginator'
 import { fetchPaginatedGoods, setPageFilter } from '@/redux/actions'
 import { GOODS_TABLE } from '@/app/constants'
-import { useAppDispatch } from '@/redux/hooks'
+import { useAppDispatch, useAppSelector } from '@/redux/hooks'
 import GoodTable from './goodTable'
 
 export default function GoodsPage({
@@ -17,6 +17,7 @@ export default function GoodsPage({
     categories: { [key: string]: category }
 }) {
     const dispatch = useAppDispatch()
+
     const handleSearch = (e) => {
         e.preventDefault()
         const query = e.target.search.value

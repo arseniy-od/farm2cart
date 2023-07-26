@@ -10,6 +10,7 @@ import { clientDi } from '@/redux/container'
 
 import initServerStore from '@/server/initServerStore'
 import { GOODS_TABLE } from '@/app/constants'
+import { getGoodsPage } from '@/app/utils'
 
 function Goods({ goods, categories, fetchCartItems }: PropsFromRedux) {
     useEffect(() => {
@@ -18,18 +19,8 @@ function Goods({ goods, categories, fetchCartItems }: PropsFromRedux) {
     return <GoodsPage goods={goods} categories={categories} />
 }
 
-function getActiveGoods(state: RootState) {
-    const goods = Object.values(state.entities.goods || {})
-    const page = state.pagination[GOODS_TABLE]
-    return goods.filter(
-        (good) =>
-            good.id &&
-            page?.pages?.[page?.currentPage || 0].ids.includes(good.id)
-    )
-}
-
 const mapState = (state: RootState) => ({
-    goods: getActiveGoods(state),
+    goods: getGoodsPage(state, GOODS_TABLE),
     categories: state.entities.categories || {},
 })
 

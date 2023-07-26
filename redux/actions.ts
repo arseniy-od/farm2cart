@@ -62,7 +62,7 @@ export const clearCart = () => action(ACTIONS.CLEAR_ENTITY, 'cartItems')
 
 // order
 
-export const fetchOrders = () => action('OrderEntity_fetchOrders')
+export const fetchOrders = () => action(ACTIONS.FETCH_ORDERS)
 
 export const createOrder = (cartData) =>
     action('OrderEntity_addOrder', cartData)
@@ -124,7 +124,7 @@ export const fetchMyPaginatedGoods = (
     })
 
 export const fetchPaginatedGoodsForUser = (
-    userId: number,
+    filter: Record<'userId', number>,
     pageName: string,
     pageNumber?: number,
     query?: string,
@@ -133,7 +133,34 @@ export const fetchPaginatedGoodsForUser = (
     action(ACTIONS.FETCH_GOODS, {
         pageName,
         pageNumber,
-        filter: { search: query, userId },
+        filter: { search: query, ...filter },
+        force,
+    })
+
+export const fetchPaginatedGoodsForCategory = (
+    filter: Record<'categorySlug', string>,
+    pageName: string,
+    pageNumber?: number,
+    query?: string,
+    force?: boolean
+) =>
+    action(ACTIONS.FETCH_GOODS, {
+        pageName,
+        pageNumber,
+        filter: { search: query, ...filter },
+        force,
+    })
+
+export const fetchPaginatedOrders = (
+    pageName: string,
+    pageNumber?: number,
+    query?: string,
+    force?: boolean
+) =>
+    action(ACTIONS.FETCH_ORDERS, {
+        pageName,
+        pageNumber,
+        filter: { search: query },
         force,
     })
 
@@ -164,7 +191,7 @@ export const setPageFilter = (
 
 export const updateEntities = (
     normalizedData: { entities: entities },
-    strategy: string = STRATEGIES.REPLACE
+    strategy: string = STRATEGIES.MERGE
 ) => action('entities/update', { entities: normalizedData.entities, strategy })
 
 export const deleteEntity = (entityName: string, entityId: number) =>

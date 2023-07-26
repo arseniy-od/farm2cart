@@ -32,7 +32,30 @@ export default class OrderEntity extends Entity {
     }
 
     @action()
-    *fetchOrders() {
-        yield call(this.readData, '/api/orders')
+    *fetchOrders({
+        pageName,
+        pageNumber,
+        filter,
+        force,
+    }: {
+        pageName: string
+        pageNumber: number
+        filter: Record<string, string>
+        force?: boolean
+    }) {
+        let forced = force
+        if (typeof filter.search === 'string') {
+            forced = true
+        } else {
+            delete filter.search
+        }
+        yield call(
+            this.readPaginated,
+            pageName,
+            '/api/orders',
+            pageNumber,
+            filter,
+            forced
+        )
     }
 }

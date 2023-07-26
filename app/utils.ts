@@ -1,4 +1,6 @@
+import { RootState } from '@/redux/store'
 import { good } from './types/interfaces'
+import { GOODS_TABLE } from './constants'
 
 export function formatDateTime(dateString: string | Date): string {
     const date = new Date(dateString)
@@ -85,4 +87,17 @@ export function toFormData(good, method) {
     })
     console.log('[toFormData]formData:', formData)
     return formData
+}
+
+export function getGoodsPage(state: RootState, pageName: string) {
+    if (state.entities.goods) {
+        const page = state.pagination[pageName]
+        const goods = Object.values(state.entities.goods)
+        return goods.filter(
+            (good) =>
+                good.id &&
+                page?.pages?.[page?.currentPage || 0].ids.includes(good.id)
+        )
+    }
+    return []
 }

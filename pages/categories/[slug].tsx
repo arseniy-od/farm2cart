@@ -3,22 +3,26 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { normalize } from 'normalizr'
 
-import container from '@/server/container'
+import container, { di } from '@/server/container'
 import { RootState } from '@/redux/store'
 import Layout from '@/app/layout'
 import GoodCard from '@/app/components/goods/goodCard'
 
 import { categorySchema, goodsSchema } from '@/redux/normalSchemas'
-import { updateEntities } from '@/redux/actions'
+import { fetchPaginatedGoodsForCategory, updateEntities } from '@/redux/actions'
 import { ConnectedProps, connect } from 'react-redux'
-import clientContainer from '@/redux/container'
+import clientContainer, { clientDi } from '@/redux/container'
 import { normalizeResponse } from '@/app/normalizeResponse'
 import { useState } from 'react'
 import { good } from '@/app/types/entities'
 import initServerStore from '@/server/initServerStore'
+import GoodTable from '@/app/components/goods/goodTable'
+import { CATEGORY_GOODS_TABLE } from '@/app/constants'
+import { useAppDispatch } from '@/redux/hooks'
+import { getGoodsPage } from '@/app/utils'
 
 function Category({ goods, category }: PropsFromRedux) {
-    const [query, setQuery] = useState('')
+    const dispatch = useAppDispatch()
     if (!category) {
         return (
             <Layout>
@@ -27,18 +31,19 @@ function Category({ goods, category }: PropsFromRedux) {
         )
     }
 
-    const filterGoods = (goods: good[]) => {
-        return goods.filter((good) =>
-            (good.title + ' ' + good.description || '')
-                .toLowerCase()
-                .includes(query.toLowerCase())
-        )
-    }
-
-    const filtered = filterGoods(Object.values(goods || {}))
-
     const handleChange = (e) => {
-        setQuery(e.target.value)
+        e.preventDefault()
+        const query = e.target.search.value
+        if (category.text) {
+            dispatch(
+                fetchPaginatedGoodsForCategory(
+                    { categorySlug: category.text.toLowerCase() },
+                    CATEGORY_GOODS_TABLE,
+                    1,
+                    query
+                )
+            )
+        }
     }
 
     return (
@@ -47,15 +52,12 @@ function Category({ goods, category }: PropsFromRedux) {
                 <div>
                     <h1 className="ml-4 mt-4 text-2xl">{category.text}</h1>
                 </div>
-                <div className="mx-auto flex flex-wrap justify-center">
-                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-                        {filtered.map((good, i) => (
-                            <div key={i}>
-                                <GoodCard good={good} />
-                            </div>
-                        ))}
-                    </div>
-                </div>
+                <GoodTable
+                    goods={goods}
+                    pageName={CATEGORY_GOODS_TABLE}
+                    fetchAction={fetchPaginatedGoodsForCategory}
+                    categoryName={category.text?.toLowerCase()}
+                />
                 <div>
                     <Link
                         href="/categories"
@@ -69,15 +71,15 @@ function Category({ goods, category }: PropsFromRedux) {
     )
 }
 
-function getGoodsByCategory(state: RootState, category) {
-    if (state.entities.goods) {
-        console.log('front category: ', category)
-        return Object.values(state.entities.goods).filter((good) =>
-            category.goods.includes(good.id || 0)
-        )
-    }
-    return []
-}
+// function getGoodsByCategory(state: RootState, category) {
+//     if (state.entities.goods) {
+//         console.log('front category: ', category)
+//         return Object.values(state.entities.goods).filter((good) =>
+//             category.goods.includes(good.id || 0)
+//         )
+//     }
+//     return []
+// }
 
 function getCategory(state: RootState, slug: string) {
     const category = Object.values(state.entities.categories || {}).find(
@@ -90,7 +92,7 @@ function getCategory(state: RootState, slug: string) {
 
 const mapState = (state: RootState, ownProps) => ({
     category: getCategory(state, ownProps.params.slug),
-    goods: getGoodsByCategory(state, getCategory(state, ownProps.params.slug)),
+    goods: getGoodsPage(state, CATEGORY_GOODS_TABLE),
 })
 
 const connector = connect(mapState, null)
@@ -100,13 +102,13 @@ export async function getStaticPaths() {
     return await container.resolve('CategoryController').getStaticPaths()
 }
 
-export const getStaticProps: GetStaticProps = clientContainer
-    .resolve('redux')
-    .wrapper.getStaticProps(
-        initServerStore(
-            container.resolve('CategoryController'),
-            '/categories/:slug'
-        )
+export const getStaticProps: GetStaticProps = clientDi(
+    'redux'
+).wrapper.getStaticProps(
+    initServerStore(
+        [di('CategoryController'), di('GoodController')],
+        '/categories/:slug'
     )
+)
 
 export default connector(Category)

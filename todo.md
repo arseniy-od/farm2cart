@@ -10,17 +10,9 @@ Remove companies
 
 ## Add
 
-Add api endpoint for user-specific goods:
-
--   use service get goods by seller id
-
-Remove non-active goods from /categories/slug
-show non-active banner on user/[id]
+Fetching spinner or "Loading..."
+Search for goods in /orders
 
 ## Libraries
 
 Read about immutable.js
-
-## Fix
-
-search filter is not added on users/me/goods

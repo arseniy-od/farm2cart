@@ -16,15 +16,17 @@ import { schema } from 'normalizr'
 import { normalizeResponse } from '@/app/normalizeResponse'
 import { pageUpdate, updateEntities } from '@/redux/actions'
 import { jsonCopy } from '@/app/utils'
+import { ParsedUrlQuery } from 'querystring'
+import { clientDi } from '@/redux/container'
 
 export default class BaseController extends BaseContext {
     protected schema: any
 
-    protected initSchema(entityName = '', attributes: any = {}) {
-        this.schema = entityName
-            ? new schema.Entity(entityName, attributes)
-            : null
-    }
+    // protected initSchema(entityName = '', attributes: any = {}) {
+    //     this.schema = entityName
+    //         ? new schema.Entity(entityName, attributes)
+    //         : null
+    // }
 
     protected normalizeData(data) {
         return normalizeResponse(
@@ -55,7 +57,11 @@ export default class BaseController extends BaseContext {
         return methodArgs
     }
 
-    public run = async (context: ContextDynamicRoute, store, routeName) => {
+    public run = async (
+        context: GetServerSidePropsContext<ParsedUrlQuery, PreviewData>,
+        store,
+        routeName
+    ) => {
         try {
             const method = 'SSR'
             const members: any = Reflect.getMetadata(routeName, this)
@@ -69,7 +75,6 @@ export default class BaseController extends BaseContext {
                 console.error('[BaseController] Data not found')
                 return { notFound: true }
             }
-
             data = jsonCopy(data)
             const normalizedResult = this.normalizeData(data.result || data)
 
@@ -84,12 +89,6 @@ export default class BaseController extends BaseContext {
             }
 
             store.dispatch(updateEntities(normalizedResult))
-            // return {
-            //     props: {
-            //         query: context?.query || {},
-            //         params: context?.params || {},
-            //     },
-            // }
         } catch (error: any) {
             console.error('[BaseController] error:', error)
             return {
@@ -123,7 +122,7 @@ export default class BaseController extends BaseContext {
                                 query: req?.query,
                                 file: req?.file,
                             } as any)
-                            data = JSON.parse(JSON.stringify(data))
+                            data = jsonCopy(data)
                             if (!data) {
                                 return res.status(500).json({
                                     error: true,
@@ -137,6 +136,7 @@ export default class BaseController extends BaseContext {
                                     message: data.message || 'Data not found',
                                 })
                             }
+                            delete data.pageName
                             return res.status(200).json(data)
                         } catch (err: any) {
                             const message = err?.message ? err.message : err

@@ -8,18 +8,19 @@ export default class CategoryService extends BaseContext {
     async getCategoryByText(text: string) {
         return await this.Category.findOne({
             where: { text },
-            include: [
-                {
-                    model: this.Good,
-                    attributes: ['id'],
-                    through: { attributes: ['id', 'goodId', 'categoryId'] },
-                    where: { active: 1 },
-                    // include : [
-                    //     {model: this.User, as: "seller"},
-                    //     {model: this.Category, as: "categories"}
-                    // ]
-                },
-            ],
+            attributes: ['id', 'text'],
+            // include: [
+            //     {
+            //         model: this.Good,
+            //         attributes: ['id'],
+            //         through: { attributes: ['id', 'goodId', 'categoryId'] },
+            //         where: { active: 1 },
+            //         // include : [
+            //         //     {model: this.User, as: "seller"},
+            //         //     {model: this.Category, as: "categories"}
+            //         // ]
+            //     },
+            // ],
         })
     }
 

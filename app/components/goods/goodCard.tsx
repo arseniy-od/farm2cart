@@ -53,6 +53,14 @@ function GoodCard({ good, seller }: Props) {
                         <div className="mr-3 mb-3 absolute flex justify-center  bottom-0 right-0 bg-gray-100 min-w-[2rem;] min-h-[2rem;] rounded-full items-center">
                             <CartHandler good={good} />
                         </div>
+                        {good.active && good.available ? null : (
+                            <div>
+                                <div className="z-10 absolute w-full h-full bg-gray-900 opacity-70 inset-0"></div>
+                                <div className="z-10 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-5/6 h-12 bg-white text-gray-900 text-center flex justify-center items-center font-semibold text-xl">
+                                    Product is not active
+                                </div>
+                            </div>
+                        )}
                     </div>
 
                     <div className="px-2 py-2 bg-gray-100">

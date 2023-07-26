@@ -21,6 +21,7 @@ import BaseController from './baseController'
 import { OrderSchema } from '../validation/schemas'
 import validate from '../validation/validator'
 import { goodsSchema, orderGoodsSchema } from '@/redux/normalSchemas'
+import { clientDi } from '@/redux/container'
 
 @USE([session, passportInit, passportSession])
 export default class OrderController extends BaseController {
@@ -28,10 +29,7 @@ export default class OrderController extends BaseController {
 
     constructor(opts) {
         super(opts)
-        this.initSchema('orders', {
-            OrderGoods: [orderGoodsSchema],
-            goods: goodsSchema,
-        })
+        this.schema = clientDi('OrderEntity').schema
     }
 
     @SSR('/orders')
@@ -39,12 +37,13 @@ export default class OrderController extends BaseController {
     async getOrdersForUser({ identity, query }) {
         const page = query?.page || 1
         const searchQuery = query?.search || ''
+        const escapedSearchQuery = searchQuery.replace(/['"]+/g, '')
         if (!identity) {
             return { error: true, message: 'You are not logged in' }
         }
         return await this.OrderService.getOrdersByCustomerId(
             page,
-            searchQuery,
+            escapedSearchQuery,
             identity.id
         )
     }

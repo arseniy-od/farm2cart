@@ -14,6 +14,7 @@ import BaseController from './baseController'
 import { reviewSchema } from '../validation/schemas'
 import validate from '../validation/validator'
 import { userSchema } from '@/redux/normalSchemas'
+import { clientDi } from '@/redux/container'
 
 @USE([session, passportInit, passportSession])
 export default class ReviewController extends BaseController {
@@ -21,7 +22,7 @@ export default class ReviewController extends BaseController {
 
     constructor(opts) {
         super(opts)
-        this.initSchema('reviews', { author: userSchema })
+        this.schema = clientDi('ReviewEntity').schema
     }
 
     @GET('/api/reviews')

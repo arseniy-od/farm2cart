@@ -2,18 +2,26 @@ import { fetchPage, fetchPaginatedGoods } from '@/redux/actions'
 import { useAppDispatch, useAppSelector } from '@/redux/hooks'
 import { ReactElement, useEffect } from 'react'
 
-export default function Paginator({ pageName, fetchAction, userId }) {
+export default function Paginator({
+    pageName,
+    fetchAction,
+    filter = undefined,
+}: {
+    pageName: string
+    fetchAction: any
+    filter?: Record<string, string | number>
+}) {
     const pagination = useAppSelector((state) => state.pagination[pageName])
     const dispatch = useAppDispatch()
     useEffect(() => {
         if (!pagination?.count) {
-            if (userId) {
-                dispatch(fetchAction(userId, pageName, 1))
+            if (filter) {
+                dispatch(fetchAction(filter, pageName, 1))
             } else {
                 dispatch(fetchAction(pageName, 1))
             }
         }
-    }, [dispatch, fetchAction, pagination, pageName, userId])
+    }, [dispatch, fetchAction, pagination, pageName, filter])
     const currentPage = pagination?.currentPage || 1
     const amount = Math.ceil(
         (pagination?.count || 0) / (pagination?.perPage || 1)
@@ -21,8 +29,8 @@ export default function Paginator({ pageName, fetchAction, userId }) {
     const pageNums: ReactElement[] = []
 
     function handlePage(index) {
-        if (userId) {
-            dispatch(fetchAction(userId, pageName, index))
+        if (filter) {
+            dispatch(fetchAction(filter, pageName, index))
         } else {
             dispatch(fetchAction(pageName, index))
         }
@@ -47,7 +55,7 @@ export default function Paginator({ pageName, fetchAction, userId }) {
     }
     return (
         <nav aria-label="Page navigation example">
-            <ul className="mt-4 list-style-none flex justify-center">
+            <ul className="mt-6 list-style-none flex justify-center">
                 <li>
                     <button
                         onClick={() => handlePage(currentPage - 1)}

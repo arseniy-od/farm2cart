@@ -18,6 +18,7 @@ import session, { passportInit, passportSession } from '@/middleware/session'
 import BaseController from './baseController'
 import { userSchema } from '../validation/schemas'
 import validate from '../validation/validator'
+import { clientDi } from '@/redux/container'
 
 @USE([session, passportInit, passportSession])
 export default class UserController extends BaseController {
@@ -27,7 +28,7 @@ export default class UserController extends BaseController {
 
     constructor(opts) {
         super(opts)
-        this.initSchema('users')
+        this.schema = clientDi('UserEntity').schema
     }
 
     @SSR('/users')

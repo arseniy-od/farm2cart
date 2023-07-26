@@ -25,6 +25,7 @@ import validate from '../validation/validator'
 import { categorySchema } from '../validation/schemas'
 import { categoryGoodSchema, goodSchema } from '@/redux/normalSchemas'
 import { jsonCopy } from '@/app/utils'
+import { clientDi } from '@/redux/container'
 
 @USE([session, passportInit, passportSession])
 export default class CategoryController extends BaseController {
@@ -33,10 +34,11 @@ export default class CategoryController extends BaseController {
 
     constructor(opts) {
         super(opts)
-        this.initSchema('categories', {
-            CategoryGood: categoryGoodSchema,
-            goods: [goodSchema],
-        })
+        this.schema = clientDi('CategoryEntity').schema
+        // this.initSchema('categories', {
+        //     CategoryGood: categoryGoodSchema,
+        //     goods: [goodSchema],
+        // })
     }
 
     @GET('/api/categories')
@@ -106,18 +108,18 @@ export default class CategoryController extends BaseController {
         }
 
         let category = await this.CategoryService.getCategoryByText(slug)
-        const goods: good[] = []
+        // const goods: good[] = []
 
-        // to avoid including a lot of models with functions and filtered attributes inside categories
-        category = jsonCopy(category)
-        if (category) {
-            for (let good of category.goods) {
-                goods.push(await this.GoodService.getGoodByIdExtended(good.id))
-            }
-        }
-        category.goods = goods
-        console.log('==================================================')
-        // console.log('category: ', category)
+        // // to avoid including a lot of models with functions and filtered attributes inside categories
+        // const parsedCategory = category?.toJSON()
+        // if (parsedCategory) {
+        //     for (let good of parsedCategory?.goods) {
+        //         goods.push(await this.GoodService.getGoodByIdExtended(good.id))
+        //     }
+        //     parsedCategory.goods = goods
+        //     // console.log('\n\n\ncategory: ', parsedCategory)
+        // }
+        // return parsedCategory
         return category
     }
 }

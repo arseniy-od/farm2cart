@@ -8,12 +8,21 @@ export default function GoodTable({
     pageName,
     fetchAction,
     userId = undefined,
+    categoryName = undefined,
 }: {
     goods: good[]
     pageName: string
     fetchAction: any
     userId?: number
+    categoryName?: string
 }) {
+    let filter
+    if (userId) {
+        filter = { userId }
+    }
+    if (categoryName) {
+        filter = { categorySlug: categoryName }
+    }
     useEffect(() => console.log('Goods Table: ', goods), [goods])
     return (
         <>
@@ -29,7 +38,7 @@ export default function GoodTable({
             <Paginator
                 pageName={pageName}
                 fetchAction={fetchAction}
-                userId={userId}
+                filter={filter}
             />
         </>
     )

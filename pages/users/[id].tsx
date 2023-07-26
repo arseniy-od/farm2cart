@@ -5,7 +5,7 @@ import clientContainer from '@/redux/container'
 import { RootState } from '@/redux/store'
 import { goodsSchema, userSchema } from '@/redux/normalSchemas'
 import { fetchPaginatedGoodsForUser, updateEntities } from '@/redux/actions'
-import { toTitle, formatDate } from '@/app/utils'
+import { toTitle, formatDate, getGoodsPage } from '@/app/utils'
 
 import ErrorMessage from '@/app/components/errorMessage'
 import Layout from '@/app/layout'
@@ -29,7 +29,12 @@ function User(props: Props) {
         const query = e.target.search.value
         if (user?.id) {
             dispatch(
-                fetchPaginatedGoodsForUser(user.id, USER_GOODS_TABLE, 1, query)
+                fetchPaginatedGoodsForUser(
+                    { userId: user.id },
+                    USER_GOODS_TABLE,
+                    1,
+                    query
+                )
             )
         } else {
             throw new Error('User not found')
@@ -85,19 +90,9 @@ function User(props: Props) {
     )
 }
 
-function getGoodsPage(state: RootState) {
-    const goods = Object.values(state.entities.goods || {})
-    const page = state.pagination[USER_GOODS_TABLE]
-    return goods.filter(
-        (good) =>
-            good.id &&
-            page?.pages?.[page?.currentPage || 0].ids.includes(good.id)
-    )
-}
-
 const mapState = (state: RootState, ownProps) => ({
     user: state.entities.users?.[ownProps.query.id],
-    goods: getGoodsPage(state),
+    goods: getGoodsPage(state, USER_GOODS_TABLE),
 })
 
 const connector = connect(mapState, null)
@@ -114,10 +109,3 @@ export const getServerSideProps = clientContainer
     )
 
 export default connector(User)
-
-// (store) => async (ctx: ContextDynamicRoute) => {
-//         await container.resolve('UserController').run(ctx, store, '/users/:id')
-//         return await container
-//             .resolve('GoodController')
-//             .run(ctx, store, '/users/:id')
-//     }

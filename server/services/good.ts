@@ -234,6 +234,63 @@ export default class GoodService extends BaseContext {
         // return goods
     }
 
+    async getGoodsByCategoryId(
+        page: number,
+        id: number | string,
+        searchQuery: string
+    ) {
+        console.log('get')
+        const goods = await this.Good.findAndCountAll({
+            where: {
+                // active: 1,
+                available: { [Op.ne]: 0 },
+                title: { [Op.like]: `%${searchQuery}%` },
+            },
+            attributes: [
+                'id',
+                'title',
+                'description',
+                'price',
+                'imageUrl',
+                'available',
+                'active',
+                [
+                    Sequelize.fn('avg', Sequelize.col('reviews.score')),
+                    'averageScore',
+                ],
+                [
+                    Sequelize.fn('count', Sequelize.col('reviews.id')),
+                    'reviewsCount',
+                ],
+            ],
+            group: ['good.id', 'title'],
+            include: [
+                {
+                    model: this.Category,
+                    where: { id },
+                    attributes: ['id', 'text'],
+                    through: { attributes: [] },
+                },
+                {
+                    model: this.User,
+                    attributes: ['id', 'username', 'email'],
+                    as: 'seller',
+                },
+                {
+                    model: this.Review,
+                    as: 'reviews',
+                    attributes: [],
+                },
+            ],
+            order: [['id', 'ASC']],
+            offset: (page - 1) * GOODS_PER_PAGE,
+            limit: GOODS_PER_PAGE,
+            subQuery: false,
+        })
+        return { count: goods.count.length, result: goods.rows, pageName: '' }
+        // return goods
+    }
+
     async deleteGood(id: string) {
         console.log('Deactivating good with id: ', id)
         const good = await this.Good.findOne({ where: { id } })

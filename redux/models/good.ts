@@ -52,7 +52,6 @@ export default class GoodEntity extends Entity {
         filter: Record<string, string>
         force?: boolean
     }) {
-        console.log('[fetchGoods]Filter: ', filter)
         let forced = force
         if (typeof filter.search === 'string') {
             forced = true
