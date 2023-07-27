@@ -18,10 +18,11 @@ import SSR from '../decorators/ssr'
 
 import session, { passportInit, passportSession } from '@/middleware/session'
 import BaseController from './baseController'
-import { OrderSchema } from '../validation/schemas'
+import { orderFilterSchema, orderSchema } from '../validation/schemas'
 import validate from '../validation/validator'
-import { goodsSchema, orderGoodsSchema } from '@/redux/normalSchemas'
+
 import { clientDi } from '@/redux/container'
+import { CODES } from '@/app/constants'
 
 @USE([session, passportInit, passportSession])
 export default class OrderController extends BaseController {
@@ -34,34 +35,43 @@ export default class OrderController extends BaseController {
 
     @SSR('/orders')
     @GET('/api/orders')
+    @USE(validate(orderFilterSchema))
     async getOrdersForUser({ identity, query }) {
         const page = query?.page || 1
         const searchQuery = query?.search || ''
         const escapedSearchQuery = searchQuery.replace(/['"]+/g, '')
-        if (!identity) {
-            return { error: true, message: 'You are not logged in' }
-        }
+
+        this.createMessage({
+            successMessage: 'Orders found',
+            failMessage: 'Orders not found',
+            successCode: CODES.DEBUG,
+            failCode: CODES.TOAST,
+        })
+
         return await this.OrderService.getOrdersByCustomerId(
             page,
             escapedSearchQuery,
-            identity.id
+            identity?.id
         )
     }
 
     @POST('/api/orders')
-    @USE(validate(OrderSchema))
+    @USE(validate(orderSchema))
     async createOrder({ body, identity, session }: NextApiRequestWithUser) {
-        if (!identity) {
-            return { error: true, message: 'You are not logged in' }
-        }
+        this.createMessage({
+            successMessage: 'Order created',
+            failMessage: 'Error while creating order',
+            successCode: CODES.TOAST,
+            failCode: CODES.TOAST,
+        })
+
         const OrderData = {
             ...body,
-            customerId: identity.id,
+            customerId: identity?.id,
             paymentStatus: 'Ok',
         }
-
         const order = await this.OrderService.createOrder(OrderData)
-        session.cart = null
+        session.cart = []
         return order
     }
 
@@ -70,11 +80,12 @@ export default class OrderController extends BaseController {
         params,
     }: GetServerSidePropsContext<ParsedUrlQuery, PreviewData>) {
         const id = params?.id
-        if (!id || id instanceof Array) {
-            return { error: true, message: 'No order id or id is an array' }
-        }
-
-        let order = await this.OrderService.getOrderById(id)
-        return order
+        this.createMessage({
+            successMessage: 'Order found',
+            failMessage: 'Order not found',
+            successCode: CODES.DEBUG,
+            failCode: CODES.TOAST,
+        })
+        return await this.OrderService.getOrderById(id)
     }
 }

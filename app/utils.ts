@@ -54,6 +54,10 @@ export function isEmpty(obj) {
 }
 
 export function jsonCopy<T extends object>(obj: T): T {
+    if (!obj) {
+        console.error('[jsonCopy] obj has to be js object')
+        return obj
+    }
     if ('toJson' in obj) {
         return (obj as any).toJson()
     }

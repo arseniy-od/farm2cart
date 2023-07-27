@@ -12,6 +12,7 @@ import { NextApiRequestWithUser } from '@/app/types/interfaces'
 import validate from '../validation/validator'
 import { cartSchema } from '../validation/schemas'
 import { goodSchema } from '@/redux/normalSchemas'
+import { CODES } from '@/app/constants'
 // import passport from '@/middleware/passport'
 
 @USE([session, passportInit, passportSession])
@@ -20,12 +21,14 @@ export default class CartController extends BaseController {
 
     @GET('/api/cart')
     getCart({ session }: NextApiRequestWithUser) {
-        const cart = session.cart
-        if (cart) {
-            return cart
-        } else {
-            return []
-        }
+        this.createMessage({
+            successMessage: 'Cart fetched',
+            failMessage: 'Cart not fetched',
+            successCode: CODES.DEBUG,
+            failCode: CODES.TOAST,
+        })
+        const cart = session.cart || []
+        return cart
     }
 
     @POST('/api/cart')

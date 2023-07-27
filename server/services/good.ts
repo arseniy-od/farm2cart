@@ -3,7 +3,12 @@ import { Sequelize, Op } from 'sequelize'
 import BaseContext from '../baseContext'
 import { category, good } from '@/app/types/interfaces'
 import { jsonCopy } from '@/app/utils'
-import { GOODS_PER_PAGE, GOODS_TABLE } from '@/app/constants'
+import {
+    CATEGORY_GOODS_TABLE,
+    GOODS_PER_PAGE,
+    GOODS_TABLE,
+    USER_GOODS_TABLE,
+} from '@/app/constants'
 
 export default class GoodService extends BaseContext {
     private Good = this.di.Good
@@ -12,6 +17,46 @@ export default class GoodService extends BaseContext {
     private Category = this.di.Category
     private Order = this.di.Order
     private CategoryGood = this.di.CategoryGood
+    private CategoryService = this.di.CategoryService
+
+    async getPaginatedGoodsWithFilters(
+        page: number,
+        searchQuery: string,
+        categorySlug?: string,
+        currentUser?: boolean | string,
+        userId?: number,
+        identityId?: number
+    ) {
+        if (currentUser) {
+            userId = identityId
+        }
+        if (userId) {
+            const goods = await this.getGoodsBySellerId(
+                page,
+                userId,
+                searchQuery
+            )
+            goods.pageName = USER_GOODS_TABLE
+            return goods
+        }
+        if (categorySlug) {
+            const category = await this.CategoryService.getCategoryByText(
+                categorySlug
+            )
+
+            const goods = await this.getGoodsByCategoryId(
+                page,
+                category?.id || 0,
+                searchQuery
+            )
+            goods.pageName = CATEGORY_GOODS_TABLE
+            return goods
+        }
+        const goods = await this.getPaginatedGoods(page, searchQuery)
+
+        goods.pageName = GOODS_TABLE
+        return goods
+    }
 
     async getPaginatedGoods(page: number, searchQuery: string) {
         const goods = await this.Good.findAndCountAll({
@@ -56,23 +101,16 @@ export default class GoodService extends BaseContext {
             limit: GOODS_PER_PAGE,
             subQuery: false,
         })
-        // const goodsWithCategories = await Promise.all(
-        //     goods.rows.map(async (good) => {
-        //         const categories = await good.getCategories({
-        //             attributes: ['id', 'text'],
-        //         })
-        //         return {
-        //             ...good.toJSON(),
-        //             categories,
-        //         }
-        //     })
-        // )
-
         return { count: goods.count.length, result: goods.rows, pageName: '' }
-        // return goods
     }
 
-    async getGoodByIdExtended(id: string) {
+    async getGoodByIdExtended(id?: string | string[]) {
+        if (!id || id instanceof Array) {
+            return {
+                error: true,
+                message: 'id not found or id is an instance of array',
+            }
+        }
         const good = await this.Good.findOne({
             where: { id },
             include: [
@@ -135,7 +173,19 @@ export default class GoodService extends BaseContext {
         return goods.map((good) => ({ params: { id: good.id.toString() } }))
     }
 
-    async createGood(goodData) {
+    async createGood({ body, identity, file }) {
+        if (!identity) {
+            return { error: true, message: 'You are not logged in' }
+        }
+        const goodData = { ...body, seller_id: identity.id }
+        if (!(goodData.categories instanceof Array)) {
+            goodData.categories = [goodData.categories]
+        }
+
+        if (file) {
+            goodData.imageUrl = file.path.replace('public', '')
+        }
+
         const newGood = await this.Good.create(goodData)
         await goodData.categories.forEach(async (catId) => {
             const categoryGood = await this.Category.findOne({
@@ -148,15 +198,31 @@ export default class GoodService extends BaseContext {
         return newGood
     }
 
-    async updateGood(goodData: good) {
-        // console.log('updateGood goodData:', goodData)
+    async updateGood({ body, identity, file }) {
+        if (!identity) {
+            return { error: true, message: 'You are not logged in' }
+        }
+        const goodData = { ...body }
+        const currentGood = await this.getGoodById(goodData.id)
+        if (currentGood?.seller_id !== identity.id) {
+            return { error: true, message: 'You are not owner of this good' }
+        }
+        if (!(goodData.categories instanceof Array)) {
+            goodData.categories = [goodData.categories]
+        }
+
+        if (file) {
+            console.log('File:', file)
+            goodData.imageUrl = file.path.replace('public', '')
+        }
+
         const good = await this.Good.findByPk(goodData.id)
-        // console.log('[GoodService] good before:', good)
+
         if (!good) {
             return { error: true, message: 'Good not found' }
         }
         await good.update(goodData)
-        // console.log('[GoodService] good after:', good)
+
         await good.setCategories([])
         await goodData.categories.forEach(async (catId) => {
             const categoryGood = await this.Category.findOne({
@@ -169,7 +235,29 @@ export default class GoodService extends BaseContext {
         return good
     }
 
-    async patchGood(goodData: good) {
+    async patchGood({ body, identity, file, query }) {
+        if (!identity) {
+            return { error: true, message: 'You are not logged in' }
+        }
+
+        const goodData = { ...body, id: query.id, active: true }
+
+        const currentGood = await this.getGoodById(goodData.id)
+
+        if (currentGood?.seller_id !== identity.id) {
+            return { error: true, message: 'You are not owner of this good' }
+        }
+
+        // console.log('[api/goods] goodData before: ', goodData)
+        if (!(goodData.categories instanceof Array) && goodData.categories) {
+            goodData.categories = [goodData.categories]
+        }
+        // console.log('[api/goods] goodData after:', goodData)
+
+        if (file) {
+            console.log('File:', file)
+            goodData.imageUrl = file.path.replace('public', '')
+        }
         const good = await this.Good.findByPk(goodData.id)
         if (!good) {
             return { error: true, message: 'Good not found' }
@@ -239,7 +327,6 @@ export default class GoodService extends BaseContext {
         id: number | string,
         searchQuery: string
     ) {
-        console.log('get')
         const goods = await this.Good.findAndCountAll({
             where: {
                 // active: 1,
@@ -291,16 +378,23 @@ export default class GoodService extends BaseContext {
         // return goods
     }
 
-    async deleteGood(id: string) {
-        console.log('Deactivating good with id: ', id)
-        const good = await this.Good.findOne({ where: { id } })
-        if (good) {
-            good.active = false
-            await good.save()
+    async deleteGood(id?: string | string[]) {
+        if (id && typeof id === 'string') {
+            const good = await this.Good.findOne({ where: { id } })
+            if (good) {
+                good.active = false
+                await good.save()
+            } else {
+                console.error('Good not found')
+                return {
+                    error: true,
+                    notFound: true,
+                    message: 'Good not found',
+                }
+            }
+            return good
         } else {
-            console.error('Good not found')
-            return { error: true, notFound: true, message: 'Good not found' }
+            return { error: true, message: 'id not found or id is an array' }
         }
-        return good
     }
 }

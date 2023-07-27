@@ -18,15 +18,33 @@ import { pageUpdate, updateEntities } from '@/redux/actions'
 import { jsonCopy } from '@/app/utils'
 import { ParsedUrlQuery } from 'querystring'
 import { clientDi } from '@/redux/container'
+import { CODES } from '@/app/constants'
 
 export default class BaseController extends BaseContext {
     protected schema: any
+    protected successMessage: string = ''
+    protected failMessage: string = ''
+    protected successCode: string = ''
+    protected failCode: string = ''
 
-    // protected initSchema(entityName = '', attributes: any = {}) {
-    //     this.schema = entityName
-    //         ? new schema.Entity(entityName, attributes)
-    //         : null
-    // }
+    protected createMessage({
+        successMessage,
+        failMessage,
+        successCode,
+        failCode,
+    }) {
+        this.successMessage = successMessage
+        this.failMessage = failMessage
+        this.successCode = successCode
+        this.failCode = failCode
+    }
+
+    private clearMessage() {
+        this.successMessage = ''
+        this.failMessage = ''
+        this.successCode = ''
+        this.failCode = ''
+    }
 
     protected normalizeData(data) {
         return normalizeResponse(
@@ -114,6 +132,10 @@ export default class BaseController extends BaseContext {
                     const callback = this[members[method][i]].bind(this)
                     const action = async (req, res, next) => {
                         try {
+                            console.log(
+                                '[BaseController] session:',
+                                req.session
+                            )
                             let data = await callback({
                                 body: req?.body,
                                 params: req?.params,
@@ -123,26 +145,43 @@ export default class BaseController extends BaseContext {
                                 file: req?.file,
                             } as any)
                             data = jsonCopy(data)
-                            if (!data) {
-                                return res.status(500).json({
-                                    error: true,
-                                    message: 'Data not found',
-                                })
+                            if (!data || data.notFound || data?.count === 0) {
+                                const response = {
+                                    data: [],
+                                    message: this.failMessage,
+                                    code: this.failCode,
+                                }
+                                this.clearMessage()
+                                return res.status(404).json(response)
                             }
-                            if (data.error || data.notFound) {
+                            if (data.error) {
                                 console.error(data.message || data)
-                                return res.status(500).json({
-                                    error: true,
-                                    message: data.message || 'Data not found',
-                                })
+                                const response = {
+                                    data: [],
+                                    message:
+                                        data.message ||
+                                        this.failMessage ||
+                                        'Data not found',
+                                    code: this.failCode,
+                                }
+                                this.clearMessage()
+                                return res.status(500).json(response)
                             }
                             delete data.pageName
-                            return res.status(200).json(data)
+                            const response = {
+                                data,
+                                message: this.successMessage || 'Ok',
+                                code: this.successCode,
+                            }
+                            this.clearMessage()
+                            return res.status(200).json(response)
                         } catch (err: any) {
                             const message = err?.message ? err.message : err
-                            return res
-                                .status(400)
-                                .json({ error: true, message })
+                            return res.status(500).json({
+                                data: [],
+                                message,
+                                code: CODES.TOAST,
+                            })
                         }
                     }
                     const args = [...methodArgs, action]

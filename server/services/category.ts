@@ -5,9 +5,12 @@ export default class CategoryService extends BaseContext {
     private User = this.di.User
     private Category = this.di.Category
 
-    async getCategoryByText(text: string) {
+    async getCategoryByText(slug?: string | string[]) {
+        if (!slug || slug instanceof Array) {
+            return { error: true, message: 'No slug or slug is array' }
+        }
         return await this.Category.findOne({
-            where: { text },
+            where: { text: slug },
             attributes: ['id', 'text'],
             // include: [
             //     {
@@ -54,11 +57,26 @@ export default class CategoryService extends BaseContext {
         return await this.Category.create(categoryData)
     }
 
-    async deleteCategory(id: string | number) {
+    async deleteCategory(id?: string | string[]) {
+        if (!id) {
+            return { error: true, message: 'Category id not found' }
+        }
+        if (Array.isArray(id)) {
+            return { error: true, message: 'Id must be integer, not array' }
+        }
         return await this.Category.destroy({ where: { id } })
     }
 
-    async updateCategory(id: string | number, categoryData: { text: string }) {
+    async updateCategory(
+        categoryData: { text: string },
+        id?: string | string[]
+    ) {
+        if (!id) {
+            return { error: true, message: 'Category id not found' }
+        }
+        if (Array.isArray(id)) {
+            return { error: true, message: 'Id must be integer, not array' }
+        }
         const category = await this.Category.findOne({ where: { id } })
         if (!category) {
             return { error: true, message: 'Category not found' }

@@ -1,7 +1,8 @@
 import { call, fork, put, select, take } from 'redux-saga/effects'
 import { schema, normalize } from 'normalizr'
+import { toast } from 'react-toastify'
 
-import { METHODS } from '@/app/constants'
+import { CODES, METHODS } from '@/app/constants'
 import {
     action,
     changeCurrentPage,
@@ -59,7 +60,6 @@ export default class Entity extends BaseClientContext {
         const options: IOptions = {
             method: method,
         }
-        console.log('Method is: ', method)
         if ([METHODS.POST, METHODS.PUT, METHODS.PATCH].includes(method)) {
             if (
                 contentType === 'multipart/form-data' &&
@@ -76,12 +76,29 @@ export default class Entity extends BaseClientContext {
         let res = await fetch(url, options)
         if (res.ok) {
             const result = await res.json()
-            return result
+            if (result.code === CODES.TOAST) {
+                toast.success(result.message)
+            }
+            if (result.code === CODES.DEBUG) {
+                console.log('[fetch]:', result.message)
+            }
+            return result.data
         } else {
             const result = await res.json()
-            throw new Error(
-                'Fetching error: ' + (result.message || res.statusText)
-            )
+            if (result.code === CODES.TOAST) {
+                toast.error(result.message)
+            }
+            if (result.code === CODES.ERROR) {
+                throw new Error(
+                    'Fetching error: ' + (result.message || res.statusText)
+                )
+            }
+            if (result.code === CODES.DEBUG) {
+                console.error(
+                    'Fetching error: ' + (result.message || res.statusText)
+                )
+            }
+            return result.data
         }
     }
 
@@ -102,14 +119,14 @@ export default class Entity extends BaseClientContext {
     ) {
         try {
             const result = yield this.fetchApi(url, method, data, contentType)
+            // const result = resultFull.data
             if ([METHODS.DELETE, METHODS.PATCH].includes(method)) {
                 return result
             }
-            // console.log('actionRequest result: ', result)
+
             const normalizedResult = this.normalizeData(result.result || result)
-            // console.log('normalized: ', normalizedResult)
-            const entities = normalizedResult.entities
-            const id = normalizedResult.result
+            const entities = normalizedResult?.entities
+            const id = normalizedResult?.result
             yield put(updateEntities(normalizedResult))
             return { data: entities, id, count: result?.count }
         } catch (error) {
@@ -117,6 +134,9 @@ export default class Entity extends BaseClientContext {
         }
     }
     protected isPageFetched(pagination: pagination, page: number) {
+        if (!pagination) {
+            return false
+        }
         if (!(page in (pagination.pages || []))) {
             return false
         } else {
@@ -124,6 +144,9 @@ export default class Entity extends BaseClientContext {
         }
     }
     private getFilters(pagination: pagination) {
+        if (!pagination) {
+            return ''
+        }
         const filter = pagination.filter
         const entries = Object.entries(filter || {})
         let filtersArr: string[] = []
@@ -146,16 +169,15 @@ export default class Entity extends BaseClientContext {
     ) {
         let pageFilter = filter || {}
 
-        let isFetched = false
-
         if (filter) {
             yield put(setPageFilter(pageName, pageFilter))
         }
 
         const pagination: pagination = yield select(
-            (state: RootState) => state.pagination[pageName]
+            (state: RootState) => state.pagination?.[pageName]
         )
 
+        let isFetched = false
         if (force) {
             // new filters apply if force is true to refresh pages
             yield put(clearPage(pageName))

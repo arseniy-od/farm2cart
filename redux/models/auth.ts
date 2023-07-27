@@ -23,7 +23,8 @@ export default class AuthEntity extends Entity {
     private *saveUser(url, user) {
         try {
             const result = yield this.fetchApi(url, METHODS.POST, user)
-            yield put(addUser(result.user))
+
+            yield put(addUser(result))
             Router.push('/')
         } catch (error) {
             yield put(fetchFailed(error.message))

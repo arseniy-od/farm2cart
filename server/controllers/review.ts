@@ -15,6 +15,7 @@ import { reviewSchema } from '../validation/schemas'
 import validate from '../validation/validator'
 import { userSchema } from '@/redux/normalSchemas'
 import { clientDi } from '@/redux/container'
+import { CODES } from '@/app/constants'
 
 @USE([session, passportInit, passportSession])
 export default class ReviewController extends BaseController {
@@ -27,18 +28,27 @@ export default class ReviewController extends BaseController {
 
     @GET('/api/reviews')
     async getReviews() {
+        this.createMessage({
+            successMessage: 'Reviews found',
+            failMessage: 'Reviews not found',
+            successCode: CODES.DEBUG,
+            failCode: CODES.DEBUG,
+        })
         return await this.ReviewService.getReviews()
     }
 
     @POST('/api/reviews')
     @USE(validate(reviewSchema))
     async createReview({ body, identity }: NextApiRequestWithUser) {
-        if (!identity) {
-            return { error: true, message: 'You are not logged in' }
-        }
+        this.createMessage({
+            successMessage: 'Review created',
+            failMessage: 'Error while creating review',
+            successCode: CODES.TOAST,
+            failCode: CODES.TOAST,
+        })
         const reviewData = {
             ...body,
-            authorId: identity.id,
+            authorId: identity?.id,
             score: parseInt(body.score),
         }
         return await this.ReviewService.createReview(reviewData)

@@ -17,6 +17,57 @@ export const categorySchema = {
     required: ['text'],
 }
 
+export const goodFilterSchema = {
+    type: 'object',
+    properties: {
+        page: {
+            type: 'string',
+            pattern: '^[0-9]+$',
+            errorMessage: {
+                pattern: "Page should be a string with number value",
+            },
+        },
+        search: {
+            type: 'string',
+        },
+        slug: {
+            type: 'string',
+            minLength: 3,
+            pattern: '^[a-z-]+$',
+            errorMessage: {
+                pattern: "Slug should only contain lower-case letters and '-'",
+                minLength: "Slug length should be 3 symbols or more"
+            },
+        },
+        categorySlug: {
+            type: 'string',
+            minLength: 3,
+            pattern: '^[a-z-]+$',
+            errorMessage: {
+                pattern: "Slug should only contain lower-case letters and '-'",
+                minLength: "Slug length should be 3 symbols or more"
+            },
+        },
+        currentUser: {
+            type: 'string',
+            pattern: '^true$',
+            errorMessage: {
+                pattern: "currentUser field should have value of 'true'",
+            },
+        },
+        userId: {
+            type: 'string',
+            pattern: '^[0-9]+$',
+            errorMessage: {
+                pattern: "userId should be a string with number value",
+            },
+        }
+
+    },
+
+}
+
+
 export const userSchema = {
     type: 'object',
     properties: {
@@ -201,7 +252,7 @@ export const cartSchema = {
 }
 
 
-export const OrderSchema = {
+export const orderSchema = {
     type: 'object',
     properties: {
         goods: {
@@ -213,6 +264,24 @@ export const OrderSchema = {
         }
     },
     required: ['goods', 'total']
+}
+
+export const orderFilterSchema = {
+    type: 'object',
+    properties: {
+        page: {
+            type: 'string',
+            pattern: '^[0-9]+$',
+            errorMessage: {
+                pattern: "Page should be a string with number value",
+            },
+        },
+        // some strange error if there is no search in query
+        search: {
+            type: 'string',
+        },
+    },
+
 }
 
 export const CompanySchema = {

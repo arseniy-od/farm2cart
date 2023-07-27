@@ -24,8 +24,11 @@ export default class UserService extends BaseContext {
         return hash
     }
 
-    async createUser(userData: user) {
+    async createUser(userData) {
         const emailData = userData.email
+        if (!userData.password) {
+            return { error: true, message: 'Password not found' }
+        }
         const passwordHash = await this.hashPassword(userData.password)
         console.log('Hashed password is: ', passwordHash)
         userData.password = passwordHash
@@ -41,11 +44,17 @@ export default class UserService extends BaseContext {
         }
     }
 
-    async deleteUser(id: string | number) {
+    async deleteUser(id?: string | string[]) {
+        if (!id || id instanceof Array) {
+            return { error: true, message: 'Please provide 1 valid user id' }
+        }
         return await this.User.destroy({ where: { id } })
     }
 
-    async getUserById(id: string | number) {
+    async getUserById(id?: string | string[]) {
+        if (!id || id instanceof Array) {
+            return { error: true, message: 'User not found' }
+        }
         const user = await this.User.findOne({ where: { id } })
         if (user) {
             return user

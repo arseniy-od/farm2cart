@@ -35,3 +35,9 @@ export const ACTIONS = {
     UPDATE_ENTITY: 'entities/update_one',
     CLEAR_ENTITY: 'entities/clear',
 }
+
+export const CODES = {
+    TOAST: 'TOAST',
+    ERROR: 'ERROR',
+    DEBUG: 'DEBUG',
+}

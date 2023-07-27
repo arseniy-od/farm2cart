@@ -23,7 +23,7 @@ export default function GoodTable({
     if (categoryName) {
         filter = { categorySlug: categoryName }
     }
-    useEffect(() => console.log('Goods Table: ', goods), [goods])
+
     return (
         <>
             <div className="mx-auto flex flex-wrap justify-center">

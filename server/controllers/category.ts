@@ -26,6 +26,7 @@ import { categorySchema } from '../validation/schemas'
 import { categoryGoodSchema, goodSchema } from '@/redux/normalSchemas'
 import { jsonCopy } from '@/app/utils'
 import { clientDi } from '@/redux/container'
+import { CODES } from '@/app/constants'
 
 @USE([session, passportInit, passportSession])
 export default class CategoryController extends BaseController {
@@ -35,10 +36,6 @@ export default class CategoryController extends BaseController {
     constructor(opts) {
         super(opts)
         this.schema = clientDi('CategoryEntity').schema
-        // this.initSchema('categories', {
-        //     CategoryGood: categoryGoodSchema,
-        //     goods: [goodSchema],
-        // })
     }
 
     @GET('/api/categories')
@@ -46,25 +43,24 @@ export default class CategoryController extends BaseController {
     @SSR('/goods/:id')
     @SSR('/')
     async getCategories() {
+        this.createMessage({
+            successMessage: 'Categories fetched',
+            failMessage: 'Categories not fetched',
+            successCode: CODES.DEBUG,
+            failCode: CODES.TOAST,
+        })
         return await this.CategoryService.getCategories()
     }
 
     @POST('/api/categories')
     @USE(validate(categorySchema))
     async createCategory({ body }: NextApiRequestWithUser) {
-        return body
-        // return await this.CategoryService.createCategory(body)
+        return await this.CategoryService.createCategory(body)
     }
 
     @DELETE('/api/categories')
     async deleteCategory({ query }: NextApiRequestWithUser) {
         const id = query.id
-        if (!id) {
-            return { error: true, message: 'Category id not found' }
-        }
-        if (Array.isArray(id)) {
-            return { error: true, message: 'Id must be integer, not array' }
-        }
         return await this.CategoryService.deleteCategory(id)
     }
 
@@ -72,19 +68,7 @@ export default class CategoryController extends BaseController {
     @USE(validate(categorySchema))
     async updateCategory({ query, body }: NextApiRequestWithUser) {
         const id = query.id
-        if (!id) {
-            return { error: true, message: 'Category id not found' }
-        }
-        if (Array.isArray(id)) {
-            return { error: true, message: 'Id must be integer, not array' }
-        }
-        return await this.CategoryService.updateCategory(id, body)
-    }
-
-    async getCategoriesWithGoods() {
-        let categories = await this.CategoryService.getCategoriesWithGoods()
-        categories = JSON.parse(JSON.stringify(categories))
-        return { props: { data: categories } }
+        return await this.CategoryService.updateCategory(body, id)
     }
 
     async getStaticPaths() {
@@ -96,30 +80,11 @@ export default class CategoryController extends BaseController {
     }
 
     @SSR('/categories/:slug')
-    async getCategoryWithGoods({
+    async getCategoryBySlug({
         params,
     }: GetStaticPropsContext<ParsedUrlQuery, PreviewData>) {
-        // const params = ctx.params
-
         const slug = params?.slug
-        if (!slug || slug instanceof Array) {
-            console.error('No slug or slug is array')
-            return { notFound: true }
-        }
-
         let category = await this.CategoryService.getCategoryByText(slug)
-        // const goods: good[] = []
-
-        // // to avoid including a lot of models with functions and filtered attributes inside categories
-        // const parsedCategory = category?.toJSON()
-        // if (parsedCategory) {
-        //     for (let good of parsedCategory?.goods) {
-        //         goods.push(await this.GoodService.getGoodByIdExtended(good.id))
-        //     }
-        //     parsedCategory.goods = goods
-        //     // console.log('\n\n\ncategory: ', parsedCategory)
-        // }
-        // return parsedCategory
         return category
     }
 }

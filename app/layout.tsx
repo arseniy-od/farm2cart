@@ -11,6 +11,8 @@ import { fetchUser, fetchCategories } from '@/redux/actions'
 import { isEmpty } from './utils'
 import OptionalHeader from './components/navigation/optionalHeader'
 import DropdownMenu from './components/navigation/dropDown'
+import { ToastContainer } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
 
 export const siteTitle = 'farm2cart'
 
@@ -27,7 +29,7 @@ function Layout({
     const [isMenuOpen, setIsMenuOpen] = useState(false)
 
     function getUser() {
-        if (isEmpty(user)) {
+        if (!user || isEmpty(user)) {
             fetchUser()
         }
     }
@@ -142,6 +144,7 @@ function Layout({
                             <DropdownMenu user={user} />
                         </div>
                     </div>
+                    <ToastContainer position="top-center" />
                 </header>
 
                 {isMenuOpen && (

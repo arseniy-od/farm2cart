@@ -28,6 +28,9 @@ export default class OrderService extends BaseContext {
     }
 
     async createOrder(orderData: orderWithGoodsCreate) {
+        if (!orderData.customerId) {
+            return { error: true, message: 'You are not logged in' }
+        }
         const newOrder = await this.Order.create(orderData)
         await orderData.goods.forEach(async (good) => {
             const goodOrder = await this.Good.findOne({
@@ -45,7 +48,10 @@ export default class OrderService extends BaseContext {
         return newOrder
     }
 
-    async getOrderById(id: string) {
+    async getOrderById(id?: string | string[]) {
+        if (!id || id instanceof Array) {
+            return { error: true, message: 'No order id or id is an array' }
+        }
         return await this.Order.findOne({
             where: { id },
             include: [
@@ -67,11 +73,14 @@ export default class OrderService extends BaseContext {
     async getOrdersByCustomerId(
         page: number,
         searchQuery: string,
-        id: string | number
+        id?: string | number
     ) {
+        if (!id) {
+            return { error: true, message: 'You are not logged in' }
+        }
         console.log('[order service] query: ', searchQuery)
         const orders = await this.Order.findAndCountAll({
-            where: { customerId: id, id: { [Op.like]: `%${searchQuery}%` } },
+            where: { customerId: id, id: { [Op.like]: `${searchQuery}%` } },
             // include: [
             //     {
             //         model: this.Good,

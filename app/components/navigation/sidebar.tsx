@@ -31,23 +31,20 @@ export default function Sidebar({
                         <div>
                             <Link
                                 className="block ml-4 w-2/3 hover:shadow-lg"
-                                href="http://localhost:3000/signup"
+                                href="/signup"
                             >
                                 Sign up
                             </Link>
                             <Link
                                 className="block ml-4 mt-2 w-2/3 hover:shadow-lg"
-                                href="http://localhost:3000/login"
+                                href="/login"
                             >
                                 Login
                             </Link>
                         </div>
                     ) : (
                         <div className="">
-                            <Link
-                                className="block ml-4"
-                                href="http://localhost:3000/users/me"
-                            >
+                            <Link className="block ml-4" href="/users/me">
                                 <div className="mt-2 flex items-center w-2/3 hover:shadow-lg">
                                     <svg
                                         xmlns="http://www.w3.org/2000/svg"

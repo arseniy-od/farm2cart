@@ -5,6 +5,7 @@ import container from '@/server/container'
 import { NextApiRequest, NextApiResponse } from 'next'
 import { NextHandler } from 'next-connect'
 import { NextApiRequestWithUser } from '@/app/types/interfaces'
+import { CODES } from '@/app/constants'
 
 passport.serializeUser((user, done) => {
     console.log('passport serialize, userid=', user.id)
@@ -71,9 +72,11 @@ export const passportAuth = (
         }
         if (!user) {
             console.error('[passport.ts] User not found')
-            return res
-                .status(500)
-                .json({ error: true, message: 'User not found' })
+            return res.status(500).json({
+                data: null,
+                message: 'User not found',
+                code: CODES.TOAST,
+            })
         }
         req.logIn(user, (err) => {
             if (err) {
@@ -81,13 +84,17 @@ export const passportAuth = (
                 // req.session.user = JSON.parse(JSON.stringify(user))category image
                 return next()
             }
-            console.log('[passport.ts] Login ok, user:', user)
-            return res.json({ user })
+            // console.log('[passport.ts] Login ok, user:', user)
+            return res.json({
+                data: user,
+                message: 'Login successful',
+                code: CODES.TOAST,
+            })
         })
 
         req.session.user = req.user
         req.session.commit()
-        console.log('\n\n[passportAuth] Request User is:\n', req.session.user)
+        // console.log('\n\n[passportAuth] Request User is:\n', req.session.user)
     })(req, res, next)
 }
 

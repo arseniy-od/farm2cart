@@ -25,20 +25,9 @@ import BaseController from './baseController'
 import session, { passportInit, passportSession } from '@/middleware/session'
 import uploadMiddleware from '@/middleware/upload'
 import validate from '../validation/validator'
-import { goodSchema } from '../validation/schemas'
-import {
-    categorySchema,
-    orderGoodsSchema,
-    reviewSchema,
-    userSchema,
-} from '@/redux/normalSchemas'
-import { IGoodModel } from '../database/models/good'
-import {
-    CATEGORY_GOODS_TABLE,
-    GOODS_TABLE,
-    MY_GOODS_TABLE,
-    USER_GOODS_TABLE,
-} from '@/app/constants'
+import { goodFilterSchema, goodSchema } from '../validation/schemas'
+
+import { CODES } from '@/app/constants'
 import { clientDi } from '@/redux/container'
 
 @USE([session, passportInit, passportSession])
@@ -49,18 +38,13 @@ export default class GoodController extends BaseController {
     constructor(opts) {
         super(opts)
         this.schema = clientDi('GoodEntity').schema
-        // this.initSchema('goods', {
-        //     seller: userSchema,
-        //     categories: [categorySchema],
-        //     reviews: [reviewSchema],
-        //     OrderGood: orderGoodsSchema,
-        // })
     }
 
     @SSR('/')
     @SSR('/categories/:slug')
     @SSR('/users/:id')
     @GET('/api/goods')
+    @USE(validate(goodFilterSchema))
     async getPaginatedGoods({ query, identity, params }) {
         const categorySlug = params?.slug || query?.categorySlug
         const page = query?.page || 1
@@ -68,82 +52,36 @@ export default class GoodController extends BaseController {
         const currentUser = query?.currentUser
         const userId = params?.id || query?.userId
         const escapedSearchQuery = searchQuery.replace(/['"]+/g, '')
-        // console.log('\n\nsearch:', searchQuery)
 
-        if (userId || currentUser) {
-            const goods = await this.GoodService.getGoodsBySellerId(
-                page,
-                userId || identity.id,
-                escapedSearchQuery
-            )
-            goods.pageName = USER_GOODS_TABLE
-            return goods
-        }
-
-        if (categorySlug) {
-            const category = await this.CategoryService.getCategoryByText(
-                categorySlug
-            )
-
-            const goods = await this.GoodService.getGoodsByCategoryId(
-                page,
-                category?.id || 0,
-                escapedSearchQuery
-            )
-            goods.pageName = CATEGORY_GOODS_TABLE
-            return goods
-        }
-
-        const goods = await this.GoodService.getPaginatedGoods(
+        this.createMessage({
+            successMessage: 'Goods fetched',
+            failMessage: 'Goods not found',
+            successCode: CODES.DEBUG,
+            failCode: CODES.TOAST,
+        })
+        const goods = await this.GoodService.getPaginatedGoodsWithFilters(
             page,
-            escapedSearchQuery
+            escapedSearchQuery,
+            categorySlug,
+            currentUser,
+            userId,
+            identity?.id
         )
-        goods.pageName = GOODS_TABLE
         return goods
     }
-
-    // @SSR('/users/:id')
-    // async getGoodsForUser({ query, params }) {
-    //     const { id } = params
-    //     if (!id || id instanceof Array) {
-    //         return {
-    //             props: { error: true, message: 'User not found' },
-    //         }
-    //     }
-    //     const page = query?.page || 1
-    //     const searchQuery = query?.search || ''
-    //     const escapedSearchQuery = searchQuery.replace(/['"]+/g, '')
-
-    //     const goods = await this.GoodService.getGoodsBySellerId(
-    //         page,
-    //         id,
-    //         escapedSearchQuery
-    //     )
-    //     goods.pageName = USER_GOODS_TABLE
-    //     return goods
-    // }
 
     @POST('/api/goods')
     // @USE(validate(goodSchema)) // problems with form-data
     @USE(uploadMiddleware)
     async createGood({ body, identity, file }: NextApiRequestFile) {
-        if (!identity) {
-            return { error: true, message: 'You are not logged in' }
-        }
-        const goodData = { ...body, seller_id: identity.id }
-        console.log('[api/goods] goodData before: ', goodData)
-        if (!(goodData.categories instanceof Array)) {
-            goodData.categories = [goodData.categories]
-        }
-        console.log('[api/goods] goodData after:', goodData)
+        this.createMessage({
+            successMessage: 'Good created',
+            failMessage: 'Error while creating good',
+            successCode: CODES.TOAST,
+            failCode: CODES.TOAST,
+        })
 
-        if (file) {
-            goodData.imageUrl = file.path.replace('public', '')
-        }
-        // console.log('[api/goods] goodData: ', goodData)
-
-        const good = await this.GoodService.createGood(goodData)
-        console.log('[api/goods] Good: ', good)
+        const good = await this.GoodService.createGood({ body, identity, file })
         return good
     }
 
@@ -151,29 +89,14 @@ export default class GoodController extends BaseController {
     @USE(uploadMiddleware)
     // @USE(validate(goodSchema)) // problems with form-data
     async updateGood({ body, identity, file }: NextApiRequestFile) {
-        // console.log('==========[GoodController]==============')
-        console.log('Body:', body)
-        if (!identity) {
-            return { error: true, message: 'You are not logged in' }
-        }
+        this.createMessage({
+            successMessage: 'Good updated',
+            failMessage: 'Error while updating good',
+            successCode: CODES.TOAST,
+            failCode: CODES.TOAST,
+        })
 
-        const goodData = { ...body }
-        const currentGood = await this.GoodService.getGoodById(goodData.id)
-        if (currentGood?.seller_id !== identity.id) {
-            return { error: true, message: 'You are not owner of this good' }
-        }
-        // console.log('[api/goods] goodData before: ', goodData)
-        if (!(goodData.categories instanceof Array)) {
-            goodData.categories = [goodData.categories]
-        }
-        // console.log('[api/goods] goodData after:', goodData)
-
-        if (file) {
-            console.log('File:', file)
-            goodData.imageUrl = file.path.replace('public', '')
-        }
-
-        const good = await this.GoodService.updateGood(goodData)
+        const good = await this.GoodService.updateGood({ body, identity, file })
         return good
     }
 
@@ -181,44 +104,44 @@ export default class GoodController extends BaseController {
     @USE(uploadMiddleware)
     // @USE(validate(goodSchema)) // problems with form-data
     async updateGoodPatch({ body, identity, file, query }: NextApiRequestFile) {
-        if (!identity) {
-            return { error: true, message: 'You are not logged in' }
-        }
-        const goodData = { ...body, id: query.id, active: true }
-        const currentGood = await this.GoodService.getGoodById(goodData.id)
-        if (currentGood?.seller_id !== identity.id) {
-            return { error: true, message: 'You are not owner of this good' }
-        }
-        // console.log('[api/goods] goodData before: ', goodData)
-        if (!(goodData.categories instanceof Array) && goodData.categories) {
-            goodData.categories = [goodData.categories]
-        }
-        // console.log('[api/goods] goodData after:', goodData)
-
-        if (file) {
-            console.log('File:', file)
-            goodData.imageUrl = file.path.replace('public', '')
-        }
-        const good = await this.GoodService.patchGood(goodData)
+        this.createMessage({
+            successMessage: 'Good updated',
+            failMessage: 'Error while updating good',
+            successCode: CODES.TOAST,
+            failCode: CODES.TOAST,
+        })
+        const good = await this.GoodService.patchGood({
+            body,
+            identity,
+            file,
+            query,
+        })
         return good
     }
 
     @DELETE('/api/goods')
     async deleteGood(req: NextApiRequest) {
-        if (req.query.id && typeof req.query.id === 'string') {
-            const good = await this.GoodService.deleteGood(req.query.id)
-            return good
-        } else {
-            return { error: true, message: 'id not found or id is an array' }
-        }
+        this.createMessage({
+            successMessage: 'Good deleted',
+            failMessage: 'Error while deleting good',
+            successCode: CODES.TOAST,
+            failCode: CODES.TOAST,
+        })
+
+        const good = await this.GoodService.deleteGood(req.query.id)
+        return good
     }
 
     @SSR('/goods/:id')
     async getGood({ params }) {
         const { id } = params
-        if (!id || id instanceof Array) {
-            return { notFound: true }
-        }
+        this.createMessage({
+            successMessage: 'Good fetched',
+            failMessage: 'Good not found',
+            successCode: CODES.DEBUG,
+            failCode: CODES.TOAST,
+        })
+
         return await this.GoodService.getGoodByIdExtended(id)
     }
 }

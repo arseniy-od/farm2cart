@@ -41,6 +41,9 @@ export default class ReviewService extends BaseContext {
     }
 
     async createReview(reviewData: review) {
+        if (!reviewData.authorId) {
+            return { error: true, message: 'You are not logged in' }
+        }
         const review = await this.Review.create(reviewData)
         return await this.getReviewById(review.id)
     }
