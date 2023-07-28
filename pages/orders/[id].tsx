@@ -1,14 +1,12 @@
 import container from '@/server/container'
-import { ContextDynamicRoute } from '@/app/types/interfaces'
+
 import OrderCard from '@/app/components/orders/orderCard'
 import { ConnectedProps, connect } from 'react-redux'
 import { RootState } from '@/redux/store'
-import { orderSchema } from '@/redux/normalSchemas'
-import { updateEntities } from '@/redux/actions'
+
 import ErrorMessage from '@/app/components/utils/errorMessage'
 import clientContainer from '@/redux/container'
 import { isEmpty } from '@/app/utils'
-import { normalizeResponse } from '@/app/normalizeResponse'
 
 import Layout from '@/app/layout'
 import initServerStore from '@/server/initServerStore'

@@ -1,13 +1,5 @@
-## Typing
-
-Change structure of interfaces folder & rewrite interfaces
-
 ## Remove
 
-Remove companies
+Remove companies:
 
-? Remove /users page
-
-## Add
-
-## Libraries
+-   change migration

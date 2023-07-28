@@ -13,7 +13,7 @@ import {
     NextApiRequestWithUser,
 } from '@/app/types/interfaces'
 import { schema } from 'normalizr'
-import { normalizeResponse } from '@/app/normalizeResponse'
+import { normalizeResponse } from '@/app/utils'
 import { pageUpdate, updateEntities } from '@/redux/actions'
 import { jsonCopy } from '@/app/utils'
 import { ParsedUrlQuery } from 'querystring'

@@ -1,6 +1,16 @@
+import { normalize, schema, NormalizedSchema } from 'normalizr'
 import { RootState } from '@/redux/store'
-import { good } from './types/interfaces'
-import { GOODS_TABLE } from './constants'
+import {
+    cartItem,
+    category,
+    categoryGood,
+    entities,
+    good,
+    order,
+    orderGood,
+    review,
+    user,
+} from './types/entities'
 
 export function formatDateTime(dateString: string | Date): string {
     const date = new Date(dateString)
@@ -40,7 +50,7 @@ export function toTitle(str: string): string {
 export function getTotal(goods: (good & { quantity: number })[]) {
     let total: number = 0
     for (let good of goods) {
-        total += good.price * good.quantity
+        total += (good.price || 0) * good.quantity
     }
     return total
 }
@@ -101,4 +111,30 @@ export function getGoodsPage(state: RootState, pageName: string) {
         return goods.filter((good) => good.id && currentIds.includes(good.id))
     }
     return []
+}
+
+interface EntityMap {
+    users: user
+    goods: good
+    categories: category
+    reviews: review
+    orders: order
+    cartItems: cartItem
+    orderGoods: orderGood
+    categoryGoods: categoryGood
+}
+
+type NormalizedData = {
+    [K in keyof EntityMap]: {
+        [key: string]: EntityMap[K] & {
+            error?: string
+        }
+    }
+}
+
+export const normalizeResponse = (
+    responseData,
+    schema: schema.Array | schema.Entity
+): NormalizedSchema<NormalizedData, string[]> => {
+    return normalize(responseData, schema)
 }

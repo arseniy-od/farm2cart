@@ -45,8 +45,8 @@ function GoodCard({ good, seller }: Props) {
                                         : '/uploads/no_image.png'
                                 }
                                 alt={good.title + ' photo'}
-                                width="1024"
-                                height="1024"
+                                width="288"
+                                height="224"
                                 className="object-cover object-center w-full h-full"
                             />
                         </Link>
