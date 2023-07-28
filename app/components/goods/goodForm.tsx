@@ -121,10 +121,7 @@ function GoodForm({ good, categories, method, createGood, updateGood }: Props) {
                                 </div>
                             </div>
                         </div>
-                        <button
-                            type="submit"
-                            className="mt-4 inline-block items-center bg-gray-100 hover:bg-gray-300 focus:outline-none focus:shadow-outline shadow-lg px-8 py-2"
-                        >
+                        <button type="submit" className="btn-submit">
                             Submit
                         </button>
                     </Form>

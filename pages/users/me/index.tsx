@@ -2,7 +2,7 @@ import Layout from '@/app/layout'
 import Link from 'next/link'
 import { formatDate, isEmpty, toTitle } from '@/app/utils'
 import { useAppSelector } from '@/redux/hooks'
-import ErrorMessage from '@/app/components/errorMessage'
+import ErrorMessage from '@/app/components/utils/errorMessage'
 
 export default function User() {
     const user = useAppSelector((state) => state.user)
@@ -15,7 +15,7 @@ export default function User() {
         )
     }
 
-    if (!user || isEmpty(user)) {
+    if (user.blank) {
         return (
             <Layout>
                 <ErrorMessage message="You are not logged in" />

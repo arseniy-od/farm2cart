@@ -21,18 +21,22 @@ export default function CategoryCreate() {
 
     return (
         <Layout>
+            <h3 className="ml-4 mt-4 text-xl">Create new category:</h3>
             <div>
-                <label htmlFor="category">Category: </label>
                 <input
                     type="text"
                     id="category"
                     value={text}
                     onChange={(event) => setText(event.target.value)}
-                    className="mt-2 px-4 py-3 w-full max-w-xs border-2"
-                    placeholder="category name"
+                    className="ml-4 mt-2 px-4 py-3 w-full max-w-xs border-2"
+                    placeholder="Category name"
                 />
             </div>
-            <button type="submit" onClick={handleSubmit}>
+            <button
+                className="ml-4 btn-submit"
+                type="submit"
+                onClick={handleSubmit}
+            >
                 Submit
             </button>
         </Layout>

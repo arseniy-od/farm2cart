@@ -30,8 +30,8 @@ export default class BaseController extends BaseContext {
     protected createMessage({
         successMessage,
         failMessage,
-        successCode,
-        failCode,
+        successCode = CODES.TOAST,
+        failCode = CODES.TOAST,
     }) {
         this.successMessage = successMessage
         this.failMessage = failMessage
@@ -90,8 +90,11 @@ export default class BaseController extends BaseContext {
             } as any)
 
             if (data.notFound || !data) {
-                console.error('[BaseController] Data not found')
-                return { notFound: true }
+                return {
+                    data: [],
+                    message: data?.message || this.failMessage,
+                    code: this.failCode,
+                }
             }
             data = jsonCopy(data)
             const normalizedResult = this.normalizeData(data.result || data)
@@ -132,10 +135,7 @@ export default class BaseController extends BaseContext {
                     const callback = this[members[method][i]].bind(this)
                     const action = async (req, res, next) => {
                         try {
-                            console.log(
-                                '[BaseController] session:',
-                                req.session
-                            )
+                            // console.log('[BaseController] req:', req)
                             let data = await callback({
                                 body: req?.body,
                                 params: req?.params,

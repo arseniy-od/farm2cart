@@ -45,10 +45,7 @@ export default function Home() {
                             type="password"
                             autoComplete="current-password"
                         />
-                        <button
-                            type="submit"
-                            className="mt-4 inline-block items-center bg-gray-400 hover:bg-gray-600 focus:outline-none focus:shadow-outline rounded-lg shadow px-8 py-2"
-                        >
+                        <button type="submit" className="btn-submit">
                             Submit
                         </button>
                     </Form>

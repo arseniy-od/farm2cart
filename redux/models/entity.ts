@@ -10,6 +10,7 @@ import {
     deleteEntity,
     fetchFailed,
     initPage,
+    pageFetching,
     pageUpdate,
     setPageFilter,
     updateEntities,
@@ -23,6 +24,7 @@ import {
     IPagerState,
     pagination,
 } from '../features/pagination/paginationReducer'
+import { isEmpty } from '@/app/utils'
 
 interface IOptions {
     method: string
@@ -169,7 +171,7 @@ export default class Entity extends BaseClientContext {
     ) {
         let pageFilter = filter || {}
 
-        if (filter) {
+        if (!isEmpty(filter)) {
             yield put(setPageFilter(pageName, pageFilter))
         }
 
@@ -177,23 +179,20 @@ export default class Entity extends BaseClientContext {
             (state: RootState) => state.pagination?.[pageName]
         )
 
-        let isFetched = false
-        if (force) {
-            // new filters apply if force is true to refresh pages
-            yield put(clearPage(pageName))
-        } else {
-            isFetched = this.isPageFetched(pagination, page)
-        }
+        yield put(pageFetching(pageName, page, true, force))
+        const isFetched = this.isPageFetched(pagination, page)
+        // if (!force) {
+        //     isFetched = this.isPageFetched(pagination, page)
+        // }
         const filterString = this.getFilters(pagination)
-        if (isFetched) {
-            yield put(changeCurrentPage(pageName, page)) // we have all data, so only changing current page
-        } else {
+        if (!isFetched) {
             const { id: ids, count } = yield call(
                 this.readData,
                 url + '?page=' + page + filterString
             )
             yield put(pageUpdate(pageName, ids, count, page))
         }
+        yield put(pageFetching(pageName, page, false))
     }
 
     protected readData(url: string) {

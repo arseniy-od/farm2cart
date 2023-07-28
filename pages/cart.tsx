@@ -13,6 +13,7 @@ import CartGood from '@/app/components/cart/cartGood'
 import Layout from '@/app/layout'
 
 import { RootState } from '@/redux/store'
+import Spinner from '@/app/components/utils/spinner'
 
 function Cart({
     cartItems,
@@ -23,8 +24,10 @@ function Cart({
     clearCart,
 }: PropsFromRedux) {
     useEffect(() => {
-        fetchCartItems()
-    }, [fetchCartItems])
+        if (!cartItems) {
+            fetchCartItems()
+        }
+    }, [fetchCartItems, cartItems])
 
     const handleDelete = async (index: number) => {
         deleteCartItem(index)
@@ -52,7 +55,7 @@ function Cart({
     if (!cartItems) {
         return (
             <Layout>
-                <h1 className="mt-6 text-center text-2xl">Loading...</h1>
+                <Spinner />
             </Layout>
         )
     }
@@ -80,7 +83,7 @@ function Cart({
                             </div>
                         ))}
                         <button
-                            className="mt-4 ml-4 px-6 py-3 inline-block shadow-lg hover:bg-gray-200"
+                            className="ml-4 btn-submit"
                             type="submit"
                             onClick={handleSubmit}
                         >

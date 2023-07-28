@@ -97,11 +97,8 @@ export function getGoodsPage(state: RootState, pageName: string) {
     if (state.entities.goods) {
         const page = state.pagination[pageName]
         const goods = Object.values(state.entities.goods)
-        return goods.filter(
-            (good) =>
-                good.id &&
-                page?.pages?.[page?.currentPage || 0].ids.includes(good.id)
-        )
+        const currentIds = page?.pages?.[page?.currentPage || 0].ids || []
+        return goods.filter((good) => good.id && currentIds.includes(good.id))
     }
     return []
 }

@@ -7,7 +7,7 @@ import { goodsSchema, userSchema } from '@/redux/normalSchemas'
 import { fetchPaginatedGoodsForUser, updateEntities } from '@/redux/actions'
 import { toTitle, formatDate, getGoodsPage } from '@/app/utils'
 
-import ErrorMessage from '@/app/components/errorMessage'
+import ErrorMessage from '@/app/components/utils/errorMessage'
 import Layout from '@/app/layout'
 import GoodCard from '@/app/components/goods/goodCard'
 
@@ -18,6 +18,7 @@ import { USER_GOODS_TABLE } from '@/app/constants'
 import initServerStore from '@/server/initServerStore'
 import GoodTable from '@/app/components/goods/goodTable'
 import { useAppDispatch } from '@/redux/hooks'
+import Spinner from '@/app/components/utils/spinner'
 
 function User(props: Props) {
     const user = props.user
@@ -39,13 +40,6 @@ function User(props: Props) {
         } else {
             throw new Error('User not found')
         }
-    }
-    if (!user) {
-        return (
-            <Layout>
-                <div>Loading...</div>
-            </Layout>
-        )
     }
 
     if (!user || props.error) {

@@ -1,3 +1,4 @@
+import { ACTIONS } from '@/app/constants'
 import { isEmpty, jsonCopy } from '@/app/utils'
 import _ from 'lodash'
 
@@ -37,8 +38,8 @@ export default function paginationReducer(
         case 'paginator/update': {
             const { pageName, pageIds, count, pageNumber } = action.payload
             if (!pageIds?.length) {
-                console.log('Return initial')
-                return initialPagerState
+                // console.log('Return initial')
+                return state
             }
             let pagination: pagination = {}
             if (state[pageName]) {
@@ -89,6 +90,26 @@ export default function paginationReducer(
                 return { ...state, [pageName]: pagination }
             }
             return state
+        }
+        case ACTIONS.PAGE_FETCHING: {
+            const { pageName, page, isFetching, force } = action.payload
+            const pagination = jsonCopy(state[pageName] || {})
+            pagination.fetching = isFetching
+
+            if (page in (pagination?.pages || {})) {
+                pagination.currentPage = page
+
+                if (force) {
+                    pagination.pages = {}
+                    pagination.currentPage = 1
+                    pagination.count = 0
+                }
+            }
+            // to prevent infinite loop of useEffect fetching at Paginator
+            if (_.isEqual(state?.[pageName], pagination)) {
+                return state
+            }
+            return { ...state, [pageName]: { ...pagination } }
         }
         default:
             return state

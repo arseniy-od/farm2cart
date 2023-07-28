@@ -2,6 +2,7 @@ import { useEffect } from 'react'
 import Paginator from '../navigation/paginator'
 import GoodCard from './goodCard'
 import { good } from '@/app/types/entities'
+import router from 'next/router'
 
 export default function GoodTable({
     goods,
@@ -39,6 +40,7 @@ export default function GoodTable({
                 pageName={pageName}
                 fetchAction={fetchAction}
                 filter={filter}
+                key={pageName}
             />
         </>
     )

@@ -30,10 +30,18 @@ export default function SignUp() {
                         firstName: Yup.string()
                             .max(15, 'Must be 15 characters or less')
                             .min(2, 'Must be 2 characters or more')
+                            .matches(
+                                /^[A-Za-z]+$/,
+                                'Should only contain letters'
+                            )
                             .required('Required'),
                         lastName: Yup.string()
                             .max(20, 'Must be 20 characters or less')
                             .min(2, 'Must be 2 characters or more')
+                            .matches(
+                                /^[A-Za-z]+$/,
+                                'Should only contain letters'
+                            )
                             .required('Required'),
                         email: Yup.string()
                             .email('Invalid email address')
@@ -80,10 +88,7 @@ export default function SignUp() {
 
                             <option value="seller">Seller</option>
                         </Select>
-                        <button
-                            type="submit"
-                            className="mt-4 inline-block items-center bg-gray-400 hover:bg-gray-600 focus:outline-none focus:shadow-outline rounded-lg shadow px-8 py-2"
-                        >
+                        <button type="submit" className="btn-submit">
                             Submit
                         </button>
                     </Form>

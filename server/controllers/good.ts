@@ -1,10 +1,4 @@
-import {
-    GetServerSidePropsContext,
-    NextApiRequest,
-    NextApiResponse,
-    PreviewData,
-} from 'next'
-import { ParsedUrlQuery } from 'querystring'
+import { NextApiRequest } from 'next'
 
 import {
     NextApiRequestFile,
@@ -48,7 +42,7 @@ export default class GoodController extends BaseController {
     async getPaginatedGoods({ query, identity, params }) {
         const categorySlug = params?.slug || query?.categorySlug
         const page = query?.page || 1
-        const searchQuery = query?.search || ''
+        const searchQuery = query?.searchQuery || ''
         const currentUser = query?.currentUser
         const userId = params?.id || query?.userId
         const escapedSearchQuery = searchQuery.replace(/['"]+/g, '')
@@ -77,8 +71,6 @@ export default class GoodController extends BaseController {
         this.createMessage({
             successMessage: 'Good created',
             failMessage: 'Error while creating good',
-            successCode: CODES.TOAST,
-            failCode: CODES.TOAST,
         })
 
         const good = await this.GoodService.createGood({ body, identity, file })
@@ -92,8 +84,6 @@ export default class GoodController extends BaseController {
         this.createMessage({
             successMessage: 'Good updated',
             failMessage: 'Error while updating good',
-            successCode: CODES.TOAST,
-            failCode: CODES.TOAST,
         })
 
         const good = await this.GoodService.updateGood({ body, identity, file })
@@ -107,8 +97,6 @@ export default class GoodController extends BaseController {
         this.createMessage({
             successMessage: 'Good updated',
             failMessage: 'Error while updating good',
-            successCode: CODES.TOAST,
-            failCode: CODES.TOAST,
         })
         const good = await this.GoodService.patchGood({
             body,
@@ -124,8 +112,6 @@ export default class GoodController extends BaseController {
         this.createMessage({
             successMessage: 'Good deleted',
             failMessage: 'Error while deleting good',
-            successCode: CODES.TOAST,
-            failCode: CODES.TOAST,
         })
 
         const good = await this.GoodService.deleteGood(req.query.id)
@@ -133,6 +119,7 @@ export default class GoodController extends BaseController {
     }
 
     @SSR('/goods/:id')
+    @GET('/api/goods/:id')
     async getGood({ params }) {
         const { id } = params
         this.createMessage({

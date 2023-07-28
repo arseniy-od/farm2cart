@@ -1,17 +1,16 @@
 import { asFunction } from 'awilix'
 
-import UserModel, {UserType} from './user'
-import CompanyModel, {CompanyType} from './company'
-import GoodModel, {GoodType} from './good'
-import ReviewModel, {ReviewType} from './review'
-import CategoryModel, {CategoryType} from './category'
-import CategoryGoodModel, {CategoryGoodType} from './categorygood'
-import OrderGoodModel, {OrderGoodType} from './ordergood'
-import OrderModel, {OrderType} from './order'
-
+import UserModel, { UserType } from './user'
+// import CompanyModel, {CompanyType} from './company'
+import GoodModel, { GoodType } from './good'
+import ReviewModel, { ReviewType } from './review'
+import CategoryModel, { CategoryType } from './category'
+import CategoryGoodModel, { CategoryGoodType } from './categorygood'
+import OrderGoodModel, { OrderGoodType } from './ordergood'
+import OrderModel, { OrderType } from './order'
 
 export interface IModelContainer {
-    Company: CompanyType
+    // Company: CompanyType
     User: UserType
     Good: GoodType
     Review: ReviewType
@@ -21,16 +20,15 @@ export interface IModelContainer {
     Order: OrderType
 }
 
-
 const modelContainer = {
-    Company: asFunction(CompanyModel).singleton(),
+    // Company: asFunction(CompanyModel).singleton(),
     User: asFunction(UserModel).singleton(),
     Good: asFunction(GoodModel).singleton(),
     Review: asFunction(ReviewModel).singleton(),
     CategoryGood: asFunction(CategoryGoodModel).singleton(),
     Category: asFunction(CategoryModel).singleton(),
     OrderGood: asFunction(OrderGoodModel).singleton(),
-    Order: asFunction(OrderModel).singleton()
-};
+    Order: asFunction(OrderModel).singleton(),
+}
 
 export default modelContainer

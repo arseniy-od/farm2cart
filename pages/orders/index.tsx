@@ -7,59 +7,68 @@ import { isEmpty } from '@/app/utils'
 
 import Layout from '@/app/layout'
 import OrderCard from '@/app/components/orders/orderCard'
-import ErrorMessage from '@/app/components/errorMessage'
+import ErrorMessage from '@/app/components/utils/errorMessage'
 import { order } from '@/app/types/entities'
 import Paginator from '@/app/components/navigation/paginator'
 import { ORDERS_TABLE } from '@/app/constants'
 import { useAppDispatch } from '@/redux/hooks'
+import Spinner from '@/app/components/utils/spinner'
 
-function MyOrders({ user, orders, goods, orderGoods, fetchOrders }: Props) {
+function MyOrders({
+    user,
+    orders,
+    goods,
+    orderGoods,
+    fetchOrders,
+    pagination,
+}: Props) {
     const dispatch = useAppDispatch()
 
     const handleSearch = (e) => {
         e.preventDefault()
         const query = e.target.search.value
         dispatch(fetchPaginatedOrders(ORDERS_TABLE, 1, query))
-        // setQuery(e.target.search.value)
+    }
+    if (user.blank) {
+        return (
+            <Layout>
+                <ErrorMessage message="You are not logged in" />
+            </Layout>
+        )
     }
 
-    // if (!orders || isEmpty(orders)) {
-    //     return (
-    //         <Layout>
-    //             <ErrorMessage
-    //                 message={orders ? 'You have no orders' : 'Loading...'}
-    //             />
-    //         </Layout>
-    //     )
-    // }
     return (
         <Layout handleSearch={handleSearch}>
+            {pagination?.fetching && <Spinner />}
+            {pagination && !pagination.fetching && pagination.count && (
+                <h3 className="ml-6 mt-3 text-xl font-semibold xl:text-center xl:text-2xl">
+                    Your orders:
+                </h3>
+            )}
+            {pagination && !pagination.fetching && !pagination.count && (
+                <ErrorMessage message="You have no orders yet" />
+            )}
             <div>
-                {user.role === 'seller' || 'admin' ? (
-                    <div>
-                        <h3 className="ml-6 mt-3 text-xl font-semibold xl:text-center xl:text-2xl">
-                            Your orders:
-                        </h3>
-
-                        <div className="mx-auto flex flex-wrap justify-center">
-                            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                                {Object.values(orders || {}).map((order, i) => (
-                                    <div key={i}>
-                                        <OrderCard
-                                            order={order}
-                                            goods={goods}
-                                            orderGoods={orderGoods}
-                                        />
-                                    </div>
-                                ))}
-                            </div>
+                <div>
+                    <div className="mx-auto flex flex-wrap justify-center">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                            {orders.map((order, i) => (
+                                <div key={i}>
+                                    <OrderCard
+                                        order={order}
+                                        goods={goods}
+                                        orderGoods={orderGoods}
+                                    />
+                                </div>
+                            ))}
                         </div>
-                        <Paginator
-                            pageName={ORDERS_TABLE}
-                            fetchAction={fetchPaginatedOrders}
-                        />
                     </div>
-                ) : null}
+                    <Paginator
+                        pageName={ORDERS_TABLE}
+                        fetchAction={fetchPaginatedOrders}
+                        key={ORDERS_TABLE}
+                    />
+                </div>
             </div>
         </Layout>
     )
@@ -85,6 +94,7 @@ const mapState = (state: RootState) => ({
     orders: getOrdersForUser(state),
     goods: state.entities.goods,
     orderGoods: state.entities.orderGoods,
+    pagination: state.pagination[ORDERS_TABLE],
 })
 
 const mapDispatch = {

@@ -27,7 +27,7 @@ export const goodFilterSchema = {
                 pattern: "Page should be a string with number value",
             },
         },
-        search: {
+        searchQuery: {
             type: 'string',
         },
         slug: {
@@ -277,7 +277,7 @@ export const orderFilterSchema = {
             },
         },
         // some strange error if there is no search in query
-        search: {
+        searchQuery: {
             type: 'string',
         },
     },

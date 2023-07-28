@@ -5,15 +5,10 @@ const bcrypt = require('bcrypt')
 
 export default class UserService extends BaseContext {
     private User = this.di.User
-    private Company = this.di.Company
 
     async getUsers() {
         return await this.User.findAll({
             attributes: { exclude: ['password'] },
-            include: {
-                model: this.Company,
-                as: 'company',
-            },
         })
     }
 

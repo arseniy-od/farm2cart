@@ -19,7 +19,7 @@ import ReviewCard from '@/app/components/reviews/reviewCard'
 
 import { ContextDynamicRoute } from '@/app/types/interfaces'
 import GoodFull from '@/app/components/goods/goodFull'
-import ErrorMessage from '@/app/components/errorMessage'
+import ErrorMessage from '@/app/components/utils/errorMessage'
 import clientContainer from '@/redux/container'
 import { isEmpty } from '@/app/utils'
 import initServerStore from '@/server/initServerStore'
@@ -95,7 +95,10 @@ function Good({
 }
 
 function getReviews(state, goodId) {
-    const good = state.entities.goods[goodId]
+    const good = state.entities.goods?.[goodId]
+    if (!good) {
+        return []
+    }
     console.log('getReviews good: ', goodId)
     if (good.reviews) {
         const reviews = good.reviews.reduce((acc, reviewId) => {
@@ -110,7 +113,10 @@ function getReviews(state, goodId) {
 }
 
 function getCategories(state, goodId) {
-    const good = state.entities.goods[goodId]
+    const good = state.entities.goods?.[goodId]
+    if (!good) {
+        return []
+    }
     const categories = good.categories.reduce((acc, categoryId) => {
         acc.push(state.entities.categories[categoryId])
         return acc

@@ -27,7 +27,7 @@ export default function Sidebar({
         <div className="xl:hidden">
             <div className="fixed start-0 left-0 z-20 bg-gray-100 w-2/3 md:w-1/3 min-h-screen">
                 <div className="py-2 flex flex-col border-b-2">
-                    {isEmpty(user) ? (
+                    {isEmpty(user) || user.blank ? (
                         <div>
                             <Link
                                 className="block ml-4 w-2/3 hover:shadow-lg"

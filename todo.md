@@ -10,16 +10,4 @@ Remove companies
 
 ## Add
 
-Fetching spinner or "Loading..."
-
-Add messages to all controller actions
-
-Refactor controllers (all ifs & other logic to services):
-
--   create service for cart
-
-add validation on get requests:
-
--   look for other requests with get (orders)
-
 ## Libraries

@@ -13,11 +13,10 @@ import validate from '../validation/validator'
 import { cartSchema } from '../validation/schemas'
 import { goodSchema } from '@/redux/normalSchemas'
 import { CODES } from '@/app/constants'
-// import passport from '@/middleware/passport'
 
 @USE([session, passportInit, passportSession])
 export default class CartController extends BaseController {
-    private GoodService = this.di.GoodService
+    private CartService = this.di.CartService
 
     @GET('/api/cart')
     getCart({ session }: NextApiRequestWithUser) {
@@ -34,37 +33,23 @@ export default class CartController extends BaseController {
     @POST('/api/cart')
     @USE(validate(cartSchema))
     async addToCart({ body, session }: NextApiRequestWithUser) {
+        this.createMessage({
+            successMessage: 'Good added to cart',
+            failMessage: 'Error while adding good',
+        })
         const goodData = body
-        console.log('body', body)
-        session.cart = session.cart || []
-        let good = await this.GoodService.getGoodById(goodData.goodId)
-        good = JSON.parse(JSON.stringify(good))
-
-        if (good.error) {
-            throw new Error('Error while fetching good: ', good.message)
-        }
-        // good can be in only one cart item
-        await session.cart.push({ id: good.id, quantity: 1, good })
-        await session.commit()
-        console.log('[POST] Cart: ', session.cart)
-        return session.cart
+        return this.CartService.addToCart({ goodData, session })
     }
 
     @DELETE('/api/cart')
     async deleteFromCart({ session, query }: NextApiRequestWithUser) {
-        if (typeof query.index === 'string') {
-            const good = await session.cart.splice(parseInt(query.index), 1)[0]
-            if (!session.cart.length) {
-                session.cart = null
-            }
-            await session.commit()
-            return { res: 'Ok', goodId: good.id }
-        } else {
-            return {
-                error: true,
-                message:
-                    'index format is not supported. Use /api/cart?index=<int>',
-            }
-        }
+        this.createMessage({
+            successMessage: 'Good deleted from cart',
+            failMessage: 'Error while deleting good',
+            successCode: CODES.DEBUG,
+            failCode: CODES.TOAST,
+        })
+        const index = query?.index
+        return this.CartService.deleteFromCart({ session, index })
     }
 }

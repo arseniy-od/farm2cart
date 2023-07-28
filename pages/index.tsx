@@ -12,16 +12,28 @@ import initServerStore from '@/server/initServerStore'
 import { GOODS_TABLE } from '@/app/constants'
 import { getGoodsPage } from '@/app/utils'
 
-function Goods({ goods, categories, fetchCartItems }: PropsFromRedux) {
+function Goods({
+    goods,
+    categories,
+    fetchCartItems,
+    pagination,
+}: PropsFromRedux) {
     useEffect(() => {
         fetchCartItems()
     }, [fetchCartItems])
-    return <GoodsPage goods={goods} categories={categories} />
+    return (
+        <GoodsPage
+            goods={goods}
+            categories={categories}
+            pagination={pagination}
+        />
+    )
 }
 
 const mapState = (state: RootState) => ({
     goods: getGoodsPage(state, GOODS_TABLE),
     categories: state.entities.categories || {},
+    pagination: state.pagination[GOODS_TABLE],
 })
 
 const mapDispatch = {

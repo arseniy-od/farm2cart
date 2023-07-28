@@ -44,10 +44,10 @@ export default class OrderEntity extends Entity {
         force?: boolean
     }) {
         let forced = force
-        if (typeof filter.search === 'string') {
+        if (typeof filter.searchQuery === 'string') {
             forced = true
         } else {
-            delete filter.search
+            delete filter.searchQuery
         }
         yield call(
             this.readPaginated,

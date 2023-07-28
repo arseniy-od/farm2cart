@@ -1,4 +1,5 @@
 export type user = {
+    blank?: boolean
     id?: number
     firstName?: string
     lastName?: string

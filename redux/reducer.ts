@@ -6,7 +6,10 @@ import { isEmpty, jsonCopy } from '@/app/utils'
 import _ from 'lodash'
 import { user } from '@/app/types/interfaces'
 import { entities } from '@/app/types/entities'
-import paginationReducer from './features/pagination/paginationReducer'
+import paginationReducer, {
+    pagination,
+} from './features/pagination/paginationReducer'
+import { IPagerState } from './features/pagination/paginationReducer'
 
 const combinedReducer = combineReducers({
     user: userReducer,
@@ -18,6 +21,7 @@ const rootReducer = (
     state: CombinedState<{
         user: user
         entities: entities
+        pagination: IPagerState
     }>,
     action
 ) => {
@@ -30,6 +34,11 @@ const rootReducer = (
             if (value instanceof Object && Object.keys(value).length) {
                 nextState[key] = value
             }
+        }
+        if (hydratedState?.pagination) {
+            nextState.pagination = jsonCopy(state.pagination)
+            const { newPagination } = hydratedState
+            nextState.pagination = { ...nextState.pagination, ...newPagination }
         }
 
         // replacing entities with new ones by id

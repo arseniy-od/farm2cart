@@ -31,7 +31,6 @@ import { CODES } from '@/app/constants'
 @USE([session, passportInit, passportSession])
 export default class CategoryController extends BaseController {
     private CategoryService = this.di.CategoryService
-    private GoodService = this.di.GoodService
 
     constructor(opts) {
         super(opts)
@@ -55,11 +54,19 @@ export default class CategoryController extends BaseController {
     @POST('/api/categories')
     @USE(validate(categorySchema))
     async createCategory({ body }: NextApiRequestWithUser) {
+        this.createMessage({
+            successMessage: 'Category created',
+            failMessage: 'Error while creating category',
+        })
         return await this.CategoryService.createCategory(body)
     }
 
     @DELETE('/api/categories')
     async deleteCategory({ query }: NextApiRequestWithUser) {
+        this.createMessage({
+            successMessage: 'Category deleted',
+            failMessage: 'Error while deleting category',
+        })
         const id = query.id
         return await this.CategoryService.deleteCategory(id)
     }
@@ -67,6 +74,10 @@ export default class CategoryController extends BaseController {
     @PATCH('/api/categories')
     @USE(validate(categorySchema))
     async updateCategory({ query, body }: NextApiRequestWithUser) {
+        this.createMessage({
+            successMessage: 'Category updated',
+            failMessage: 'Error while updating category',
+        })
         const id = query.id
         return await this.CategoryService.updateCategory(body, id)
     }
@@ -83,6 +94,12 @@ export default class CategoryController extends BaseController {
     async getCategoryBySlug({
         params,
     }: GetStaticPropsContext<ParsedUrlQuery, PreviewData>) {
+        // this.createMessage({
+        //     successMessage: 'Category fetched',
+        //     failMessage: 'Category not found',
+        //     successCode: CODES.DEBUG,
+        //     failCode: CODES.TOAST,
+        // })
         const slug = params?.slug
         let category = await this.CategoryService.getCategoryByText(slug)
         return category

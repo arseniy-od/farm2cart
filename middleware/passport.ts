@@ -73,7 +73,7 @@ export const passportAuth = (
         if (!user) {
             console.error('[passport.ts] User not found')
             return res.status(500).json({
-                data: null,
+                data: [],
                 message: 'User not found',
                 code: CODES.TOAST,
             })

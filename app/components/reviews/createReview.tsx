@@ -11,8 +11,6 @@ import { RootState } from '@/redux/store'
 import { ConnectedProps, connect } from 'react-redux'
 import { review, good } from '@/app/types/entities'
 import { createReview, updateEntities } from '@/redux/actions'
-import { normalize } from 'normalizr'
-import { reviewSchema } from '@/redux/normalSchemas'
 
 type ownProps = {
     good: good
@@ -121,7 +119,7 @@ function CreateReview({ good, createReview }: Props) {
                 <button
                     onClick={handleSubmit}
                     type="submit"
-                    className="mt-4 inline-block items-center bg-gray-400 hover:bg-gray-600 focus:outline-none focus:shadow-outline rounded-lg shadow px-8 py-2"
+                    className="btn-submit"
                 >
                     Submit
                 </button>

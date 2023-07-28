@@ -106,7 +106,7 @@ export const fetchPaginatedGoods = (
     action(ACTIONS.FETCH_GOODS, {
         pageName,
         pageNumber,
-        filter: { search: query },
+        filter: { searchQuery: query },
         force,
     })
 
@@ -119,7 +119,7 @@ export const fetchMyPaginatedGoods = (
     action(ACTIONS.FETCH_GOODS, {
         pageName,
         pageNumber,
-        filter: { search: query, currentUser: true },
+        filter: { searchQuery: query, currentUser: true },
         force,
     })
 
@@ -133,7 +133,7 @@ export const fetchPaginatedGoodsForUser = (
     action(ACTIONS.FETCH_GOODS, {
         pageName,
         pageNumber,
-        filter: { search: query, ...filter },
+        filter: { searchQuery: query, ...filter },
         force,
     })
 
@@ -147,7 +147,7 @@ export const fetchPaginatedGoodsForCategory = (
     action(ACTIONS.FETCH_GOODS, {
         pageName,
         pageNumber,
-        filter: { search: query, ...filter },
+        filter: { searchQuery: query, ...filter },
         force,
     })
 
@@ -160,7 +160,20 @@ export const fetchPaginatedOrders = (
     action(ACTIONS.FETCH_ORDERS, {
         pageName,
         pageNumber,
-        filter: { search: query },
+        filter: { searchQuery: query },
+        force,
+    })
+
+export const pageFetching = (
+    pageName: string,
+    page: number,
+    isFetching: boolean,
+    force = false
+) =>
+    action(ACTIONS.PAGE_FETCHING, {
+        pageName,
+        page,
+        isFetching,
         force,
     })
 

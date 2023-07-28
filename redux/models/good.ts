@@ -53,10 +53,10 @@ export default class GoodEntity extends Entity {
         force?: boolean
     }) {
         let forced = force
-        if (typeof filter.search === 'string') {
+        if (typeof filter.searchQuery === 'string') {
             forced = true
         } else {
-            delete filter.search
+            delete filter.searchQuery
         }
 
         yield call(

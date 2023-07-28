@@ -2,7 +2,7 @@ import Image from 'next/image'
 import { cartItem, good } from '@/app/types/entities'
 import { useAppDispatch } from '@/redux/hooks'
 import { changeGoodQuantity } from '@/redux/actions'
-import ErrorMessage from '../errorMessage'
+import ErrorMessage from '../utils/errorMessage'
 
 type cartGoodProps = {
     cartItem?: cartItem

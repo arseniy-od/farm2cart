@@ -8,13 +8,17 @@ import { fetchPaginatedGoods, setPageFilter } from '@/redux/actions'
 import { GOODS_TABLE } from '@/app/constants'
 import { useAppDispatch, useAppSelector } from '@/redux/hooks'
 import GoodTable from './goodTable'
+import Spinner from '../utils/spinner'
+import { pagination } from '@/redux/features/pagination/paginationReducer'
 
 export default function GoodsPage({
     goods,
     categories,
+    pagination,
 }: {
     goods: good[]
     categories: { [key: string]: category }
+    pagination: pagination
 }) {
     const dispatch = useAppDispatch()
 
@@ -51,9 +55,10 @@ export default function GoodsPage({
                         />
                     </>
                 ) : (
-                    <div>Loading...</div>
+                    <Spinner />
                 )}
             </div>
+            {pagination?.fetching && <Spinner />}
             <GoodTable
                 goods={goods}
                 pageName={GOODS_TABLE}

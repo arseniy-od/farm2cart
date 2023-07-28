@@ -11,8 +11,8 @@ import { IPagerState } from './features/pagination/paginationReducer'
 
 export default class ReduxStore extends BaseClientContext {
     public isDebug: boolean = false
-    public wrapper
-    private sagas
+    public wrapper: ReturnType<typeof createWrapper>
+    private sagas: ReturnType<typeof Entity.sagas>
 
     constructor(opts) {
         super(opts)
@@ -27,7 +27,7 @@ export default class ReduxStore extends BaseClientContext {
         yield all(this.sagas)
     }
 
-    private setupStore() {
+    public setupStore() {
         const sagaMiddleware = createSagaMiddleware()
         const store = configureStore({
             reducer: rootReducer,
@@ -46,6 +46,7 @@ export type RootState = {
     pagination: IPagerState
 }
 
-// export type AppStore = ReturnType<typeof setupStore>
+export type AppStore = ReturnType<typeof ReduxStore.prototype.setupStore>
+export type AppDispatch = AppStore['dispatch']
 
-// export type AppDispatch = AppStore['dispatch']
+// export type AppStore = ReturnType<typeof setupStore>

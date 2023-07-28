@@ -6,7 +6,7 @@ export default function userReducer(state = initialState, action) {
             return action.payload
         }
         case 'user/fetch_blank': {
-            return initialState
+            return { blank: true }
         }
         case 'user/logout': {
             return initialState

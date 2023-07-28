@@ -15,16 +15,16 @@ export default function DropdownMenu({ user }) {
     function Dropdown() {
         return (
             <div className="absolute mt-3 bg-white right-0 w-48 py-2 shadow-xl xl:border">
-                {isEmpty(user) ? (
+                {isEmpty(user) || user.blank ? (
                     <>
                         <Link
-                            href="http://localhost:3000/signup"
+                            href="/signup"
                             className="block hover:text-white mt-0 text-gray-800 px-4 py-2 hover:bg-indigo-500"
                         >
                             Sign up
                         </Link>
                         <Link
-                            href="http://localhost:3000/login"
+                            href="/login"
                             className="block hover:text-white mt-0 text-gray-800 px-4 py-2 hover:bg-indigo-500"
                         >
                             Login
@@ -33,7 +33,7 @@ export default function DropdownMenu({ user }) {
                 ) : (
                     <>
                         <Link
-                            href="http://localhost:3000/users/me"
+                            href="/users/me"
                             className="block hover:text-white mt-0 text-gray-800 px-4 py-2 hover:bg-indigo-500 font-semibold"
                         >
                             {user.username}
@@ -74,10 +74,10 @@ export default function DropdownMenu({ user }) {
                 <button
                     type="button"
                     onClick={toggle}
-                    className="flex items-center w-10 h-10"
+                    className="px-2 py-2 flex items-center justify-center hover:shadow-lg hover:rounded"
                 >
                     <svg
-                        className="ml-4 h-5 hover:h-7"
+                        className="h-5"
                         xmlns="http://www.w3.org/2000/svg"
                         height="1em"
                         viewBox="0 0 448 512"

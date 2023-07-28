@@ -16,6 +16,8 @@ export interface IGoodModel
         InferAttributes<IGoodModel>,
         InferCreationAttributes<IGoodModel>
     > {
+    error?: boolean
+    message?: string
     id: CreationOptional<number>
     title: string
     imageUrl: string

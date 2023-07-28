@@ -22,10 +22,12 @@ export default class AuthEntity extends Entity {
 
     private *saveUser(url, user) {
         try {
-            const result = yield this.fetchApi(url, METHODS.POST, user)
+            const result = yield call(this.fetchApi, url, METHODS.POST, user)
+            console.log('saveUser result:', result)
 
             yield put(addUser(result))
-            Router.push('/')
+
+            return result
         } catch (error) {
             yield put(fetchFailed(error.message))
         }
@@ -46,44 +48,26 @@ export default class AuthEntity extends Entity {
 
     @action()
     *loginUser(data) {
-        // while (true) {
-        //     const { payload } = yield take('saga/login')
         yield call(this.saveUser, '/api/auth', data)
-        // }
+        Router.push('/')
     }
 
     @action()
     *logoutUser() {
-        // while (true) {
-        //     yield take('saga/logout')
         yield call(this.readData, 'api/auth/logout')
         yield put(logoutRedux())
         Router.push('/')
-        // }
     }
 
     @action()
     *createUser(data) {
-        // while (true) {
-        //     const { payload } = yield take('saga/create_user')
         yield call(this.saveUser, 'api/users', data)
-        // }
+        yield call(this.loginUser, data)
+        Router.push('/')
     }
 
     @action()
     *fetchUser() {
-        // while (true) {
-        //     yield take('saga/fetch_user')
         yield call(this.readUser, '/api/users/me')
-        // }
     }
-
-    // *authSaga() {
-    //     yield all([
-    //         call(this.fetchUser),
-    //         call(this.loginUser),
-    //         call(this.logoutUser),
-    //         call(this.createUser),
-    //     ])
-    // }
 }

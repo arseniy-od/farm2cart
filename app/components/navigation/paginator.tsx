@@ -1,4 +1,4 @@
-import { fetchPage, fetchPaginatedGoods } from '@/redux/actions'
+import { clearPage, fetchPage, fetchPaginatedGoods } from '@/redux/actions'
 import { useAppDispatch, useAppSelector } from '@/redux/hooks'
 import { ReactElement, useEffect } from 'react'
 
@@ -13,8 +13,10 @@ export default function Paginator({
 }) {
     const pagination = useAppSelector((state) => state.pagination[pageName])
     const dispatch = useAppDispatch()
+
+    // fires if data was not fetched
     useEffect(() => {
-        if (!pagination?.count) {
+        if (!pagination?.count && typeof pagination?.fetching !== 'boolean') {
             if (filter) {
                 dispatch(fetchAction(filter, pageName, 1))
             } else {
@@ -22,6 +24,7 @@ export default function Paginator({
             }
         }
     }, [dispatch, fetchAction, pagination, pageName, filter])
+
     const currentPage = pagination?.currentPage || 1
     const amount = Math.ceil(
         (pagination?.count || 0) / (pagination?.perPage || 1)
@@ -34,6 +37,10 @@ export default function Paginator({
         } else {
             dispatch(fetchAction(pageName, index))
         }
+    }
+
+    if (!pagination?.count) {
+        return <></>
     }
 
     for (let index = 1; index <= amount; index++) {

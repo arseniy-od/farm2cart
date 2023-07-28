@@ -11,13 +11,14 @@ import {
     fetchPaginatedGoods,
 } from '@/redux/actions'
 import { getGoodsPage, isEmpty } from '@/app/utils'
-import ErrorMessage from '@/app/components/errorMessage'
+import ErrorMessage from '@/app/components/utils/errorMessage'
 import { good } from '@/app/types/entities'
 import GoodTable from '@/app/components/goods/goodTable'
 import { MY_GOODS_TABLE } from '@/app/constants'
 import { useAppDispatch, useAppSelector } from '@/redux/hooks'
+import Spinner from '@/app/components/utils/spinner'
 
-function MyGoods({ user, goods, fetchMyGoods }: Props) {
+function MyGoods({ user, goods, fetchMyGoods, pagination }: Props) {
     const dispatch = useAppDispatch()
 
     useEffect(() => {
@@ -30,7 +31,7 @@ function MyGoods({ user, goods, fetchMyGoods }: Props) {
         dispatch(fetchPaginatedGoods(MY_GOODS_TABLE, 1, query))
     }
 
-    if (!user || isEmpty(user)) {
+    if (user.blank) {
         return (
             <Layout>
                 <ErrorMessage message="You are not logged in" />
@@ -40,12 +41,18 @@ function MyGoods({ user, goods, fetchMyGoods }: Props) {
 
     return (
         <Layout handleSearch={handleSearch}>
+            {pagination?.fetching && <Spinner />}
+            {pagination && !pagination.fetching && pagination.count && (
+                <h3 className="ml-6 mt-3 text-xl font-semibold xl:text-center xl:text-2xl">
+                    Your products:
+                </h3>
+            )}
+            {pagination && !pagination.fetching && !pagination.count && (
+                <ErrorMessage message="You have no goods yet" />
+            )}
             <div>
                 {user.role === 'seller' || 'admin' ? (
                     <div>
-                        <h3 className="ml-6 mt-3 text-xl font-semibold xl:text-center xl:text-2xl">
-                            Your products:
-                        </h3>
                         <GoodTable
                             goods={goods}
                             pageName={MY_GOODS_TABLE}
@@ -61,6 +68,7 @@ function MyGoods({ user, goods, fetchMyGoods }: Props) {
 const mapState = (state: RootState) => ({
     user: state.user,
     goods: getGoodsPage(state, MY_GOODS_TABLE),
+    pagination: state.pagination[MY_GOODS_TABLE],
 })
 
 const mapDispatch = {

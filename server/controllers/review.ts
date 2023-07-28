@@ -43,8 +43,6 @@ export default class ReviewController extends BaseController {
         this.createMessage({
             successMessage: 'Review created',
             failMessage: 'Error while creating review',
-            successCode: CODES.TOAST,
-            failCode: CODES.TOAST,
         })
         const reviewData = {
             ...body,

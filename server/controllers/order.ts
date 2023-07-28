@@ -38,7 +38,7 @@ export default class OrderController extends BaseController {
     @USE(validate(orderFilterSchema))
     async getOrdersForUser({ identity, query }) {
         const page = query?.page || 1
-        const searchQuery = query?.search || ''
+        const searchQuery = query?.searchQuery || ''
         const escapedSearchQuery = searchQuery.replace(/['"]+/g, '')
 
         this.createMessage({
@@ -47,6 +47,7 @@ export default class OrderController extends BaseController {
             successCode: CODES.DEBUG,
             failCode: CODES.TOAST,
         })
+        console.log('[OrderController] identity: ', identity)
 
         return await this.OrderService.getOrdersByCustomerId(
             page,
@@ -61,8 +62,6 @@ export default class OrderController extends BaseController {
         this.createMessage({
             successMessage: 'Order created',
             failMessage: 'Error while creating order',
-            successCode: CODES.TOAST,
-            failCode: CODES.TOAST,
         })
 
         const OrderData = {
@@ -80,12 +79,12 @@ export default class OrderController extends BaseController {
         params,
     }: GetServerSidePropsContext<ParsedUrlQuery, PreviewData>) {
         const id = params?.id
-        this.createMessage({
-            successMessage: 'Order found',
-            failMessage: 'Order not found',
-            successCode: CODES.DEBUG,
-            failCode: CODES.TOAST,
-        })
+        // this.createMessage({
+        //     successMessage: 'Order found',
+        //     failMessage: 'Order not found',
+        //     successCode: CODES.DEBUG,
+        //     failCode: CODES.TOAST,
+        // })
         return await this.OrderService.getOrderById(id)
     }
 }

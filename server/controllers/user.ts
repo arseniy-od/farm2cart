@@ -24,8 +24,6 @@ import { CODES } from '@/app/constants'
 @USE([session, passportInit, passportSession])
 export default class UserController extends BaseController {
     private UserService = this.di.UserService
-    private GoodService = this.di.GoodService
-    private OrderService = this.di.OrderService
 
     constructor(opts) {
         super(opts)
@@ -50,8 +48,6 @@ export default class UserController extends BaseController {
         this.createMessage({
             successMessage: 'Sign up successful',
             failMessage: 'Error while signing up',
-            successCode: CODES.TOAST,
-            failCode: CODES.TOAST,
         })
         return await this.UserService.createUser(req.body)
     }
@@ -61,16 +57,15 @@ export default class UserController extends BaseController {
         this.createMessage({
             successMessage: 'User deleted',
             failMessage: 'Error while deleting user',
-            successCode: CODES.TOAST,
-            failCode: CODES.TOAST,
         })
         const id = req.query.id
         return await this.UserService.deleteUser(id)
     }
 
     @SSR('/users/:id')
-    async getUserWithGoods(ctx) {
-        const { id } = ctx.params
+    @GET('/api/users/:id')
+    async getUserWithGoods({ params }) {
+        const { id } = params
         this.createMessage({
             successMessage: 'User found',
             failMessage: 'User not found',

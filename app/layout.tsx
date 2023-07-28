@@ -29,7 +29,7 @@ function Layout({
     const [isMenuOpen, setIsMenuOpen] = useState(false)
 
     function getUser() {
-        if (!user || isEmpty(user)) {
+        if (isEmpty(user)) {
             fetchUser()
         }
     }
@@ -105,24 +105,24 @@ function Layout({
                         <div className="mx-2 flex items-center">
                             <OptionalHeader user={user} />
                             {handleSearch && (
-                                <div className="hidden lg:block">
+                                <div className="px-2 hidden lg:block">
                                     <form onSubmit={handleSearch}>
                                         <input
                                             name="search"
                                             type="text"
                                             placeholder="Search..."
-                                            className="mx-4 border-none rounded w-full"
+                                            className="border-none rounded w-full"
                                         />
                                     </form>
                                 </div>
                             )}
                             <Link
                                 href="/cart"
-                                className=" inline-block hover:ml-1"
+                                className="block px-2 py-2 hover:shadow-lg hover:rounded"
                             >
                                 {cartItems && !isEmpty(cartItems) ? (
                                     <svg
-                                        className="ml-8 h-4 xl:h-5 hover:h-7 hover:ml-6"
+                                        className="h-4 xl:h-5"
                                         xmlns="http://www.w3.org/2000/svg"
                                         height="1em"
                                         viewBox="0 0 576 512"
@@ -131,7 +131,7 @@ function Layout({
                                     </svg>
                                 ) : (
                                     <svg
-                                        className="ml-8 h-4 xl:h-5 hover:h-7 hover:ml-6"
+                                        className="h-4 xl:h-5"
                                         xmlns="http://www.w3.org/2000/svg"
                                         height="1em"
                                         viewBox="0 0 576 512"

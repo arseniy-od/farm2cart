@@ -8,7 +8,7 @@ import { updateEntities } from '@/redux/actions'
 
 import GoodForm from '@/app/components/goods/goodForm'
 import Layout from '@/app/layout'
-import ErrorMessage from '@/app/components/errorMessage'
+import ErrorMessage from '@/app/components/utils/errorMessage'
 
 import { ContextDynamicRoute } from '@/app/types/interfaces'
 import clientContainer from '@/redux/container'

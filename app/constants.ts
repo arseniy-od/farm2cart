@@ -34,6 +34,7 @@ export const ACTIONS = {
     FETCH_ORDERS: 'OrderEntity_fetchOrders',
     UPDATE_ENTITY: 'entities/update_one',
     CLEAR_ENTITY: 'entities/clear',
+    PAGE_FETCHING: 'paginator/page_fetching',
 }
 
 export const CODES = {

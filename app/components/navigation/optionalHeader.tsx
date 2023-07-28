@@ -12,7 +12,7 @@ export default function OptionalHeader({ user }) {
 
     return (
         <div className="hidden xl:block">
-            {!isEmpty(user) && !user.error && (
+            {!isEmpty(user) && !user.error && !user.blank && (
                 <div className="flex justify-between items-center">
                     <Link
                         className="mt-2 px-4 block w-2/3 hover:shadow-lg"
