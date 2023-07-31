@@ -1,6 +1,6 @@
 export default function ErrorMessage({ message }) {
     return (
-        <div className="mt-4 ml-4 text-2xl font-semibold text-center">
+        <div className="ml-4 mt-4 text-center text-2xl font-semibold">
             {message}
         </div>
     )

@@ -12,7 +12,7 @@ export const FormInput = ({ label, name, ...props }) => {
             </div>
 
             <input
-                className={`mt-2 px-4 py-3 w-full max-w-xs border-2 ${
+                className={`mt-2 w-full max-w-xs border-2 px-4 py-3 ${
                     meta.touched && meta.error && ' border-red-700'
                 }`}
                 {...field}
@@ -36,7 +36,7 @@ export const TextArea = ({ label, name, ...props }) => {
             </div>
 
             <textarea
-                className="mt-2 px-4 py-3 w-full max-w-xs border-2"
+                className="mt-2 w-full max-w-xs border-2 px-4 py-3"
                 {...field}
                 {...props}
             />
@@ -63,7 +63,7 @@ export const Select = ({ children, name, ...props }) => {
         <div>
             <label htmlFor={props.id || name}>{props.label}</label>
             <select
-                className="mt-2 px-4 py-3 w-full max-w-xs border-2 bg-white"
+                className="mt-2 w-full max-w-xs border-2 bg-white px-4 py-3"
                 {...field}
                 {...props}
             >
@@ -113,7 +113,7 @@ export const FileUpload = ({ fileRef, name, ...props }) => {
                 <label htmlFor="file">Choose image:</label>{' '}
             </div>
             <input
-                className="block w-full text-sm text-gray-900 border border-gray-300 cursor-pointer bg-gray-50  focus:outline-none"
+                className="block w-full cursor-pointer border border-gray-300 bg-gray-50 text-sm text-gray-900  focus:outline-none"
                 ref={fileRef}
                 multiple={false}
                 type="file"

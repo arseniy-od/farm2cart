@@ -51,7 +51,7 @@ function MyOrders({
             <div>
                 <div>
                     <div className="mx-auto flex flex-wrap justify-center">
-                        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
                             {orders.map((order, i) => (
                                 <div key={i}>
                                     <OrderCard

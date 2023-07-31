@@ -1,5 +1,6 @@
 import { ACTIONS } from '@/app/constants'
 import { isEmpty, jsonCopy } from '@/app/utils'
+import { Action } from '@/redux/actions'
 import _ from 'lodash'
 
 export type pagination = {
@@ -18,16 +19,16 @@ const initialPagerState: IPagerState = {}
 
 export default function paginationReducer(
     state = initialPagerState,
-    action: any
+    action: Action
 ) {
     const { type } = action
     switch (type) {
-        case 'paginator/init': {
+        case ACTIONS.PAGINATOR_INIT: {
             const { pageName } = action.payload
             return { ...state, [pageName]: {} }
         }
 
-        case 'paginator/clear_page': {
+        case ACTIONS.CLEAR_PAGE: {
             const { pageName } = action.payload
             const pagination = jsonCopy(state[pageName])
             pagination.pages = {}
@@ -35,7 +36,7 @@ export default function paginationReducer(
             pagination.count = 0
             return { ...state, [pageName]: pagination }
         }
-        case 'paginator/update': {
+        case ACTIONS.PAGINATOR_UPDATE: {
             const { pageName, pageIds, count, pageNumber } = action.payload
             if (!pageIds?.length) {
                 // console.log('Return initial')
@@ -66,7 +67,7 @@ export default function paginationReducer(
             return { ...state, [pageName]: { ...pagination } }
         }
 
-        case 'paginator/change_page': {
+        case ACTIONS.CHANGE_PAGE: {
             const { pageName, page } = action.payload
             const pagination = jsonCopy(state[pageName])
             return {
@@ -75,7 +76,7 @@ export default function paginationReducer(
             }
         }
 
-        case 'paginator/set_filter': {
+        case ACTIONS.SET_FILTER: {
             const { pageName, filter } = action.payload
             if (!isEmpty(filter)) {
                 const pagination = jsonCopy(state[pageName] || {})

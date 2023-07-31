@@ -25,7 +25,7 @@ function Categories({ categories }: PropsFromRedux) {
         <Layout>
             {Object.values(categories).map((category, i) => (
                 <div key={i}>
-                    <div className="mt-4 ml-4 px-4 py-3 text-lg max-w-xs text-center bg-gray-100 shadow-lg">
+                    <div className="ml-4 mt-4 max-w-xs bg-gray-100 px-4 py-3 text-center text-lg shadow-lg">
                         <Link
                             href={
                                 category.text

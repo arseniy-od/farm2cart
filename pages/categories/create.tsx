@@ -28,12 +28,12 @@ export default function CategoryCreate() {
                     id="category"
                     value={text}
                     onChange={(event) => setText(event.target.value)}
-                    className="ml-4 mt-2 px-4 py-3 w-full max-w-xs border-2"
+                    className="ml-4 mt-2 w-full max-w-xs border-2 px-4 py-3"
                     placeholder="Category name"
                 />
             </div>
             <button
-                className="ml-4 btn-submit"
+                className="btn-submit ml-4"
                 type="submit"
                 onClick={handleSubmit}
             >

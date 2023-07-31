@@ -1,11 +1,13 @@
-import { ACTIONS, STRATEGIES } from '@/app/constants'
+import { ACTIONS, STRATEGIES, actionType } from '@/app/constants'
 import { entities, good, review } from '@/app/types/entities'
 import { order, user } from '@/app/types/interfaces'
 
-export const action = (type: string, payload?: any) => ({
+export const action = (type: actionType, payload?: any) => ({
     type,
     payload,
 })
+
+export type Action = ReturnType<typeof action>
 
 // good
 export const createGood = (good: good) => action(ACTIONS.CREATE_GOOD, good)
@@ -64,36 +66,35 @@ export const clearCart = () => action(ACTIONS.CLEAR_ENTITY, 'cartItems')
 
 export const fetchOrders = () => action(ACTIONS.FETCH_ORDERS)
 
-export const createOrder = (cartData) =>
-    action('OrderEntity_addOrder', cartData)
+export const createOrder = (cartData) => action(ACTIONS.ADD_ORDER, cartData)
 
 export const createOrderFail = (message) =>
-    action('saga/create_order_fail', message)
+    action(ACTIONS.CREATE_ORDER_FAIL, message)
 
 // review
 
 export const createReview = (review, goodId) =>
-    action('ReviewEntity_addReview', { review, goodId })
+    action(ACTIONS.CREATE_REVIEW, { review, goodId })
 
 // auth
 
-export const createUser = (user) => action('AuthEntity_createUser', user)
+export const createUser = (user) => action(ACTIONS.CREATE_USER, user)
 
-export const addUser = (user: user) => action('user/fetch_success', user)
+export const addUser = (user: user) => action(ACTIONS.ADD_USER, user)
 
-export const noUser = () => action('user/fetch_blank')
+export const noUser = () => action(ACTIONS.NO_USER)
 
-export const loginUser = (user: user) => action('AuthEntity_loginUser', user)
+export const loginUser = (user: user) => action(ACTIONS.LOGIN, user)
 
-export const logoutSaga = () => action('AuthEntity_logoutUser')
+export const logoutSaga = () => action(ACTIONS.LOGOUT)
 
-export const fetchUser = () => action('AuthEntity_fetchUser')
+export const fetchUser = () => action(ACTIONS.FETCH_USER)
 
-export const logoutRedux = () => action('user/logout')
+export const logoutRedux = () => action(ACTIONS.CLEAR_USER)
 
 // categories
 
-export const fetchCategories = () => action('CategoryEntity_fetchCategories')
+export const fetchCategories = () => action(ACTIONS.FETCH_CATEGORIES)
 
 // pagination
 
@@ -182,41 +183,46 @@ export const pageUpdate = (
     pageIds: number[] | string[],
     count: number,
     pageNumber: number = 1
-) => action('paginator/update', { pageName, pageIds, count, pageNumber })
+) => action(ACTIONS.PAGINATOR_UPDATE, { pageName, pageIds, count, pageNumber })
 
 export const initPage = (pageName: string) =>
-    action('paginator/init', { pageName })
+    action(ACTIONS.PAGINATOR_INIT, { pageName })
 
 export const fetchPage = (pageName: string, page: number) =>
-    action('PageEntity_fetchPage', { pageName, page })
+    action(ACTIONS.FETCH_PAGE, { pageName, page })
 
 export const changeCurrentPage = (pageName: string, page: number) =>
-    action('paginator/change_page', { pageName, page })
+    action(ACTIONS.CHANGE_PAGE, { pageName, page })
 
 export const clearPage = (pageName: string) =>
-    action('paginator/clear_page', { pageName })
+    action(ACTIONS.CLEAR_PAGE, { pageName })
 
 export const setPageFilter = (
     pageName: string,
     filter: Record<string, string>
-) => action('paginator/set_filter', { pageName, filter })
+) => action(ACTIONS.SET_FILTER, { pageName, filter })
+
 //entities
 
 export const updateEntities = (
     normalizedData: { entities: entities },
     strategy: string = STRATEGIES.MERGE
-) => action('entities/update', { entities: normalizedData.entities, strategy })
+) =>
+    action(ACTIONS.UPDATE_ENTITIES, {
+        entities: normalizedData.entities,
+        strategy,
+    })
 
 export const deleteEntity = (entityName: string, entityId: number) =>
-    action('entities/delete', { entityName, entityId })
+    action(ACTIONS.DELETE_ONE_ENTITY, { entityName, entityId })
 
 export const updateEntityArrayField = (data: {
     entityName: string
     entityId: number
     entityField: string
     data: any
-}) => action('entities/update_array_field', data)
+}) => action(ACTIONS.ENTITY_UPDATE_ARRAY_FIELD, data)
 
 // errors
 
-export const fetchFailed = (message) => action('saga/fetch_failed', message)
+export const fetchFailed = (message) => action(ACTIONS.FETCH_FAILED, message)

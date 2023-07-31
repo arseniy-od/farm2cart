@@ -56,14 +56,14 @@ function Layout({
     }
 
     return (
-        <div className="bg-gray-200 min-h-screen text-gray-900">
+        <div className="min-h-screen bg-gray-200 text-gray-900">
             <div>
                 <Head>
                     <title>{siteTitle}</title>
                 </Head>
 
-                <header className="sticky z-20 top-0 text-gray-900 bg-gray-100">
-                    <div className="flex justify-between items-center py-3">
+                <header className="sticky top-0 z-20 bg-gray-100 text-gray-900">
+                    <div className="flex items-center justify-between py-3">
                         {/* Menu button */}
                         <button
                             className="ml-4 xl:hidden"
@@ -105,20 +105,20 @@ function Layout({
                         <div className="mx-2 flex items-center">
                             <OptionalHeader user={user} />
                             {handleSearch && (
-                                <div className="px-2 hidden lg:block">
+                                <div className="hidden px-2 lg:block">
                                     <form onSubmit={handleSearch}>
                                         <input
                                             name="search"
                                             type="text"
                                             placeholder="Search..."
-                                            className="border-none rounded w-full"
+                                            className="w-full rounded border-none"
                                         />
                                     </form>
                                 </div>
                             )}
                             <Link
                                 href="/cart"
-                                className="block px-2 py-2 hover:shadow-lg hover:rounded"
+                                className="block px-2 py-2 hover:rounded hover:shadow-lg"
                             >
                                 {cartItems && !isEmpty(cartItems) ? (
                                     <svg
@@ -153,13 +153,13 @@ function Layout({
                 {handleSearch && (
                     <form
                         onSubmit={handleSearch}
-                        className="py-2 flex justify-end bg-gray-100 w-full border-2 border-gray-200 lg:hidden"
+                        className="flex w-full justify-end border-2 border-gray-200 bg-gray-100 py-2 lg:hidden"
                     >
                         <input
                             name="search"
                             type="text"
                             placeholder="Search..."
-                            className="mx-4 border-none rounded w-full sm:w-2/3 md:w-1/2 lg:w-1/3"
+                            className="mx-4 w-full rounded border-none sm:w-2/3 md:w-1/2 lg:w-1/3"
                         />
                     </form>
                 )}

@@ -28,7 +28,7 @@ export default function GoodTable({
     return (
         <>
             <div className="mx-auto flex flex-wrap justify-center">
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
                     {goods.map((good, i) => (
                         <div key={i}>
                             <GoodCard good={good} />

@@ -30,13 +30,13 @@ function GoodCard({ good, seller }: Props) {
     }
 
     return (
-        <div className="mt-4 mx-3">
-            <div className="px-4 py-2 max-w-xs w-full text-lg">
+        <div className="mx-3 mt-4">
+            <div className="w-full max-w-xs px-4 py-2 text-lg">
                 <div className="shadow-lg">
-                    <div className="z-0 relative flex items-center justify-center overflow-hidden w-full h-56">
+                    <div className="relative z-0 flex h-56 w-full items-center justify-center overflow-hidden">
                         <Link
                             href={'/goods/' + good.id}
-                            className="w-full h-full"
+                            className="h-full w-full"
                         >
                             <Image
                                 src={
@@ -47,23 +47,23 @@ function GoodCard({ good, seller }: Props) {
                                 alt={good.title + ' photo'}
                                 width="288"
                                 height="224"
-                                className="object-cover object-center w-full h-full"
+                                className="h-full w-full object-cover object-center"
                             />
                         </Link>
-                        <div className="mr-3 mb-3 absolute flex justify-center  bottom-0 right-0 bg-gray-100 min-w-[2rem;] min-h-[2rem;] rounded-full items-center">
+                        <div className="absolute bottom-0 right-0 mb-3 mr-3  flex min-h-[2rem;] min-w-[2rem;] items-center justify-center rounded-full bg-gray-100">
                             <CartHandler good={good} />
                         </div>
                         {good.active && good.available ? null : (
                             <div>
-                                <div className="z-10 absolute w-full h-full bg-gray-900 opacity-70 inset-0"></div>
-                                <div className="z-10 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-5/6 h-12 bg-white text-gray-900 text-center flex justify-center items-center font-semibold text-xl">
+                                <div className="absolute inset-0 z-10 h-full w-full bg-gray-900 opacity-70"></div>
+                                <div className="absolute left-1/2 top-1/2 z-10 flex h-12 w-5/6 -translate-x-1/2 -translate-y-1/2 transform items-center justify-center bg-white text-center text-xl font-semibold text-gray-900">
                                     Product is not active
                                 </div>
                             </div>
                         )}
                     </div>
 
-                    <div className="px-2 py-2 bg-gray-100">
+                    <div className="bg-gray-100 px-2 py-2">
                         <Link
                             href={seller?.id ? '/users/' + seller.id : '#'}
                             className="text-gray-700"
@@ -76,7 +76,7 @@ function GoodCard({ good, seller }: Props) {
                             </h3>
 
                             {good.averageScore && good.reviewsCount ? (
-                                <div className=" flex items-center justify-left">
+                                <div className=" justify-left flex items-center">
                                     <div className="flex">
                                         {stars.map((star, i) => (
                                             <div key={i}>{star}</div>
@@ -93,7 +93,7 @@ function GoodCard({ good, seller }: Props) {
                                 </div>
                             )}
 
-                            <p className="line-clamp-2 overflow-hidden leading-snug h-12 hover:underline">
+                            <p className="line-clamp-2 h-12 overflow-hidden leading-snug hover:underline">
                                 {good.description}
                             </p>
 

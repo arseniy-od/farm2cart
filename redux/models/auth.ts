@@ -24,12 +24,16 @@ export default class AuthEntity extends Entity {
         try {
             const result = yield call(this.fetchApi, url, METHODS.POST, user)
             console.log('saveUser result:', result)
-
-            yield put(addUser(result))
-
-            return result
+            if (!isEmpty(result)) {
+                yield put(addUser(result))
+                return result
+            } else {
+                yield put(noUser())
+                return { error: true, message: 'User not found' }
+            }
         } catch (error) {
             yield put(fetchFailed(error.message))
+            return { error: true, message: error.message }
         }
     }
 
@@ -48,8 +52,11 @@ export default class AuthEntity extends Entity {
 
     @action()
     *loginUser(data) {
-        yield call(this.saveUser, '/api/auth', data)
-        Router.push('/')
+        const result = yield call(this.saveUser, '/api/auth', data)
+        console.log('RESULT: ', result)
+        if (!result.error) {
+            Router.push('/')
+        }
     }
 
     @action()

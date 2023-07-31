@@ -83,7 +83,7 @@ function Cart({
                             </div>
                         ))}
                         <button
-                            className="ml-4 btn-submit"
+                            className="btn-submit ml-4"
                             type="submit"
                             onClick={handleSubmit}
                         >

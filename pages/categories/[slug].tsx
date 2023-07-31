@@ -57,7 +57,7 @@ function Category({ goods, category }: PropsFromRedux) {
                 <div>
                     <Link
                         href="/categories"
-                        className="ml-4 mt-4 px-6 py-3 inline-block font-semibold shadow-lg"
+                        className="ml-4 mt-4 inline-block px-6 py-3 font-semibold shadow-lg"
                     >
                         Go to categories
                     </Link>
@@ -66,16 +66,6 @@ function Category({ goods, category }: PropsFromRedux) {
         </Layout>
     )
 }
-
-// function getGoodsByCategory(state: RootState, category) {
-//     if (state.entities.goods) {
-//         console.log('front category: ', category)
-//         return Object.values(state.entities.goods).filter((good) =>
-//             category.goods.includes(good.id || 0)
-//         )
-//     }
-//     return []
-// }
 
 function getCategory(state: RootState, slug: string) {
     const category = Object.values(state.entities.categories || {}).find(

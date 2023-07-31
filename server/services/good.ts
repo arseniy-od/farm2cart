@@ -10,6 +10,10 @@ import {
     USER_GOODS_TABLE,
 } from '@/app/constants'
 
+interface ErrorType {
+    error: boolean
+    message: string
+}
 export default class GoodService extends BaseContext {
     private Good = this.di.Good
     private User = this.di.User
@@ -43,6 +47,9 @@ export default class GoodService extends BaseContext {
             const category = await this.CategoryService.getCategoryByText(
                 categorySlug
             )
+            if (category && 'error' in category) {
+                return category
+            }
 
             const goods = await this.getGoodsByCategoryId(
                 page,
@@ -142,7 +149,6 @@ export default class GoodService extends BaseContext {
                 },
             ],
         })
-
         const aggregatedReview = await this.Review.findOne({
             attributes: [
                 [Sequelize.fn('AVG', Sequelize.col('score')), 'averageScore'],

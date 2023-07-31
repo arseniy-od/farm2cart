@@ -9,7 +9,9 @@ export const goodMinSchema = new schema.Entity('goods', {
 })
 
 export const userSchema = new schema.Entity('users')
-export const reviewSchema = new schema.Entity('reviews', { author: userSchema })
+export const reviewSchema = new schema.Entity('reviews', {
+    author: userSchema,
+})
 
 export const categorySchema = new schema.Entity('categories', {
     CategoryGood: categoryGoodSchema,

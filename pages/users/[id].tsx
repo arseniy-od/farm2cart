@@ -53,7 +53,7 @@ function User(props: Props) {
         <Layout handleSearch={handleSearch}>
             <div>
                 <div className="ml-4 max-w-xs">
-                    <div className="mt-4 px-4 py-3 text-lg bg-gray-100 shadow-lg">
+                    <div className="mt-4 bg-gray-100 px-4 py-3 text-lg shadow-lg">
                         <div className="text-indigo-500">@{user.username}</div>
                         <p>
                             {toTitle(user.firstName || '')}{' '}

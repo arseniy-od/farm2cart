@@ -11,13 +11,15 @@ import { InferAttributes, InferCreationAttributes } from 'sequelize'
 import { IContextContainer } from '../../container'
 import { ICategoryModel } from './category'
 
+interface SequelizeError {
+    error: boolean
+    message: string
+}
 export interface IGoodModel
     extends Model<
         InferAttributes<IGoodModel>,
         InferCreationAttributes<IGoodModel>
     > {
-    error?: boolean
-    message?: string
     id: CreationOptional<number>
     title: string
     imageUrl: string

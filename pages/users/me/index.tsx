@@ -26,7 +26,7 @@ export default function User() {
     return (
         <Layout>
             <div className="ml-4 max-w-xs">
-                <div className="mt-4 px-4 py-3 text-lg bg-gray-100 shadow-lg">
+                <div className="mt-4 bg-gray-100 px-4 py-3 text-lg shadow-lg">
                     <div className="text-indigo-500">@{user.username}</div>
                     <p>
                         {toTitle(user.firstName || '')}{' '}
@@ -42,14 +42,14 @@ export default function User() {
                 <div className="mx-4 mt-3 flex justify-between">
                     {user.role === 'seller' || 'admin' ? (
                         <Link
-                            className="mt-2 px-4 py-3 block w-32 bg-gray-100 shadow-lg"
+                            className="mt-2 block w-32 bg-gray-100 px-4 py-3 shadow-lg"
                             href="/users/me/goods"
                         >
                             My products
                         </Link>
                     ) : null}
                     <Link
-                        className="mt-2 px-4 py-3 block w-32 bg-gray-100 shadow-lg"
+                        className="mt-2 block w-32 bg-gray-100 px-4 py-3 shadow-lg"
                         href="/orders"
                     >
                         My orders

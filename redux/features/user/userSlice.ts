@@ -1,14 +1,17 @@
+import { ACTIONS } from '@/app/constants'
+import { Action } from '@/redux/actions'
+
 const initialState = {}
 
-export default function userReducer(state = initialState, action) {
+export default function userReducer(state = initialState, action: Action) {
     switch (action.type) {
-        case 'user/fetch_success': {
+        case ACTIONS.ADD_USER: {
             return action.payload
         }
-        case 'user/fetch_blank': {
+        case ACTIONS.NO_USER: {
             return { blank: true }
         }
-        case 'user/logout': {
+        case ACTIONS.CLEAR_USER: {
             return initialState
         }
         default:

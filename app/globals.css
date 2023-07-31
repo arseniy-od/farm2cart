@@ -23,7 +23,7 @@ body {
 
 @layer components {
     .btn-submit {
-        @apply mt-4 px-8 py-2 inline-block items-center bg-gray-100 hover:bg-gray-300 focus:outline-none shadow-lg;
+        @apply mt-4 inline-block items-center bg-gray-100 px-8 py-2 shadow-lg hover:bg-gray-300 focus:outline-none;
     }
 }
 

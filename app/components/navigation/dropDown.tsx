@@ -14,18 +14,18 @@ export default function DropdownMenu({ user }) {
 
     function Dropdown() {
         return (
-            <div className="absolute mt-3 bg-white right-0 w-48 py-2 shadow-xl xl:border">
+            <div className="absolute right-0 mt-3 w-48 bg-white py-2 shadow-xl xl:border">
                 {isEmpty(user) || user.blank ? (
                     <>
                         <Link
                             href="/signup"
-                            className="block hover:text-white mt-0 text-gray-800 px-4 py-2 hover:bg-indigo-500"
+                            className="mt-0 block px-4 py-2 text-gray-800 hover:bg-indigo-500 hover:text-white"
                         >
                             Sign up
                         </Link>
                         <Link
                             href="/login"
-                            className="block hover:text-white mt-0 text-gray-800 px-4 py-2 hover:bg-indigo-500"
+                            className="mt-0 block px-4 py-2 text-gray-800 hover:bg-indigo-500 hover:text-white"
                         >
                             Login
                         </Link>
@@ -34,13 +34,13 @@ export default function DropdownMenu({ user }) {
                     <>
                         <Link
                             href="/users/me"
-                            className="block hover:text-white mt-0 text-gray-800 px-4 py-2 hover:bg-indigo-500 font-semibold"
+                            className="mt-0 block px-4 py-2 font-semibold text-gray-800 hover:bg-indigo-500 hover:text-white"
                         >
                             {user.username}
                         </Link>
                         <button
                             onClick={handleLogout}
-                            className="block hover:text-white mt-0 text-gray-800 px-4 py-2 hover:bg-indigo-500 w-full text-left"
+                            className="mt-0 block w-full px-4 py-2 text-left text-gray-800 hover:bg-indigo-500 hover:text-white"
                         >
                             Logout
                         </button>
@@ -74,7 +74,7 @@ export default function DropdownMenu({ user }) {
                 <button
                     type="button"
                     onClick={toggle}
-                    className="px-2 py-2 flex items-center justify-center hover:shadow-lg hover:rounded"
+                    className="flex items-center justify-center px-2 py-2 hover:rounded hover:shadow-lg"
                 >
                     <svg
                         className="h-5"
@@ -91,7 +91,7 @@ export default function DropdownMenu({ user }) {
                         onClick={() => {
                             setIsOpen(false)
                         }}
-                        className="z-30 fixed opacity-0 inset-0 cursor-default min-h-full min-w-full"
+                        className="fixed inset-0 z-30 min-h-full min-w-full cursor-default opacity-0"
                     ></button>
 
                     <div className="relative z-40">

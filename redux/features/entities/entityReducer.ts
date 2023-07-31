@@ -1,48 +1,48 @@
 import _ from 'lodash'
 
 import { isEmpty, jsonCopy } from '@/app/utils'
-import { STRATEGIES } from '@/app/constants'
+import { ACTIONS, STRATEGIES } from '@/app/constants'
 import { entities } from '@/app/types/entities'
+import { Action } from '@/redux/actions'
 
 const initialState: entities = {}
 
-export default function entitiesReducer(state = initialState, action) {
+export default function entitiesReducer(state = initialState, action: Action) {
     switch (action.type) {
-        case 'entities/update':
-            {
-                if (action.payload && action.payload.entities) {
-                    let nextState = jsonCopy(state)
-                    const { entities } = action.payload
-                    if (!isEmpty(entities)) {
-                        Object.keys(entities).map((entityName) => {
-                            let entityList = nextState[entityName]
-                            // console.log('[previous state] entityList:', entityList)
-                            if (
-                                entityList &&
-                                !isEmpty(entityList) &&
-                                !(action.payload.strategy === STRATEGIES.MERGE)
-                            ) {
-                                Object.keys(entities[entityName]).map((id) => {
-                                    delete entityList[id]
-                                })
-                            }
-                        })
-
-                        nextState = _.merge(nextState, entities)
-
-                        // to prevent infinite loop of useEffect calls
-                        if (_.isEqual(state, nextState)) {
-                            return state
+        case ACTIONS.UPDATE_ENTITIES: {
+            if (action.payload && action.payload.entities) {
+                let nextState = jsonCopy(state)
+                const { entities } = action.payload
+                if (!isEmpty(entities)) {
+                    Object.keys(entities).map((entityName) => {
+                        let entityList = nextState[entityName]
+                        // console.log('[previous state] entityList:', entityList)
+                        if (
+                            entityList &&
+                            !isEmpty(entityList) &&
+                            !(action.payload.strategy === STRATEGIES.MERGE)
+                        ) {
+                            Object.keys(entities[entityName]).map((id) => {
+                                delete entityList[id]
+                            })
                         }
-                        return nextState
+                    })
+
+                    nextState = _.merge(nextState, entities)
+
+                    // to prevent infinite loop of useEffect calls
+                    if (_.isEqual(state, nextState)) {
+                        return state
                     }
+                    return nextState
                 }
-                return state
             }
-            break
-        case 'entities/update_one':
+            return state
+        }
+
+        // to change one or more fields in one entity
+        case ACTIONS.UPDATE_ENTITY:
             {
-                console.log('Update one')
                 if (action.payload) {
                     const { entityName, entityId, entityFields } =
                         action.payload
@@ -60,9 +60,10 @@ export default function entitiesReducer(state = initialState, action) {
                 }
             }
             break
-        case 'entities/update_array_field':
+
+        // to add some more ids to array of ids, e. g. good.reviews: [1, 2, 3] => good.reviews: [1, 2, 3, 4]
+        case ACTIONS.ENTITY_UPDATE_ARRAY_FIELD:
             {
-                console.log('Update array field')
                 if (action.payload) {
                     const {
                         entityName,
@@ -94,7 +95,9 @@ export default function entitiesReducer(state = initialState, action) {
                 }
             }
             break
-        case 'entities/delete':
+
+        // deletes one instance by id
+        case ACTIONS.DELETE_ONE_ENTITY:
             {
                 if (action.payload) {
                     const { entityName, entityId } = action.payload
@@ -107,10 +110,12 @@ export default function entitiesReducer(state = initialState, action) {
                 }
             }
             break
-        case 'entities/clear':
+
+        // deletes all entities of same type by entity name
+        case ACTIONS.CLEAR_ENTITY:
             {
-                if (action.payload && typeof action.payload === 'string') {
-                    const entityName: string = action.payload
+                if (action.payload) {
+                    const entityName: keyof entities = action.payload
                     let { [entityName]: omit, ...nextState } = state
                     return nextState
                 }

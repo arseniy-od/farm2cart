@@ -21,6 +21,7 @@ export default function GoodsPage({
     pagination: pagination
 }) {
     const dispatch = useAppDispatch()
+    // ^?
 
     const handleSearch = (e) => {
         e.preventDefault()

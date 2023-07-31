@@ -12,7 +12,7 @@ export default function GoodFull({
 }) {
     return (
         <div className="mx-auto">
-            <div className="mx-auto mt-6 flex flex-col justify-center items-center w-2/3">
+            <div className="mx-auto mt-6 flex w-2/3 flex-col items-center justify-center">
                 <div>
                     <h3 className="text-xl font-semibold">{good.title}</h3>
                     <Link
@@ -23,7 +23,7 @@ export default function GoodFull({
                     </Link>
 
                     {stars.length ? (
-                        <div className=" flex items-center justify-left">
+                        <div className=" justify-left flex items-center">
                             <div className="flex">
                                 {stars.map((star, i) => (
                                     <div key={i}>{star}</div>
@@ -45,16 +45,16 @@ export default function GoodFull({
                             alt={good.title + ' photo'}
                             width="1024"
                             height="1024"
-                            className="object-cover object-center w-full h-full shadow-lg"
+                            className="h-full w-full object-cover object-center shadow-lg"
                         />
-                        <div className="mr-3 mb-3 absolute flex right-0 bottom-0 bg-gray-100 min-w-[2rem;] min-h-[2rem;] rounded-full items-center justify-center">
+                        <div className="absolute bottom-0 right-0 mb-3 mr-3 flex min-h-[2rem;] min-w-[2rem;] items-center justify-center rounded-full bg-gray-100">
                             <CartHandler good={good} />
                         </div>
 
                         {good.active && good.available ? null : (
                             <div>
-                                <div className="z-10 absolute w-full h-full bg-gray-900 opacity-70 inset-0"></div>
-                                <div className="z-10 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-5/6 h-10 bg-white text-gray-900 text-center flex justify-center items-center font-semibold text-xl">
+                                <div className="absolute inset-0 z-10 h-full w-full bg-gray-900 opacity-70"></div>
+                                <div className="absolute left-1/2 top-1/2 z-10 flex h-10 w-5/6 -translate-x-1/2 -translate-y-1/2 transform items-center justify-center bg-white text-center text-xl font-semibold text-gray-900">
                                     Product is not active
                                 </div>
                             </div>
@@ -71,7 +71,7 @@ export default function GoodFull({
                             {categories.map((category, i) => (
                                 <div
                                     key={i}
-                                    className="pr-3 underline text-gray-700 hover:text-gray-900"
+                                    className="pr-3 text-gray-700 underline hover:text-gray-900"
                                 >
                                     <Link
                                         href={`/categories/${category.text.toLowerCase()}`}
@@ -84,16 +84,16 @@ export default function GoodFull({
                     </div>
                 </div>
                 {user.id === seller.id && (
-                    <div className="mt-2 mx-auto flex justify-between">
+                    <div className="mx-auto mt-2 flex justify-between">
                         <Link
                             href={`/goods/${good.id}/edit/`}
-                            className="block px-6 py-2 border-2 font-semibold border-green-600 hover:bg-gray-200 shadow-lg"
+                            className="block border-2 border-green-600 px-6 py-2 font-semibold shadow-lg hover:bg-gray-200"
                         >
                             Edit
                         </Link>
                         <button
                             onClick={handleDelete}
-                            className="ml-6 block px-6 py-2 border-2 font-semibold border-red-600 hover:bg-gray-200 shadow-lg"
+                            className="ml-6 block border-2 border-red-600 px-6 py-2 font-semibold shadow-lg hover:bg-gray-200"
                         >
                             {good.active ? 'Delete' : 'Activate'}
                         </button>

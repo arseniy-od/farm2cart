@@ -45,8 +45,6 @@ export type company = {
 }
 
 export type user = {
-    error?: boolean
-    message?: string
     id: number
     firstName: string
     lastName: string
@@ -57,6 +55,11 @@ export type user = {
     role: string
     companyId?: number
     registrationDate: Date
+} & sequelizeError
+
+type sequelizeError = {
+    error?: boolean
+    message?: string
 }
 
 export interface IUser {
@@ -95,7 +98,6 @@ export type review = {
 }
 
 export type good = {
-    notFound?: boolean
     quantity?: number
     id: number
     title: string
@@ -113,7 +115,6 @@ export type good = {
 }
 
 export type order = {
-    notFound?: boolean
     id: number
     customerId: number
     total: number

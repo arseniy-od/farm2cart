@@ -10,7 +10,6 @@ import OrderGoodModel, { OrderGoodType } from './ordergood'
 import OrderModel, { OrderType } from './order'
 
 export interface IModelContainer {
-    // Company: CompanyType
     User: UserType
     Good: GoodType
     Review: ReviewType
@@ -21,7 +20,6 @@ export interface IModelContainer {
 }
 
 const modelContainer = {
-    // Company: asFunction(CompanyModel).singleton(),
     User: asFunction(UserModel).singleton(),
     Good: asFunction(GoodModel).singleton(),
     Review: asFunction(ReviewModel).singleton(),

@@ -89,7 +89,7 @@ export default class BaseController extends BaseContext {
                 params: context?.params,
             } as any)
 
-            if (data.notFound || !data) {
+            if (!data) {
                 return {
                     data: [],
                     message: data?.message || this.failMessage,
@@ -111,7 +111,7 @@ export default class BaseController extends BaseContext {
 
             store.dispatch(updateEntities(normalizedResult))
         } catch (error: any) {
-            console.error('[BaseController] error:', error)
+            console.error('[BaseController] error caught:\n', error)
             return {
                 props: {
                     error: true,
@@ -154,6 +154,7 @@ export default class BaseController extends BaseContext {
                                 this.clearMessage()
                                 return res.status(404).json(response)
                             }
+                            // my custom errors from services
                             if (data.error) {
                                 console.error(data.message || data)
                                 const response = {
@@ -175,6 +176,7 @@ export default class BaseController extends BaseContext {
                             }
                             this.clearMessage()
                             return res.status(200).json(response)
+                            // sequelize errors
                         } catch (err: any) {
                             const message = err?.message ? err.message : err
                             return res.status(500).json({

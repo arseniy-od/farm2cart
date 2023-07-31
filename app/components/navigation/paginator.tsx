@@ -62,7 +62,7 @@ export default function Paginator({
     }
     return (
         <nav aria-label="Page navigation example">
-            <ul className="mt-6 list-style-none flex justify-center">
+            <ul className="list-style-none mt-6 flex justify-center">
                 <li>
                     <button
                         onClick={() => handlePage(currentPage - 1)}

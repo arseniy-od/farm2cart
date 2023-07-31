@@ -40,15 +40,15 @@ export default function CartGood({
     }
 
     return (
-        <div className="ml-4 mt-4 w-3/4 bg-gray-100 shadow-lg overflow-hidden lg:w-1/2 xl:w-1/4">
-            <div className="flex justify-between h-44 min-w-full">
+        <div className="ml-4 mt-4 w-3/4 overflow-hidden bg-gray-100 shadow-lg lg:w-1/2 xl:w-1/4">
+            <div className="flex h-44 min-w-full justify-between">
                 <div className="ml-4">
-                    <div className="font-semibold text-xl">{good.title}</div>
+                    <div className="text-xl font-semibold">{good.title}</div>
                     <div>Price: {good.price}</div>
                     <div>
                         Total: {(good.price || 0) * (cartItem.quantity || 0)}
                     </div>
-                    <div className="flex w-24 items-center justify-left">
+                    <div className="justify-left flex w-24 items-center">
                         <button
                             type="button"
                             className="px-2 py-2 "
@@ -79,7 +79,7 @@ export default function CartGood({
                     </div>
                     <div>
                         <button
-                            className="mt-2 px-4 py-2 block bg-red-500 hover:bg-red-700 rounded-lg text-white shadow-lg"
+                            className="mt-2 block rounded-lg bg-red-500 px-4 py-2 text-white shadow-lg hover:bg-red-700"
                             type="button"
                             onClick={() => handleDelete(index)}
                         >
@@ -87,13 +87,13 @@ export default function CartGood({
                         </button>
                     </div>
                 </div>
-                <div className="ml-6 w-1/2 min-h-full">
+                <div className="ml-6 min-h-full w-1/2">
                     <Image
                         src={good.imageUrl || '/uploads/no_image.png'}
                         alt="image of product"
                         width="255"
                         height="255"
-                        className="w-full h-full object-center object-cover"
+                        className="h-full w-full object-cover object-center"
                     />
                 </div>
             </div>

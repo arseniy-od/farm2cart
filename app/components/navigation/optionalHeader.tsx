@@ -13,9 +13,9 @@ export default function OptionalHeader({ user }) {
     return (
         <div className="hidden xl:block">
             {!isEmpty(user) && !user.error && !user.blank && (
-                <div className="flex justify-between items-center">
+                <div className="flex items-center justify-between">
                     <Link
-                        className="mt-2 px-4 block w-2/3 hover:shadow-lg"
+                        className="mt-2 block w-2/3 px-4 hover:shadow-lg"
                         href={`/orders`}
                     >
                         My orders
@@ -24,13 +24,13 @@ export default function OptionalHeader({ user }) {
                     {user.role === 'seller' && (
                         <>
                             <Link
-                                className="mt-2 px-4  block w-2/3 hover:shadow-lg whitespace-nowrap"
+                                className="mt-2 block  w-2/3 whitespace-nowrap px-4 hover:shadow-lg"
                                 href="/users/me/goods"
                             >
                                 My products
                             </Link>
                             <Link
-                                className="mt-2 block px-4 w-2/3 hover:shadow-lg whitespace-nowrap"
+                                className="mt-2 block w-2/3 whitespace-nowrap px-4 hover:shadow-lg"
                                 href="/goods/create"
                             >
                                 Add new product
