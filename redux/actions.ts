@@ -2,7 +2,7 @@ import { ACTIONS, STRATEGIES, actionType } from '@/app/constants'
 import { entities, good, review } from '@/app/types/entities'
 import { order, user } from '@/app/types/interfaces'
 
-export const action = (type: actionType, payload?: any) => ({
+export const action = (type: string, payload?: any) => ({
     type,
     payload,
 })

@@ -4,6 +4,14 @@ export default class UserEntity extends Entity {
     constructor(opts) {
         super(opts)
         this.initSchema('users')
+        this.actions = {} as {
+            [methodName in keyof Omit<
+                UserEntity,
+                keyof Entity | 'actions'
+            >]: string
+        }
     }
-    public actions  //: Record<string, string>
+    public actions: {
+        [methodName in keyof Omit<UserEntity, keyof Entity | 'actions'>]: string
+    }
 }

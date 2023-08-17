@@ -2,6 +2,7 @@ import '../app/globals.css'
 import { AppProps } from 'next/app'
 import { FC } from 'react'
 import { Provider } from 'react-redux'
+import ContainerContext from '@/redux/ContainerContext'
 
 import { clientDi } from '@/redux/container'
 
@@ -10,7 +11,9 @@ const MyApp: FC<AppProps> = ({ Component, ...rest }) => {
     const { pageProps } = props
     return (
         <Provider store={store}>
-            <Component {...pageProps} />
+            <ContainerContext.Provider value={clientDi}>
+                <Component {...pageProps} />
+            </ContainerContext.Provider>
         </Provider>
     )
 }

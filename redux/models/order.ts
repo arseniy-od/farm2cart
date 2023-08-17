@@ -15,8 +15,19 @@ export default class OrderEntity extends Entity {
             OrderGoods: [orderGoodsSchema],
             goods: goodsSchema,
         })
+        this.actions = {} as {
+            [methodName in keyof Omit<
+                OrderEntity,
+                keyof Entity | 'actions'
+            >]: string
+        }
     }
-    public actions  //: Record<string, string>
+    public actions: {
+        [methodName in keyof Omit<
+            OrderEntity,
+            keyof Entity | 'actions'
+        >]: string
+    };
 
     @action()
     *addOrder(data) {

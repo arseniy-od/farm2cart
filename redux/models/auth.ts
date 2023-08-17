@@ -18,9 +18,16 @@ export default class AuthEntity extends Entity {
         this.logoutUser = this.logoutUser.bind(this)
         this.readUser = this.readUser.bind(this)
         this.saveUser = this.saveUser.bind(this)
+        this.actions = {} as {
+            [methodName in keyof Omit<
+                AuthEntity,
+                keyof Entity | 'actions'
+            >]: string
+        }
     }
-    public actions  //: Record<string, string>
-
+    public actions: {
+        [methodName in keyof Omit<AuthEntity, keyof Entity | 'actions'>]: string
+    }
     private *saveUser(url, user) {
         try {
             const result = yield call(this.fetchApi, url, METHODS.POST, user)

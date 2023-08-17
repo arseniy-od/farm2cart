@@ -13,8 +13,19 @@ export default class CategoryEntity extends Entity {
             CategoryGood: categoryGoodSchema,
             goods: [goodSchema],
         })
+        this.actions = {} as {
+            [methodName in keyof Omit<
+                CategoryEntity,
+                keyof Entity | 'actions'
+            >]: string
+        }
     }
-    public actions  //: Record<string, string>
+    public actions: {
+        [methodName in keyof Omit<
+            CategoryEntity,
+            keyof Entity | 'actions'
+        >]: string
+    };
 
     @action()
     *fetchCategories() {

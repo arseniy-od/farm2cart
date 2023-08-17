@@ -10,7 +10,8 @@ import { useAppDispatch, useAppSelector } from '@/redux/hooks'
 import GoodTable from './goodTable'
 import Spinner from '../utils/spinner'
 import { pagination } from '@/redux/features/pagination/paginationReducer'
-import { clientDi } from '@/redux/container'
+// import { clientDi } from '@/redux/container'
+import { useActions } from '@/redux/useEntity'
 
 export default function GoodsPage({
     goods,
@@ -23,14 +24,18 @@ export default function GoodsPage({
 }) {
     const dispatch = useAppDispatch()
 
-    const actionName = clientDi('GoodEntity').actions.activateGood
-    console.log('action:', actionName)
-    
+    const { fetchGoods } = useActions('GoodEntity')
 
     const handleSearch = (e) => {
         e.preventDefault()
         const query = e.target.search.value
-        dispatch(fetchPaginatedGoods(GOODS_TABLE, 1, query))
+        dispatch(
+            fetchGoods({
+                pageName: GOODS_TABLE,
+                pageNumber: 1,
+                filter: query,
+            })
+        )
     }
 
     return (

@@ -16,8 +16,16 @@ export default class CartEntity extends Entity {
         this.initSchema('cartItems', {
             good: goodSchema,
         })
+        this.actions = {} as {
+            [methodName in keyof Omit<
+                CartEntity,
+                keyof Entity | 'actions'
+            >]: string
+        }
     }
-    public actions  //: Record<string, string>
+    public actions: {
+        [methodName in keyof Omit<CartEntity, keyof Entity | 'actions'>]: string
+    }
 
     // to avoid replacing of good entities after fetch
     private *updateCartItems(cartApi) {

@@ -27,12 +27,15 @@ export default class GoodEntity extends Entity {
             OrderGood: orderGoodsSchema,
         })
         this.actions = {} as {
-      [methodName in keyof Omit<GoodEntity, keyof Entity | 'actions'>]: string;
-    };
+            [methodName in keyof Omit<
+                GoodEntity,
+                keyof Entity | 'actions'
+            >]: string
+        }
     }
     public actions: {
-    [methodName in keyof Omit<GoodEntity, keyof Entity | 'actions'>]: string;
-  };
+        [methodName in keyof Omit<GoodEntity, keyof Entity | 'actions'>]: string
+    };
 
     @action()
     *activateGood(data) {
