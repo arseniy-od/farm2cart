@@ -15,9 +15,10 @@ export function useActions<T extends keyof IEntityContainer>(entityName: T) {
     const dispatch = useDispatch()
     const entity = useEntity(entityName)
     const actions = entity.actions as IEntityContainer[T]['actions']
+    type MyParameters<T> = T extends (...args: infer P) => any ? P : never // removed check for function
     const dispatches: {
         [key in keyof typeof actions]: (
-            data: Parameters<IEntityContainer[T][key]>[0]
+            data: MyParameters<IEntityContainer[T][key]>[0]
         ) => Action
     } = {} as any
     for (const key in actions) {
