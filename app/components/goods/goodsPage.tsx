@@ -29,13 +29,12 @@ export default function GoodsPage({
     const handleSearch = (e) => {
         e.preventDefault()
         const query = e.target.search.value
-        dispatch(
-            fetchGoods({
-                pageName: GOODS_TABLE,
-                pageNumber: 1,
-                filter: query,
-            })
-        )
+        // dispatch(fetchPaginatedGoods(GOODS_TABLE, 1, query))
+        fetchGoods({
+            pageName: GOODS_TABLE,
+            pageNumber: 1,
+            filter: { searchQuery: query },
+        })
     }
 
     return (
