@@ -11,6 +11,7 @@ export default class ReviewEntity extends Entity {
         this.addReview = this.addReview.bind(this)
         this.initSchema('reviews', { author: userSchema })
     }
+    public actions  //: Record<string, string>
     @action()
     *addReview(data) {
         const review = yield call(this.saveData, '/api/reviews', data.review)

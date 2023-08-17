@@ -17,6 +17,7 @@ export default class CartEntity extends Entity {
             good: goodSchema,
         })
     }
+    public actions  //: Record<string, string>
 
     // to avoid replacing of good entities after fetch
     private *updateCartItems(cartApi) {

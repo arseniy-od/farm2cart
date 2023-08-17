@@ -14,6 +14,7 @@ export default class CategoryEntity extends Entity {
             goods: [goodSchema],
         })
     }
+    public actions  //: Record<string, string>
 
     @action()
     *fetchCategories() {

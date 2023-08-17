@@ -44,7 +44,7 @@ export default class Entity extends BaseClientContext {
         this.deleteData = this.deleteData.bind(this)
     }
 
-    private static _actions = []
+    public static _actions: string[] = []
     public schema: any
 
     protected initSchema(entityName = '', attributes: any = {}) {
@@ -231,6 +231,13 @@ export default class Entity extends BaseClientContext {
             // console.log('Action name: ', actionName)
             const classInstance = clientContainer.resolve(obj.className)
             const method = classInstance[obj.methodName].bind(classInstance)
+            
+            // NEW
+            if (!classInstance.actions) {
+                classInstance.actions = {}
+            }
+            classInstance.actions[obj.methodName] = actionName
+            
             const saga = function* () {
                 while (true) {
                     const { payload } = yield take(actionName)
@@ -248,5 +255,8 @@ export default class Entity extends BaseClientContext {
     // not used
     public action(methodName, data?) {
         return Entity._actions[this.constructor.name + '_' + methodName](data) // _actions['categories_']
+    }
+    public myAction() {
+        return Entity._actions
     }
 }

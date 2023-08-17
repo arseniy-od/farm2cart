@@ -19,6 +19,7 @@ export default class AuthEntity extends Entity {
         this.readUser = this.readUser.bind(this)
         this.saveUser = this.saveUser.bind(this)
     }
+    public actions  //: Record<string, string>
 
     private *saveUser(url, user) {
         try {

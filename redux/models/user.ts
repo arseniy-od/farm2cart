@@ -5,4 +5,5 @@ export default class UserEntity extends Entity {
         super(opts)
         this.initSchema('users')
     }
+    public actions  //: Record<string, string>
 }

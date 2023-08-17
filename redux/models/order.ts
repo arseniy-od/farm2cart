@@ -16,6 +16,7 @@ export default class OrderEntity extends Entity {
             goods: goodsSchema,
         })
     }
+    public actions  //: Record<string, string>
 
     @action()
     *addOrder(data) {
