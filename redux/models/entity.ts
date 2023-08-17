@@ -231,13 +231,13 @@ export default class Entity extends BaseClientContext {
             // console.log('Action name: ', actionName)
             const classInstance = clientContainer.resolve(obj.className)
             const method = classInstance[obj.methodName].bind(classInstance)
-            
+
             // NEW
-            if (!classInstance.actions) {
-                classInstance.actions = {}
-            }
+            // if (!classInstance.actions) {
+            //     classInstance.actions = {}
+            // }
             classInstance.actions[obj.methodName] = actionName
-            
+
             const saga = function* () {
                 while (true) {
                     const { payload } = yield take(actionName)
