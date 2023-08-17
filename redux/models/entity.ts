@@ -32,7 +32,7 @@ interface IOptions {
     body?: string | FormData
 }
 
-export default class Entity extends BaseClientContext {
+export default class Entity<EntityInstance = null> extends BaseClientContext {
     constructor(opts) {
         super(opts)
         this.fetchApi = this.fetchApi.bind(this)
@@ -42,6 +42,18 @@ export default class Entity extends BaseClientContext {
         this.updateData = this.updateData.bind(this)
         this.patchData = this.patchData.bind(this)
         this.deleteData = this.deleteData.bind(this)
+        this.actions = {} as {
+            [methodName in keyof Omit<
+                EntityInstance,
+                keyof Entity<EntityInstance>
+            >]: string
+        }
+    }
+    public actions: {
+        [methodName in keyof Omit<
+            EntityInstance,
+            keyof Entity<EntityInstance> | 'actions'
+        >]: string
     }
 
     public static _actions: string[] = []

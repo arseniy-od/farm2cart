@@ -6,7 +6,7 @@ import Router from 'next/router'
 import { createOrderFail, decrementQuantity } from '../actions'
 
 import action from '../decorators/action'
-export default class OrderEntity extends Entity {
+export default class OrderEntity extends Entity<OrderEntity> {
     constructor(opts) {
         super(opts)
         this.fetchOrders = this.fetchOrders.bind(this)
@@ -15,19 +15,19 @@ export default class OrderEntity extends Entity {
             OrderGoods: [orderGoodsSchema],
             goods: goodsSchema,
         })
-        this.actions = {} as {
-            [methodName in keyof Omit<
-                OrderEntity,
-                keyof Entity | 'actions'
-            >]: string
-        }
+        // this.actions = {} as {
+        //     [methodName in keyof Omit<
+        //         OrderEntity,
+        //         keyof Entity | 'actions'
+        //     >]: string
+        // }
     }
-    public actions: {
-        [methodName in keyof Omit<
-            OrderEntity,
-            keyof Entity | 'actions'
-        >]: string
-    };
+    // public actions: {
+    //     [methodName in keyof Omit<
+    //         OrderEntity,
+    //         keyof Entity | 'actions'
+    //     >]: string
+    // };
 
     @action()
     *addOrder(data) {

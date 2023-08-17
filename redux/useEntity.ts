@@ -1,8 +1,6 @@
-import { Dispatch, useContext } from 'react'
+import { useContext } from 'react'
 import ContainerContext from './ContainerContext'
 import { useDispatch } from 'react-redux'
-import { IClientContextContainer } from './container'
-import ReduxStore from './store'
 import { IEntityContainer } from './models'
 import { Action, action } from './actions'
 
@@ -12,8 +10,6 @@ export default function useEntity<T extends keyof IEntityContainer>(
     const di = useContext(ContainerContext)
     return di(entityName)
 }
-
-type dispatchType = Dispatch<Action>
 
 export function useActions<T extends keyof IEntityContainer>(entityName: T) {
     const dispatch = useDispatch()

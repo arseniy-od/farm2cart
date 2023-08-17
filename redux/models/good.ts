@@ -12,7 +12,7 @@ import { activateGoodRedux, deactivateGoodRedux, pageUpdate } from '../actions'
 import { toFormData } from '@/app/utils'
 import Router from 'next/router'
 
-export default class GoodEntity extends Entity {
+export default class GoodEntity extends Entity<GoodEntity> {
     constructor(opts) {
         super(opts)
         this.fetchGoods = this.fetchGoods.bind(this)
@@ -26,16 +26,13 @@ export default class GoodEntity extends Entity {
             reviews: [reviewSchema],
             OrderGood: orderGoodsSchema,
         })
-        this.actions = {} as {
-            [methodName in keyof Omit<
-                GoodEntity,
-                keyof Entity | 'actions'
-            >]: string
-        }
+        // this.actions = {} as {
+        //     [methodName in keyof Omit<
+        //         GoodEntity,
+        //         keyof Entity | 'actions'
+        //     >]: string
+        // }
     }
-    public actions: {
-        [methodName in keyof Omit<GoodEntity, keyof Entity | 'actions'>]: string
-    };
 
     @action()
     *activateGood(data) {

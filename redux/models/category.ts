@@ -4,7 +4,7 @@ import { all, call, fork, put, take } from 'redux-saga/effects'
 import { categoryGoodSchema, goodSchema } from '../normalSchemas'
 import action from '../decorators/action'
 
-export default class CategoryEntity extends Entity {
+export default class CategoryEntity extends Entity<CategoryEntity> {
     constructor(opts) {
         super(opts)
         this.fetchCategories = this.fetchCategories.bind(this)
@@ -13,19 +13,19 @@ export default class CategoryEntity extends Entity {
             CategoryGood: categoryGoodSchema,
             goods: [goodSchema],
         })
-        this.actions = {} as {
-            [methodName in keyof Omit<
-                CategoryEntity,
-                keyof Entity | 'actions'
-            >]: string
-        }
+        // this.actions = {} as {
+        //     [methodName in keyof Omit<
+        //         CategoryEntity,
+        //         keyof Entity | 'actions'
+        //     >]: string
+        // }
     }
-    public actions: {
-        [methodName in keyof Omit<
-            CategoryEntity,
-            keyof Entity | 'actions'
-        >]: string
-    };
+    // public actions: {
+    //     [methodName in keyof Omit<
+    //         CategoryEntity,
+    //         keyof Entity | 'actions'
+    //     >]: string
+    // };
 
     @action()
     *fetchCategories() {

@@ -6,7 +6,7 @@ import action from '../decorators/action'
 import { deleteEntity, updateEntities } from '../actions'
 import { METHODS, STRATEGIES } from '@/app/constants'
 
-export default class CartEntity extends Entity {
+export default class CartEntity extends Entity<CartEntity> {
     constructor(opts) {
         super(opts)
         this.fetchCart = this.fetchCart.bind(this)
@@ -16,16 +16,16 @@ export default class CartEntity extends Entity {
         this.initSchema('cartItems', {
             good: goodSchema,
         })
-        this.actions = {} as {
-            [methodName in keyof Omit<
-                CartEntity,
-                keyof Entity | 'actions'
-            >]: string
-        }
+        // this.actions = {} as {
+        //     [methodName in keyof Omit<
+        //         CartEntity,
+        //         keyof Entity | 'actions'
+        //     >]: string
+        // }
     }
-    public actions: {
-        [methodName in keyof Omit<CartEntity, keyof Entity | 'actions'>]: string
-    }
+    // public actions: {
+    //     [methodName in keyof Omit<CartEntity, keyof Entity | 'actions'>]: string
+    // }
 
     // to avoid replacing of good entities after fetch
     private *updateCartItems(cartApi) {

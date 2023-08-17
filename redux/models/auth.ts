@@ -8,7 +8,7 @@ import { METHODS } from '@/app/constants'
 import Router from 'next/router'
 import { isEmpty } from '@/app/utils'
 
-export default class AuthEntity extends Entity {
+export default class AuthEntity extends Entity<AuthEntity> {
     constructor(opts) {
         super(opts)
         // this.authSaga = this.authSaga.bind(this)
@@ -18,16 +18,16 @@ export default class AuthEntity extends Entity {
         this.logoutUser = this.logoutUser.bind(this)
         this.readUser = this.readUser.bind(this)
         this.saveUser = this.saveUser.bind(this)
-        this.actions = {} as {
-            [methodName in keyof Omit<
-                AuthEntity,
-                keyof Entity | 'actions'
-            >]: string
-        }
+        // this.actions = {} as {
+        //     [methodName in keyof Omit<
+        //         AuthEntity,
+        //         keyof Entity | 'actions'
+        //     >]: string
+        // }
     }
-    public actions: {
-        [methodName in keyof Omit<AuthEntity, keyof Entity | 'actions'>]: string
-    }
+    // public actions: {
+    //     [methodName in keyof Omit<AuthEntity, keyof Entity | 'actions'>]: string
+    // }
     private *saveUser(url, user) {
         try {
             const result = yield call(this.fetchApi, url, METHODS.POST, user)
