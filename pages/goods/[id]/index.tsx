@@ -156,3 +156,4 @@ export const getServerSideProps = clientContainer
     )
 
 export default connector(Good)
+

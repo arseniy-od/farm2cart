@@ -16,7 +16,7 @@ import {
     updateEntities,
 } from '../actions'
 import 'reflect-metadata'
-import { ISagaMethods } from '@/app/types/common'
+import { ISagaMethod } from '@/app/types/common'
 import BaseClientContext from '../baseClientContext'
 import clientContainer from '../container'
 import { RootState } from '../store'
@@ -237,7 +237,7 @@ export default class Entity<EntityInstance = null> extends BaseClientContext {
     }
 
     public static sagas() {
-        const objects: ISagaMethods[] = Reflect.getMetadata('sagas', Entity)
+        const objects: ISagaMethod[] = Reflect.getMetadata('sagas', Entity)
         return objects.map((obj) => {
             const actionName = obj.className + '_' + obj.methodName
             // console.log('Action name: ', actionName)
